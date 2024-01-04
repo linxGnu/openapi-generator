@@ -104,11 +104,11 @@ where
     {
     // body validation
     #[derive(validator::Validate)]
-    struct bodyValidator<'a> {
+    struct BodyValidator<'a> {
         #[validate]
         body: &'a models::Pet,
     }
-      let b = bodyValidator { body: &body };
+      let b = BodyValidator { body: &body };
       if let Err(e) = b.validate() {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
@@ -450,11 +450,11 @@ where
     {
     // body validation
     #[derive(validator::Validate)]
-    struct bodyValidator<'a> {
+    struct BodyValidator<'a> {
         #[validate]
         body: &'a models::Pet,
     }
-      let b = bodyValidator { body: &body };
+      let b = BodyValidator { body: &body };
       if let Err(e) = b.validate() {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
@@ -815,11 +815,11 @@ where
     {
     // body validation
     #[derive(validator::Validate)]
-    struct bodyValidator<'a> {
+    struct BodyValidator<'a> {
         #[validate]
         body: &'a models::Order,
     }
-      let b = bodyValidator { body: &body };
+      let b = BodyValidator { body: &body };
       if let Err(e) = b.validate() {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
@@ -886,11 +886,11 @@ where
     {
     // body validation
     #[derive(validator::Validate)]
-    struct bodyValidator<'a> {
+    struct BodyValidator<'a> {
         #[validate]
         body: &'a models::User,
     }
-      let b = bodyValidator { body: &body };
+      let b = BodyValidator { body: &body };
       if let Err(e) = b.validate() {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
@@ -944,11 +944,11 @@ where
     {
     // body validation
     #[derive(validator::Validate)]
-    struct bodyValidator<'a> {
+    struct BodyValidator<'a> {
         #[validate]
         body: &'a Vec<models::User>,
     }
-      let b = bodyValidator { body: &body };
+      let b = BodyValidator { body: &body };
       if let Err(e) = b.validate() {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
@@ -1002,11 +1002,11 @@ where
     {
     // body validation
     #[derive(validator::Validate)]
-    struct bodyValidator<'a> {
+    struct BodyValidator<'a> {
         #[validate]
         body: &'a Vec<models::User>,
     }
-      let b = bodyValidator { body: &body };
+      let b = BodyValidator { body: &body };
       if let Err(e) = b.validate() {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
@@ -1361,11 +1361,11 @@ where
     {
     // body validation
     #[derive(validator::Validate)]
-    struct bodyValidator<'a> {
+    struct BodyValidator<'a> {
         #[validate]
         body: &'a models::User,
     }
-      let b = bodyValidator { body: &body };
+      let b = BodyValidator { body: &body };
       if let Err(e) = b.validate() {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)

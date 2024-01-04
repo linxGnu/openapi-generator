@@ -116,7 +116,7 @@ where
     {
     // body validation
     #[derive(validator::Validate)]
-    struct bodyValidator<'a> {
+    struct BodyValidator<'a> {
 {{#hasValidation}}
     #[validate(
         {{#maxLength}}
@@ -174,11 +174,11 @@ where
         body: &'a {{{dataType}}},
     }
     {{#required}}
-      let b = bodyValidator { body: &body };
+      let b = BodyValidator { body: &body };
     {{/required}}
     {{^required}}
       if let Some(body) = &body {
-        let b = bodyValidator { body };
+        let b = BodyValidator { body };
     {{/required}}
       if let Err(e) = b.validate() {
         return Response::builder()
