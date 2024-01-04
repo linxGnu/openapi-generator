@@ -237,7 +237,7 @@ pub enum UpdateUserResponse {
 
 /// API
 #[async_trait]
-#[allow(clippy::too_many_arguments, clippy::ptr_arg)]
+#[allow(clippy::ptr_arg)]
 pub trait Api {
 
                 /// Add a new pet to the store
