@@ -1,0 +1,8 @@
+generatorName: rust-axum
+outputDir: samples/server/petstore/rust-axum
+inputSpec: modules/openapi-generator/src/test/resources/3_0/petstore.yaml
+templateDir: modules/openapi-generator/src/main/resources/rust-axum
+generateAliasAsModel: true
+additionalProperties:
+  hideGenerationTimestamp: "true"
+  packageName: rust-axum-test

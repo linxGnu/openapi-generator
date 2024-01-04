@@ -329,7 +329,6 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
 
     boolean isMimetypePlain(String mimetype) {
         return !(isMimetypeUnknown(mimetype) ||
-//                isMimetypeXml(mimetype) ||
                 isMimetypeJson(mimetype) ||
                 isMimetypeWwwFormUrlEncoded(mimetype) ||
                 isMimetypeMultipartFormData(mimetype) ||
@@ -613,14 +612,16 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
     }
 
     private void postProcessOperationWithModels(CodegenOperation op) {
+        boolean consumesJson = false;
         boolean consumesPlainText = false;
 
         if (op.consumes != null) {
             for (Map<String, String> consume : op.consumes) {
-                if (consume.get("mediaType") != null) {
-                    String mediaType = consume.get("mediaType");
-
-                    if (isMimetypePlain(mediaType)) {
+                final String mediaType = consume.get("mediaType");
+                if (mediaType != null) {
+                    if (isMimetypeJson(mediaType)) {
+                        consumesJson = true;
+                    } else if (isMimetypePlain(mediaType)) {
                         consumesPlainText = true;
                     } else if (isMimetypeWwwFormUrlEncoded(mediaType)) {
                         additionalProperties.put("usesUrlEncodedForm", true);
@@ -641,7 +642,9 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
         if (op.bodyParam != null) {
             // Default to consuming json
             op.bodyParam.vendorExtensions.put("x-uppercase-operation-id", underscoredOperationId);
-            if (consumesPlainText) {
+            if (consumesJson) {
+                op.bodyParam.vendorExtensions.put("x-consumes-json", true);
+            } else if (consumesPlainText) {
                 op.bodyParam.vendorExtensions.put("x-consumes-plain-text", true);
             } else {
                 op.bodyParam.vendorExtensions.put("x-consumes-json", true);
@@ -654,7 +657,9 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
             param.vendorExtensions.put("x-uppercase-operation-id", underscoredOperationId);
 
             // Default to producing json if nothing else is specified
-            if (consumesPlainText) {
+            if (consumesJson) {
+                param.vendorExtensions.put("x-consumes-json", true);
+            } else if (consumesPlainText) {
                 param.vendorExtensions.put("x-consumes-plain-text", true);
             } else {
                 param.vendorExtensions.put("x-consumes-json", true);

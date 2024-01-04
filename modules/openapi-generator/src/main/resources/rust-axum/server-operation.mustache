@@ -19,21 +19,19 @@ async fn {{#vendorExtensions}}{{{x-operation-id}}}{{/vendorExtensions}}<I, A>(
 {{#vendorExtensions}}
 {{^x-consumes-multipart}}
 {{#bodyParams}}
-{{#-first}}
 {{#vendorExtensions}}
 {{#x-consumes-json}}
   Json(body): Json<{{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}}>
 {{/x-consumes-json}}
 {{#x-consumes-plain-text}}
-  {{#isByteArray}}
-    body: Bytes,
-  {{/isByteArray}}
   {{#isString}}
     body: String,
   {{/isString}}
+  {{^isString}}
+    body: Bytes,
+  {{/isString}}
 {{/x-consumes-plain-text}}
 {{/vendorExtensions}}
-{{/-first}}
 {{/bodyParams}}
 {{/x-consumes-multipart}}
 {{#x-consumes-multipart}}

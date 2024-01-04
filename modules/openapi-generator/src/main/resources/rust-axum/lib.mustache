@@ -54,24 +54,19 @@ pub trait Api {
                 {{/queryParams}}
                 {{^x-consumes-multipart}}
                     {{#bodyParams}}
-                    {{#-first}}
                     {{#vendorExtensions}}
                     {{#x-consumes-json}}
                         body: {{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}},
                     {{/x-consumes-json}}
-                    {{^x-consumes-json}}
-                        body: Bytes,
-                    {{/x-consumes-json}}
                     {{#x-consumes-plain-text}}
-                      {{#isByteArray}}
-                        body: Bytes,
-                      {{/isByteArray}}
                       {{#isString}}
                         body: String,
                       {{/isString}}
+                      {{^isString}}
+                          body: Bytes,
+                      {{/isString}}
                     {{/x-consumes-plain-text}}
                     {{/vendorExtensions}}
-                    {{/-first}}
                     {{/bodyParams}}
                 {{/x-consumes-multipart}}
                 {{#x-consumes-multipart}}
