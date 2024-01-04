@@ -5,6 +5,7 @@ use axum_extra::extract::{CookieJar, Multipart};
 use bytes::Bytes;
 use http::{header::CONTENT_TYPE, HeaderMap, HeaderName, HeaderValue, Method, StatusCode};
 use tracing::error;
+use validator::Validate;
 
 use crate:: header;
 
@@ -94,12 +95,29 @@ async fn add_pet<I, A>(
   host: Host,
   cookies: CookieJar,
  State(api_impl): State<I>,
-  Json(body): Json<models::Pet>
+      Json(body): Json<models::Pet>,
 ) -> Result<Response, StatusCode>
 where 
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    {
+    // body validation
+    #[derive(validator::Validate)]
+    struct bodyValidator<'a> {
+        #[validate]
+        body: &'a models::Pet,
+    }
+      let b = bodyValidator { body: &body };
+      if let Err(e) = b.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+      }
+  }
 
   let result = api_impl.as_ref().add_pet(
       method,
@@ -180,6 +198,17 @@ where
        }
   };
 
+    // path params validation
+    if let Err(e) = path_params.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+    }
+
+
   let result = api_impl.as_ref().delete_pet(
       method,
       host,
@@ -221,6 +250,16 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    // query params validation
+    if let Err(e) = query_params.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+    }
+
 
   let result = api_impl.as_ref().find_pets_by_status(
       method,
@@ -275,6 +314,16 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    // query params validation
+    if let Err(e) = query_params.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+    }
+
 
   let result = api_impl.as_ref().find_pets_by_tags(
       method,
@@ -329,6 +378,16 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    // path params validation
+    if let Err(e) = path_params.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+    }
+
 
   let result = api_impl.as_ref().get_pet_by_id(
       method,
@@ -382,12 +441,29 @@ async fn update_pet<I, A>(
   host: Host,
   cookies: CookieJar,
  State(api_impl): State<I>,
-  Json(body): Json<models::Pet>
+      Json(body): Json<models::Pet>,
 ) -> Result<Response, StatusCode>
 where 
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    {
+    // body validation
+    #[derive(validator::Validate)]
+    struct bodyValidator<'a> {
+        #[validate]
+        body: &'a models::Pet,
+    }
+      let b = bodyValidator { body: &body };
+      if let Err(e) = b.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+      }
+  }
 
   let result = api_impl.as_ref().update_pet(
       method,
@@ -452,6 +528,16 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    // path params validation
+    if let Err(e) = path_params.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+    }
+
 
   let result = api_impl.as_ref().update_pet_with_form(
       method,
@@ -494,6 +580,16 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    // path params validation
+    if let Err(e) = path_params.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+    }
+
 
   let result = api_impl.as_ref().upload_file(
       method,
@@ -544,6 +640,16 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    // path params validation
+    if let Err(e) = path_params.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+    }
+
 
   let result = api_impl.as_ref().delete_order(
       method,
@@ -637,6 +743,16 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    // path params validation
+    if let Err(e) = path_params.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+    }
+
 
   let result = api_impl.as_ref().get_order_by_id(
       method,
@@ -690,12 +806,29 @@ async fn place_order<I, A>(
   host: Host,
   cookies: CookieJar,
  State(api_impl): State<I>,
-  Json(body): Json<models::Order>
+      Json(body): Json<models::Order>,
 ) -> Result<Response, StatusCode>
 where 
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    {
+    // body validation
+    #[derive(validator::Validate)]
+    struct bodyValidator<'a> {
+        #[validate]
+        body: &'a models::Order,
+    }
+      let b = bodyValidator { body: &body };
+      if let Err(e) = b.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+      }
+  }
 
   let result = api_impl.as_ref().place_order(
       method,
@@ -744,12 +877,29 @@ async fn create_user<I, A>(
   host: Host,
   cookies: CookieJar,
  State(api_impl): State<I>,
-  Json(body): Json<models::User>
+      Json(body): Json<models::User>,
 ) -> Result<Response, StatusCode>
 where 
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    {
+    // body validation
+    #[derive(validator::Validate)]
+    struct bodyValidator<'a> {
+        #[validate]
+        body: &'a models::User,
+    }
+      let b = bodyValidator { body: &body };
+      if let Err(e) = b.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+      }
+  }
 
   let result = api_impl.as_ref().create_user(
       method,
@@ -785,12 +935,29 @@ async fn create_users_with_array_input<I, A>(
   host: Host,
   cookies: CookieJar,
  State(api_impl): State<I>,
-  Json(body): Json<Vec<models::User>>
+      Json(body): Json<Vec<models::User>>,
 ) -> Result<Response, StatusCode>
 where 
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    {
+    // body validation
+    #[derive(validator::Validate)]
+    struct bodyValidator<'a> {
+        #[validate]
+        body: &'a Vec<models::User>,
+    }
+      let b = bodyValidator { body: &body };
+      if let Err(e) = b.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+      }
+  }
 
   let result = api_impl.as_ref().create_users_with_array_input(
       method,
@@ -826,12 +993,29 @@ async fn create_users_with_list_input<I, A>(
   host: Host,
   cookies: CookieJar,
  State(api_impl): State<I>,
-  Json(body): Json<Vec<models::User>>
+      Json(body): Json<Vec<models::User>>,
 ) -> Result<Response, StatusCode>
 where 
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    {
+    // body validation
+    #[derive(validator::Validate)]
+    struct bodyValidator<'a> {
+        #[validate]
+        body: &'a Vec<models::User>,
+    }
+      let b = bodyValidator { body: &body };
+      if let Err(e) = b.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+      }
+  }
 
   let result = api_impl.as_ref().create_users_with_list_input(
       method,
@@ -873,6 +1057,16 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    // path params validation
+    if let Err(e) = path_params.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+    }
+
 
   let result = api_impl.as_ref().delete_user(
       method,
@@ -919,6 +1113,16 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    // path params validation
+    if let Err(e) = path_params.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+    }
+
 
   let result = api_impl.as_ref().get_user_by_name(
       method,
@@ -978,6 +1182,16 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    // query params validation
+    if let Err(e) = query_params.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+    }
+
 
   let result = api_impl.as_ref().login_user(
       method,
@@ -1128,12 +1342,39 @@ async fn update_user<I, A>(
   cookies: CookieJar,
   Path(path_params): Path<models::UpdateUserPathParams>,
  State(api_impl): State<I>,
-  Json(body): Json<models::User>
+      Json(body): Json<models::User>,
 ) -> Result<Response, StatusCode>
 where 
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    // path params validation
+    if let Err(e) = path_params.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+    }
+
+    {
+    // body validation
+    #[derive(validator::Validate)]
+    struct bodyValidator<'a> {
+        #[validate]
+        body: &'a models::User,
+    }
+      let b = bodyValidator { body: &body };
+      if let Err(e) = b.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+      }
+  }
 
   let result = api_impl.as_ref().update_user(
       method,

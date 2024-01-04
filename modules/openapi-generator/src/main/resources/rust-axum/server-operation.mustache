@@ -18,21 +18,16 @@ async fn {{#vendorExtensions}}{{{x-operation-id}}}{{/vendorExtensions}}<I, A>(
  State(api_impl): State<I>,
 {{#vendorExtensions}}
 {{^x-consumes-multipart}}
-{{#bodyParams}}
-{{#vendorExtensions}}
-{{#x-consumes-json}}
-  Json(body): Json<{{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}}>
-{{/x-consumes-json}}
-{{#x-consumes-plain-text}}
-  {{#isString}}
-    body: String,
-  {{/isString}}
-  {{^isString}}
-    body: Bytes,
-  {{/isString}}
-{{/x-consumes-plain-text}}
-{{/vendorExtensions}}
-{{/bodyParams}}
+  {{#usesJson}}
+    {{#bodyParam}}
+      Json(body): Json<{{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}}>,
+    {{/bodyParam}}
+  {{/usesJson}}
+  {{^usesJson}}
+   {{#bodyParam}}
+      body: Bytes,
+   {{/bodyParam}}
+  {{/usesJson}}
 {{/x-consumes-multipart}}
 {{#x-consumes-multipart}}
   body: Multipart,
@@ -87,8 +82,120 @@ where
   {{#-last}}
        }
   };
+
   {{/-last}} 
-{{/headerParams}} 
+{{/headerParams}}
+{{#vendorExtensions}}
+ {{#pathParams.size}}
+    // path params validation
+    if let Err(e) = path_params.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+    }
+
+ {{/pathParams.size}}
+ {{#queryParams.size}}
+    // query params validation
+    if let Err(e) = query_params.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+    }
+
+ {{/queryParams.size}}
+ {{^x-consumes-multipart}}
+  {{#usesJson}}
+    {{#bodyParam}}
+    {
+    // body validation
+    #[derive(validator::Validate)]
+    struct bodyValidator<'a> {
+{{#hasValidation}}
+    #[validate(
+        {{#maxLength}}
+            {{#minLength}}
+            length(min = {{minLength}}, max = {{maxLength}}),
+            {{/minLength}}
+            {{^minLength}}
+            length(max = {{maxLength}}),
+            {{/minLength}}
+        {{/maxLength}}
+        {{^maxLength}}
+            {{#minLength}}
+            length(min = {{minLength}}),
+            {{/minLength}}
+        {{/maxLength}}
+        {{#pattern}}
+          {{^isByteArray}}
+           regex = "RE_{{#lambda.uppercase}}{{{classname}}}_{{{name}}}{{/lambda.uppercase}}",
+          {{/isByteArray}}
+          {{#isByteArray}}
+           custom ="validate_byte_{{#lambda.lowercase}}{{{classname}}}_{{{name}}}{{/lambda.lowercase}}"
+          {{/isByteArray}}
+        {{/pattern}}
+        {{#maximum}}
+            {{#minimum}}
+            range(min = {{minimum}}, max = {{maximum}}),
+            {{/minimum}}
+            {{^minimum}}
+            range(max = {{maximum}}),
+            {{/minimum}}
+        {{/maximum}}
+        {{#minimum}}
+            {{^maximum}}
+            range(min = {{minimum}}),
+            {{/maximum}}
+        {{/minimum}}
+        {{#maxItems}}
+            {{#minItems}}
+            length(min = {{minItems}}, max = {{maxItems}}),
+            {{/minItems}}
+            {{^minItems}}
+            length(max = {{maxItems}}),
+            {{/minItems}}
+        {{/maxItems}}
+        {{^maxItems}}
+            {{#minItems}}
+            length(min = {{minItems}}),
+            {{/minItems}}
+        {{/maxItems}}
+        )]
+{{/hasValidation}}
+{{^hasValidation}}
+        #[validate]
+{{/hasValidation}}
+        body: &'a {{{dataType}}},
+    }
+    {{#required}}
+      let b = bodyValidator { body: &body };
+    {{/required}}
+    {{^required}}
+      if let Some(body) = &body {
+        let b = bodyValidator { body };
+    {{/required}}
+      if let Err(e) = b.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+      }
+    {{^required}}
+      } 
+    {{/required}}
+  }
+    {{/bodyParam}}
+  {{/usesJson}}
+ {{/x-consumes-multipart}}
+{{/vendorExtensions}}
 
   let result = api_impl.as_ref().{{#vendorExtensions}}{{{x-operation-id}}}{{/vendorExtensions}}(
       method,
