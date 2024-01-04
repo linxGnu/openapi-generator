@@ -9,11 +9,11 @@ async fn {{#vendorExtensions}}{{{x-operation-id}}}{{/vendorExtensions}}<I, A>(
 {{/headerParams.size}}
 {{#vendorExtensions}}
   {{#x-has-path-params}}
-  Path({{#pathParams}}{{#-first}}{{^-last}}({{/-last}}{{/-first}}path_{{{paramName}}}{{^-last}},{{/-last}}{{#-last}}{{^-first}}){{/-first}}{{/-last}}{{/pathParams}}): Path<{{#pathParams}}{{#-first}}{{^-last}}({{/-last}}{{/-first}}{{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}}{{^-last}},{{/-last}}{{#-last}}{{^-first}}){{/-first}}{{/-last}}{{/pathParams}}>,
+  Path(path_params): Path<models::{{{operationIdCamelCase}}}PathParams>,
   {{/x-has-path-params}}
 {{/vendorExtensions}}
 {{#queryParams.size}}
-  Query(query_params): Query<HashMap<String, String>>,
+  Query(query_params): Query<models::{{{operationIdCamelCase}}}QueryParams>,
 {{/queryParams.size}}
  State(api_impl): State<I>,
 {{#vendorExtensions}}
@@ -45,7 +45,8 @@ where
 {
 {{#headerParams}}
   {{#-first}}
-                // Header parameters
+    // Header parameters
+    let header_params = {
   {{/-first}}
                 let header_{{{paramName}}} = headers.get(HeaderName::from_static("{{{nameInLowerCase}}}"));
 
@@ -76,99 +77,32 @@ where
 {{/required}}
                     }
                 };
-  {{#-last}}
-
-  {{/-last}}
 {{/headerParams}}
+{{#headerParams}}
+  {{#-first}}
 
-{{#queryParams}}
-    let query_{{{paramName}}} = query_params.iter().filter(|e| e.0 == "{{{baseName}}}").map(|e| e.1.clone())
-  {{#isArray}}
-    {{^vendorExtensions.x-consumes-json}}
-                    .filter_map(|query_{{{paramName}}}| query_{{{paramName}}}.parse().ok())
-                    .collect::<Vec<_>>();
-      {{^required}}
-                let query_{{{paramName}}} = if !query_{{{paramName}}}.is_empty() {
-                    Some(query_{{{paramName}}})
-                } else {
-                    None
-                };
-      {{/required}}
-    {{/vendorExtensions.x-consumes-json}}
-    {{#vendorExtensions.x-consumes-json}}
-                    .next();
-                let query_{{{paramName}}} = match query_{{{paramName}}} {
-                    Some(query_{{{paramName}}}) => {
-                        let query_{{{paramName}}} =
-                            serde_json::from_str::<{{{dataType}}}>
-                                (&query_{{{paramName}}});
-                        match query_{{{paramName}}} {
-                            Ok(query_{{{paramName}}}) => Some(query_{{{paramName}}}),
-                            Err(e) => return Response::builder()
-                                .status(StatusCode::BAD_REQUEST)
-                                .body(Body::from(format!("Couldn't parse query parameter {{{baseName}}} - doesn't match schema: {}", e))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
-                        }
-                    },
-                    None => None,
-                };
-      {{#required}}
-                let query_{{{paramName}}} = match query_{{{paramName}}} {
-                    Some(query_{{{paramName}}}) => query_{{{paramName}}},
-                    None => return Response::builder()
-                        .status(StatusCode::BAD_REQUEST)
-                        .body(Body::from("Missing required query parameter {{{baseName}}}")).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
-                };
-      {{/required}}
-    {{/vendorExtensions.x-consumes-json}}
-  {{/isArray}}
-  {{^isArray}}
-                    .next();
-                let query_{{{paramName}}} = match query_{{{paramName}}} {
-                    Some(query_{{{paramName}}}) => {
-                        let query_{{{paramName}}} =
-    {{#vendorExtensions.x-consumes-json}}
-                            serde_json::from_str::<{{{dataType}}}>
-    {{/vendorExtensions.x-consumes-json}}
-    {{^vendorExtensions.x-consumes-json}}
-                            <{{{dataType}}} as std::str::FromStr>::from_str
-    {{/vendorExtensions.x-consumes-json}}
-                                (&query_{{{paramName}}});
-                        match query_{{{paramName}}} {
-                            Ok(query_{{{paramName}}}) => Some(query_{{{paramName}}}),
-                            Err(e) => return Response::builder()
-                                .status(StatusCode::BAD_REQUEST)
-                                .body(Body::from(format!("Couldn't parse query parameter {{{baseName}}} - doesn't match schema: {}", e))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR }),
-                        }
-                    },
-                    None => None,
-                };
-    {{#required}}
-                let query_{{{paramName}}} = match query_{{{paramName}}} {
-                    Some(query_{{{paramName}}}) => query_{{{paramName}}},
-                    None => return Response::builder()
-                        .status(StatusCode::BAD_REQUEST)
-                        .body(Body::from("Missing required query parameter {{{baseName}}}")).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR }),
-                };
-    {{/required}}
-  {{/isArray}}
+       models::{{{operationIdCamelCase}}}HeaderParams {
+  {{/-first}}
+          {{{paramName}}}: header_{{{paramName}}},
   {{#-last}}
-
-  {{/-last}}
-{{/queryParams}}
+       }
+  };
+  {{/-last}} 
+{{/headerParams}} 
 
   let result = api_impl.as_ref().{{#vendorExtensions}}{{{x-operation-id}}}{{/vendorExtensions}}(
       method,
       host,
       cookies,
-      {{#headerParams}}
-      header_{{{paramName}}},
-      {{/headerParams}}
-      {{#pathParams}}
-      path_{{{paramName}}},
-      {{/pathParams}}
-      {{#queryParams}}
-      query_{{{paramName}}},
-      {{/queryParams}}
+      {{#headerParams.size}}
+        header_params,
+      {{/headerParams.size}}
+      {{#pathParams.size}}
+        path_params,
+      {{/pathParams.size}}
+      {{#queryParams.size}}
+        query_params,
+      {{/queryParams.size}}
       {{#vendorExtensions}}
         {{#bodyParams}}
           {{#-first}}

@@ -101,7 +101,6 @@ where
     A: Api,
 {
 
-
   let result = api_impl.as_ref().add_pet(
       method,
       host,
@@ -149,14 +148,15 @@ async fn delete_pet<I, A>(
   host: Host,
   cookies: CookieJar,
   headers: HeaderMap,
-  Path(path_pet_id): Path<i64>,
+  Path(path_params): Path<models::DeletePetPathParams>,
  State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
 where 
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-                // Header parameters
+    // Header parameters
+    let header_params = {
                 let header_api_key = headers.get(HeaderName::from_static("api_key"));
 
                 let header_api_key = match header_api_key {
@@ -175,14 +175,17 @@ where
                     }
                 };
 
-
+       models::DeletePetHeaderParams {
+          api_key: header_api_key,
+       }
+  };
 
   let result = api_impl.as_ref().delete_pet(
       method,
       host,
       cookies,
-      header_api_key,
-      path_pet_id,
+        header_params,
+        path_params,
   ).await;
 
   let mut response = Response::builder();
@@ -211,7 +214,7 @@ async fn find_pets_by_status<I, A>(
   method: Method,
   host: Host,
   cookies: CookieJar,
-  Query(query_params): Query<HashMap<String, String>>,
+  Query(query_params): Query<models::FindPetsByStatusQueryParams>,
  State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
 where 
@@ -219,16 +222,11 @@ where
     A: Api,
 {
 
-    let query_status = query_params.iter().filter(|e| e.0 == "status").map(|e| e.1.clone())
-                    .filter_map(|query_status| query_status.parse().ok())
-                    .collect::<Vec<_>>();
-
-
   let result = api_impl.as_ref().find_pets_by_status(
       method,
       host,
       cookies,
-      query_status,
+        query_params,
   ).await;
 
   let mut response = Response::builder();
@@ -270,7 +268,7 @@ async fn find_pets_by_tags<I, A>(
   method: Method,
   host: Host,
   cookies: CookieJar,
-  Query(query_params): Query<HashMap<String, String>>,
+  Query(query_params): Query<models::FindPetsByTagsQueryParams>,
  State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
 where 
@@ -278,16 +276,11 @@ where
     A: Api,
 {
 
-    let query_tags = query_params.iter().filter(|e| e.0 == "tags").map(|e| e.1.clone())
-                    .filter_map(|query_tags| query_tags.parse().ok())
-                    .collect::<Vec<_>>();
-
-
   let result = api_impl.as_ref().find_pets_by_tags(
       method,
       host,
       cookies,
-      query_tags,
+        query_params,
   ).await;
 
   let mut response = Response::builder();
@@ -329,7 +322,7 @@ async fn get_pet_by_id<I, A>(
   method: Method,
   host: Host,
   cookies: CookieJar,
-  Path(path_pet_id): Path<i64>,
+  Path(path_params): Path<models::GetPetByIdPathParams>,
  State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
 where 
@@ -337,12 +330,11 @@ where
     A: Api,
 {
 
-
   let result = api_impl.as_ref().get_pet_by_id(
       method,
       host,
       cookies,
-      path_pet_id,
+        path_params,
   ).await;
 
   let mut response = Response::builder();
@@ -396,7 +388,6 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-
 
   let result = api_impl.as_ref().update_pet(
       method,
@@ -454,7 +445,7 @@ async fn update_pet_with_form<I, A>(
   method: Method,
   host: Host,
   cookies: CookieJar,
-  Path(path_pet_id): Path<i64>,
+  Path(path_params): Path<models::UpdatePetWithFormPathParams>,
  State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
 where 
@@ -462,12 +453,11 @@ where
     A: Api,
 {
 
-
   let result = api_impl.as_ref().update_pet_with_form(
       method,
       host,
       cookies,
-      path_pet_id,
+        path_params,
   ).await;
 
   let mut response = Response::builder();
@@ -496,7 +486,7 @@ async fn upload_file<I, A>(
   method: Method,
   host: Host,
   cookies: CookieJar,
-  Path(path_pet_id): Path<i64>,
+  Path(path_params): Path<models::UploadFilePathParams>,
  State(api_impl): State<I>,
   body: Multipart,
 ) -> Result<Response, StatusCode>
@@ -505,12 +495,11 @@ where
     A: Api,
 {
 
-
   let result = api_impl.as_ref().upload_file(
       method,
       host,
       cookies,
-      path_pet_id,
+        path_params,
           body,
   ).await;
 
@@ -548,7 +537,7 @@ async fn delete_order<I, A>(
   method: Method,
   host: Host,
   cookies: CookieJar,
-  Path(path_order_id): Path<String>,
+  Path(path_params): Path<models::DeleteOrderPathParams>,
  State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
 where 
@@ -556,12 +545,11 @@ where
     A: Api,
 {
 
-
   let result = api_impl.as_ref().delete_order(
       method,
       host,
       cookies,
-      path_order_id,
+        path_params,
   ).await;
 
   let mut response = Response::builder();
@@ -601,7 +589,6 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-
 
   let result = api_impl.as_ref().get_inventory(
       method,
@@ -643,7 +630,7 @@ async fn get_order_by_id<I, A>(
   method: Method,
   host: Host,
   cookies: CookieJar,
-  Path(path_order_id): Path<i64>,
+  Path(path_params): Path<models::GetOrderByIdPathParams>,
  State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
 where 
@@ -651,12 +638,11 @@ where
     A: Api,
 {
 
-
   let result = api_impl.as_ref().get_order_by_id(
       method,
       host,
       cookies,
-      path_order_id,
+        path_params,
   ).await;
 
   let mut response = Response::builder();
@@ -710,7 +696,6 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-
 
   let result = api_impl.as_ref().place_order(
       method,
@@ -766,7 +751,6 @@ where
     A: Api,
 {
 
-
   let result = api_impl.as_ref().create_user(
       method,
       host,
@@ -807,7 +791,6 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-
 
   let result = api_impl.as_ref().create_users_with_array_input(
       method,
@@ -850,7 +833,6 @@ where
     A: Api,
 {
 
-
   let result = api_impl.as_ref().create_users_with_list_input(
       method,
       host,
@@ -884,7 +866,7 @@ async fn delete_user<I, A>(
   method: Method,
   host: Host,
   cookies: CookieJar,
-  Path(path_username): Path<String>,
+  Path(path_params): Path<models::DeleteUserPathParams>,
  State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
 where 
@@ -892,12 +874,11 @@ where
     A: Api,
 {
 
-
   let result = api_impl.as_ref().delete_user(
       method,
       host,
       cookies,
-      path_username,
+        path_params,
   ).await;
 
   let mut response = Response::builder();
@@ -931,7 +912,7 @@ async fn get_user_by_name<I, A>(
   method: Method,
   host: Host,
   cookies: CookieJar,
-  Path(path_username): Path<String>,
+  Path(path_params): Path<models::GetUserByNamePathParams>,
  State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
 where 
@@ -939,12 +920,11 @@ where
     A: Api,
 {
 
-
   let result = api_impl.as_ref().get_user_by_name(
       method,
       host,
       cookies,
-      path_username,
+        path_params,
   ).await;
 
   let mut response = Response::builder();
@@ -991,7 +971,7 @@ async fn login_user<I, A>(
   method: Method,
   host: Host,
   cookies: CookieJar,
-  Query(query_params): Query<HashMap<String, String>>,
+  Query(query_params): Query<models::LoginUserQueryParams>,
  State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
 where 
@@ -999,58 +979,11 @@ where
     A: Api,
 {
 
-    let query_username = query_params.iter().filter(|e| e.0 == "username").map(|e| e.1.clone())
-                    .next();
-                let query_username = match query_username {
-                    Some(query_username) => {
-                        let query_username =
-                            <String as std::str::FromStr>::from_str
-                                (&query_username);
-                        match query_username {
-                            Ok(query_username) => Some(query_username),
-                            Err(e) => return Response::builder()
-                                .status(StatusCode::BAD_REQUEST)
-                                .body(Body::from(format!("Couldn't parse query parameter username - doesn't match schema: {}", e))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR }),
-                        }
-                    },
-                    None => None,
-                };
-                let query_username = match query_username {
-                    Some(query_username) => query_username,
-                    None => return Response::builder()
-                        .status(StatusCode::BAD_REQUEST)
-                        .body(Body::from("Missing required query parameter username")).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR }),
-                };
-    let query_password = query_params.iter().filter(|e| e.0 == "password").map(|e| e.1.clone())
-                    .next();
-                let query_password = match query_password {
-                    Some(query_password) => {
-                        let query_password =
-                            <String as std::str::FromStr>::from_str
-                                (&query_password);
-                        match query_password {
-                            Ok(query_password) => Some(query_password),
-                            Err(e) => return Response::builder()
-                                .status(StatusCode::BAD_REQUEST)
-                                .body(Body::from(format!("Couldn't parse query parameter password - doesn't match schema: {}", e))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR }),
-                        }
-                    },
-                    None => None,
-                };
-                let query_password = match query_password {
-                    Some(query_password) => query_password,
-                    None => return Response::builder()
-                        .status(StatusCode::BAD_REQUEST)
-                        .body(Body::from("Missing required query parameter password")).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR }),
-                };
-
-
   let result = api_impl.as_ref().login_user(
       method,
       host,
       cookies,
-      query_username,
-      query_password,
+        query_params,
   ).await;
 
   let mut response = Response::builder();
@@ -1161,7 +1094,6 @@ where
     A: Api,
 {
 
-
   let result = api_impl.as_ref().logout_user(
       method,
       host,
@@ -1194,7 +1126,7 @@ async fn update_user<I, A>(
   method: Method,
   host: Host,
   cookies: CookieJar,
-  Path(path_username): Path<String>,
+  Path(path_params): Path<models::UpdateUserPathParams>,
  State(api_impl): State<I>,
   Json(body): Json<models::User>
 ) -> Result<Response, StatusCode>
@@ -1203,12 +1135,11 @@ where
     A: Api,
 {
 
-
   let result = api_impl.as_ref().update_user(
       method,
       host,
       cookies,
-      path_username,
+        path_params,
             body,
   ).await;
 

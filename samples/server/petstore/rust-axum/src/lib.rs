@@ -258,8 +258,8 @@ pub trait Api {
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                    header_api_key:  Option<String>,
-                    path_pet_id: i64,
+                  header_params: models::DeletePetHeaderParams,
+                  path_params: models::DeletePetPathParams,
                 ) -> Result<DeletePetResponse, String>;
 
 
@@ -270,7 +270,7 @@ pub trait Api {
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                    query_status: Vec<String>,
+                  query_params: models::FindPetsByStatusQueryParams,
                 ) -> Result<FindPetsByStatusResponse, String>;
 
 
@@ -281,7 +281,7 @@ pub trait Api {
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                    query_tags: Vec<String>,
+                  query_params: models::FindPetsByTagsQueryParams,
                 ) -> Result<FindPetsByTagsResponse, String>;
 
 
@@ -292,7 +292,7 @@ pub trait Api {
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                    path_pet_id: i64,
+                  path_params: models::GetPetByIdPathParams,
                 ) -> Result<GetPetByIdResponse, String>;
 
 
@@ -314,7 +314,7 @@ pub trait Api {
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                    path_pet_id: i64,
+                  path_params: models::UpdatePetWithFormPathParams,
                 ) -> Result<UpdatePetWithFormResponse, String>;
 
 
@@ -325,7 +325,7 @@ pub trait Api {
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                    path_pet_id: i64,
+                  path_params: models::UploadFilePathParams,
                     body: Multipart,
                 ) -> Result<UploadFileResponse, String>;
 
@@ -337,7 +337,7 @@ pub trait Api {
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                    path_order_id: String,
+                  path_params: models::DeleteOrderPathParams,
                 ) -> Result<DeleteOrderResponse, String>;
 
 
@@ -358,7 +358,7 @@ pub trait Api {
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                    path_order_id: i64,
+                  path_params: models::GetOrderByIdPathParams,
                 ) -> Result<GetOrderByIdResponse, String>;
 
 
@@ -413,7 +413,7 @@ pub trait Api {
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                    path_username: String,
+                  path_params: models::DeleteUserPathParams,
                 ) -> Result<DeleteUserResponse, String>;
 
 
@@ -424,7 +424,7 @@ pub trait Api {
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                    path_username: String,
+                  path_params: models::GetUserByNamePathParams,
                 ) -> Result<GetUserByNameResponse, String>;
 
 
@@ -435,8 +435,7 @@ pub trait Api {
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                    query_username: String,
-                    query_password: String,
+                  query_params: models::LoginUserQueryParams,
                 ) -> Result<LoginUserResponse, String>;
 
 
@@ -457,7 +456,7 @@ pub trait Api {
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                    path_username: String,
+                  path_params: models::UpdateUserPathParams,
                         body: models::User,
                 ) -> Result<UpdateUserResponse, String>;
 

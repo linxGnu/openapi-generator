@@ -8,6 +8,232 @@ use crate::header;
 use crate::{models, types::*};
 
 {{! Don't "use" structs here - they can conflict with the names of models, and mean that the code won't compile }}
+{{#apiInfo}}
+  {{#apis}}
+    {{#operations}}
+      {{#operation}}
+      
+{{#vendorExtensions}}
+  {{#headerParams.size}} 
+            pub struct {{{operationIdCamelCase}}}HeaderParams {
+                {{#headerParams}}
+                pub {{{paramName}}}: {{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}},
+                {{/headerParams}} 
+            }
+            
+  {{/headerParams.size}}
+  {{#x-has-path-params}}
+    #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
+    #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
+    pub struct {{{operationIdCamelCase}}}PathParams {
+        {{#pathParams}}
+            {{#description}}    
+            /// {{{.}}}
+            {{/description}}
+            {{#isEnum}}
+            /// Note: inline enums are not fully supported by openapi-generator
+            {{/isEnum}}
+                #[serde(rename = "{{{baseName}}}")]
+            {{#hasValidation}}
+                #[validate(
+                    {{#maxLength}}
+                        {{#minLength}}
+                        length(min = {{minLength}}, max = {{maxLength}}),
+                        {{/minLength}}
+                        {{^minLength}}
+                        length(max = {{maxLength}}),
+                        {{/minLength}}
+                    {{/maxLength}}
+                    {{^maxLength}}
+                        {{#minLength}}
+                        length(min = {{minLength}}),
+                        {{/minLength}}
+                    {{/maxLength}}
+                    {{#pattern}}
+                        {{^isByteArray}}
+                        regex = "RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}PathParams_{{{paramName}}}{{/lambda.uppercase}}",
+                        {{/isByteArray}}
+                        {{#isByteArray}}
+                        custom ="validate_byte_{{#lambda.lowercase}}{{{operationIdCamelCase}}}PathParams_{{{paramName}}}{{/lambda.lowercase}}"
+                        {{/isByteArray}}
+                    {{/pattern}}
+                    {{#maximum}}
+                        {{#minimum}}
+                        range(min = {{minimum}}, max = {{maximum}}),
+                        {{/minimum}}
+                        {{^minimum}}
+                        range(max = {{maximum}}),
+                        {{/minimum}}
+                    {{/maximum}}
+                    {{#minimum}}
+                        {{^maximum}}
+                        range(min = {{minimum}}),
+                        {{/maximum}}
+                    {{/minimum}}
+                    {{#maxItems}}
+                        {{#minItems}}
+                        length(min = {{minItems}}, max = {{maxItems}}),
+                        {{/minItems}}
+                        {{^minItems}}
+                        length(max = {{maxItems}}),
+                        {{/minItems}}
+                    {{/maxItems}}
+                    {{^maxItems}}
+                        {{#minItems}}
+                        length(min = {{minItems}}),
+                        {{/minItems}}
+                    {{/maxItems}}
+                    )]
+            {{/hasValidation}}
+            {{#required}}
+                pub {{{paramName}}}: {{#isNullable}}Nullable<{{/isNullable}}{{{dataType}}}{{#isNullable}}>{{/isNullable}},
+            {{/required}}
+            {{^required}}
+            {{#isNullable}}
+                #[serde(deserialize_with = "nullable_format::deserialize_optional_nullable")]
+                #[serde(default = "nullable_format::default_optional_nullable")]
+            {{/isNullable}}
+                #[serde(skip_serializing_if="Option::is_none")]
+                pub {{{paramName}}}: Option<{{#isNullable}}Nullable<{{/isNullable}}{{{dataType}}}{{#isNullable}}>{{/isNullable}}>,
+            {{/required}}
+        {{/pathParams}}
+    }
+
+    {{#pathParams}}
+    {{#hasValidation}}
+    {{#pattern}}
+    {{^isByteArray}}
+    lazy_static::lazy_static! {
+        static ref RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}PathParams_{{{paramName}}}{{/lambda.uppercase}}: regex::Regex = regex::Regex::new(r"{{ pattern }}").unwrap();
+    }
+    {{/isByteArray}}
+    {{#isByteArray}}
+    lazy_static::lazy_static! {
+        static ref RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}PathParams_{{{paramName}}}{{/lambda.uppercase}}: regex::bytes::Regex = regex::bytes::Regex::new(r"{{ pattern }}").unwrap();
+    }
+    fn validate_byte_{{#lambda.lowercase}}{{{operationIdCamelCase}}}PathParams_{{{paramName}}}{{/lambda.lowercase}}(
+        b: &ByteArray
+    ) -> Result<(), validator::ValidationError> {
+        if !RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}PathParams_{{{paramName}}}{{/lambda.uppercase}}.is_match(b) {
+            return Err(validator::ValidationError::new("Character not allowed"));
+        }
+        Ok(())
+    }
+    {{/isByteArray}}
+    {{/pattern}}
+    {{/hasValidation}}
+    {{/pathParams}}
+
+  {{/x-has-path-params}}
+  {{#queryParams.size}}
+    #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
+    #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
+    pub struct {{{operationIdCamelCase}}}QueryParams {
+        {{#queryParams}}
+            {{#description}}    
+            /// {{{.}}}
+            {{/description}}
+            {{#isEnum}}
+            /// Note: inline enums are not fully supported by openapi-generator
+            {{/isEnum}}
+                #[serde(rename = "{{{baseName}}}")]
+            {{#hasValidation}}
+                #[validate(
+                    {{#maxLength}}
+                        {{#minLength}}
+                        length(min = {{minLength}}, max = {{maxLength}}),
+                        {{/minLength}}
+                        {{^minLength}}
+                        length(max = {{maxLength}}),
+                        {{/minLength}}
+                    {{/maxLength}}
+                    {{^maxLength}}
+                        {{#minLength}}
+                        length(min = {{minLength}}),
+                        {{/minLength}}
+                    {{/maxLength}}
+                    {{#pattern}}
+                        {{^isByteArray}}
+                        regex = "RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}QueryParams_{{{paramName}}}{{/lambda.uppercase}}",
+                        {{/isByteArray}}
+                        {{#isByteArray}}
+                        custom ="validate_byte_{{#lambda.lowercase}}{{{operationIdCamelCase}}}QueryParams_{{{paramName}}}{{/lambda.lowercase}}"
+                        {{/isByteArray}}
+                    {{/pattern}}
+                    {{#maximum}}
+                        {{#minimum}}
+                        range(min = {{minimum}}, max = {{maximum}}),
+                        {{/minimum}}
+                        {{^minimum}}
+                        range(max = {{maximum}}),
+                        {{/minimum}}
+                    {{/maximum}}
+                    {{#minimum}}
+                        {{^maximum}}
+                        range(min = {{minimum}}),
+                        {{/maximum}}
+                    {{/minimum}}
+                    {{#maxItems}}
+                        {{#minItems}}
+                        length(min = {{minItems}}, max = {{maxItems}}),
+                        {{/minItems}}
+                        {{^minItems}}
+                        length(max = {{maxItems}}),
+                        {{/minItems}}
+                    {{/maxItems}}
+                    {{^maxItems}}
+                        {{#minItems}}
+                        length(min = {{minItems}}),
+                        {{/minItems}}
+                    {{/maxItems}}
+                    )]
+            {{/hasValidation}}
+            {{#required}}
+                pub {{{paramName}}}: {{#isNullable}}Nullable<{{/isNullable}}{{{dataType}}}{{#isNullable}}>{{/isNullable}},
+            {{/required}}
+            {{^required}}
+            {{#isNullable}}
+                #[serde(deserialize_with = "nullable_format::deserialize_optional_nullable")]
+                #[serde(default = "nullable_format::default_optional_nullable")]
+            {{/isNullable}}
+                #[serde(skip_serializing_if="Option::is_none")]
+                pub {{{paramName}}}: Option<{{#isNullable}}Nullable<{{/isNullable}}{{{dataType}}}{{#isNullable}}>{{/isNullable}}>,
+            {{/required}}
+        {{/queryParams}}
+    }
+
+    {{#queryParams}}
+    {{#hasValidation}}
+    {{#pattern}}
+    {{^isByteArray}}
+    lazy_static::lazy_static! {
+        static ref RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}QueryParams_{{{paramName}}}{{/lambda.uppercase}}: regex::Regex = regex::Regex::new(r"{{ pattern }}").unwrap();
+    }
+    {{/isByteArray}}
+    {{#isByteArray}}
+    lazy_static::lazy_static! {
+        static ref RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}QueryParams_{{{paramName}}}{{/lambda.uppercase}}: regex::bytes::Regex = regex::bytes::Regex::new(r"{{ pattern }}").unwrap();
+    }
+    fn validate_byte_{{#lambda.lowercase}}{{{operationIdCamelCase}}}QueryParams_{{{paramName}}}{{/lambda.lowercase}}(
+        b: &ByteArray
+    ) -> Result<(), validator::ValidationError> {
+        if !RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}QueryParams_{{{paramName}}}{{/lambda.uppercase}}.is_match(b) {
+            return Err(validator::ValidationError::new("Character not allowed"));
+        }
+        Ok(())
+    }
+    {{/isByteArray}}
+    {{/pattern}}
+    {{/hasValidation}}
+    {{/queryParams}} 
+  {{/queryParams.size}}
+{{/vendorExtensions}}
+      {{/operation}}
+    {{/operations}}
+  {{/apis}}
+{{/apiInfo}}
+
+{{! Don't "use" structs here - they can conflict with the names of models, and mean that the code won't compile }}
 {{#models}}
 {{#model}}
 
@@ -285,8 +511,12 @@ impl PartialEq for {{{classname}}} {
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
 #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
 pub struct {{{classname}}} {
-{{#vars}}{{#description}}    /// {{{.}}}
-{{/description}}{{#isEnum}}    // Note: inline enums are not fully supported by openapi-generator
+{{#vars}}
+{{#description}}    
+/// {{{.}}}
+{{/description}}
+{{#isEnum}}
+/// Note: inline enums are not fully supported by openapi-generator
 {{/isEnum}}
     #[serde(rename = "{{{baseName}}}")]
 {{#hasValidation}}

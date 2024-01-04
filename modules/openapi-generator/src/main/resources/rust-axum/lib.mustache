@@ -43,15 +43,15 @@ pub trait Api {
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                {{#headerParams}}
-                    header_{{{paramName}}}:  {{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}},
-                {{/headerParams}}
-                {{#pathParams}}
-                    path_{{{paramName}}}: {{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}},
-                {{/pathParams}}
-                {{#queryParams}}
-                    query_{{{paramName}}}: {{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}},
-                {{/queryParams}}
+                {{#headerParams.size}}
+                  header_params: models::{{{operationIdCamelCase}}}HeaderParams,
+                {{/headerParams.size}}
+                {{#pathParams.size}}
+                  path_params: models::{{{operationIdCamelCase}}}PathParams,
+                {{/pathParams.size}}
+                {{#queryParams.size}}
+                  query_params: models::{{{operationIdCamelCase}}}QueryParams,
+                {{/queryParams.size}}
                 {{^x-consumes-multipart}}
                     {{#bodyParams}}
                     {{#vendorExtensions}}

@@ -7,6 +7,149 @@ use validator::Validate;
 use crate::header;
 use crate::{models, types::*};
 
+      
+      
+            pub struct DeletePetHeaderParams {
+                pub api_key: Option<String>,
+            }
+            
+    #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
+    #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
+    pub struct DeletePetPathParams {
+            /// Pet id to delete
+                #[serde(rename = "petId")]
+                pub pet_id: i64,
+    }
+
+
+      
+    #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
+    #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
+    pub struct FindPetsByStatusQueryParams {
+            /// Status values that need to be considered for filter
+            /// Note: inline enums are not fully supported by openapi-generator
+                #[serde(rename = "status")]
+                pub status: Vec<String>,
+    }
+
+      
+    #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
+    #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
+    pub struct FindPetsByTagsQueryParams {
+            /// Tags to filter by
+                #[serde(rename = "tags")]
+                pub tags: Vec<String>,
+    }
+
+      
+    #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
+    #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
+    pub struct GetPetByIdPathParams {
+            /// ID of pet to return
+                #[serde(rename = "petId")]
+                pub pet_id: i64,
+    }
+
+
+      
+      
+    #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
+    #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
+    pub struct UpdatePetWithFormPathParams {
+            /// ID of pet that needs to be updated
+                #[serde(rename = "petId")]
+                pub pet_id: i64,
+    }
+
+
+      
+    #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
+    #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
+    pub struct UploadFilePathParams {
+            /// ID of pet to update
+                #[serde(rename = "petId")]
+                pub pet_id: i64,
+    }
+
+
+      
+    #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
+    #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
+    pub struct DeleteOrderPathParams {
+            /// ID of the order that needs to be deleted
+                #[serde(rename = "orderId")]
+                pub order_id: String,
+    }
+
+
+      
+      
+    #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
+    #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
+    pub struct GetOrderByIdPathParams {
+            /// ID of pet that needs to be fetched
+                #[serde(rename = "orderId")]
+                #[validate(
+                        range(min = 1, max = 5),
+                    )]
+                pub order_id: i64,
+    }
+
+
+      
+      
+      
+      
+      
+    #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
+    #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
+    pub struct DeleteUserPathParams {
+            /// The name that needs to be deleted
+                #[serde(rename = "username")]
+                pub username: String,
+    }
+
+
+      
+    #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
+    #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
+    pub struct GetUserByNamePathParams {
+            /// The name that needs to be fetched. Use user1 for testing.
+                #[serde(rename = "username")]
+                pub username: String,
+    }
+
+
+      
+    #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
+    #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
+    pub struct LoginUserQueryParams {
+            /// The user name for login
+                #[serde(rename = "username")]
+                #[validate(
+                        regex = "RE_LOGINUSERQUERYPARAMS_USERNAME",
+                    )]
+                pub username: String,
+            /// The password for login in clear text
+                #[serde(rename = "password")]
+                pub password: String,
+    }
+
+    lazy_static::lazy_static! {
+        static ref RE_LOGINUSERQUERYPARAMS_USERNAME: regex::Regex = regex::Regex::new(r"^[a-zA-Z0-9]+[a-zA-Z0-9\\.\\-_]*[a-zA-Z0-9]+$").unwrap();
+    }
+      
+      
+    #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
+    #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
+    pub struct UpdateUserPathParams {
+            /// name that need to be deleted
+                #[serde(rename = "username")]
+                pub username: String,
+    }
+
+
+
 
 /// Describes the result of uploading an image resource
 
@@ -348,8 +491,8 @@ pub struct Order {
     #[serde(skip_serializing_if="Option::is_none")]
     pub ship_date: Option<chrono::DateTime::<chrono::Utc>>,
 
-    /// Order Status
-    // Note: inline enums are not fully supported by openapi-generator
+/// Order Status
+/// Note: inline enums are not fully supported by openapi-generator
     #[serde(rename = "status")]
     #[serde(skip_serializing_if="Option::is_none")]
     pub status: Option<String>,
@@ -561,8 +704,8 @@ pub struct Pet {
     #[serde(skip_serializing_if="Option::is_none")]
     pub tags: Option<Vec<models::Tag>>,
 
-    /// pet status in the store
-    // Note: inline enums are not fully supported by openapi-generator
+/// pet status in the store
+/// Note: inline enums are not fully supported by openapi-generator
     #[serde(rename = "status")]
     #[serde(skip_serializing_if="Option::is_none")]
     pub status: Option<String>,
@@ -911,7 +1054,7 @@ pub struct User {
     #[serde(skip_serializing_if="Option::is_none")]
     pub phone: Option<String>,
 
-    /// User Status
+/// User Status
     #[serde(rename = "userStatus")]
     #[serde(skip_serializing_if="Option::is_none")]
     pub user_status: Option<i32>,
