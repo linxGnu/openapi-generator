@@ -1,0 +1,287 @@
+/// Operation: {{{operationId}}} - {{{httpMethod}}} {{{path}}}
+#[tracing::instrument(skip_all)]
+async fn {{#vendorExtensions}}{{{x-operation-id}}}{{/vendorExtensions}}<I, A>(
+  method: Method,
+  host: Host,
+  cookies: CookieJar,
+{{#headerParams.size}}
+  headers: HeaderMap,
+{{/headerParams.size}}
+{{#vendorExtensions}}
+  {{#x-has-path-params}}
+  Path({{#pathParams}}{{#-first}}{{^-last}}({{/-last}}{{/-first}}path_{{{paramName}}}{{^-last}},{{/-last}}{{#-last}}{{^-first}}){{/-first}}{{/-last}}{{/pathParams}}): Path<{{#pathParams}}{{#-first}}{{^-last}}({{/-last}}{{/-first}}{{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}}{{^-last}},{{/-last}}{{#-last}}{{^-first}}){{/-first}}{{/-last}}{{/pathParams}}>,
+  {{/x-has-path-params}}
+{{/vendorExtensions}}
+{{#queryParams.size}}
+  Query(query_params): Query<HashMap<String, String>>,
+{{/queryParams.size}}
+ State(api_impl): State<I>,
+{{#vendorExtensions}}
+{{^x-consumes-multipart}}
+{{#bodyParams}}
+{{#-first}}
+{{#vendorExtensions}}
+{{#x-consumes-json}}
+  Json(body): Json<{{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}}>
+{{/x-consumes-json}}
+{{#x-consumes-plain-text}}
+  {{#isByteArray}}
+    body: Bytes,
+  {{/isByteArray}}
+  {{#isString}}
+    body: String,
+  {{/isString}}
+{{/x-consumes-plain-text}}
+{{/vendorExtensions}}
+{{/-first}}
+{{/bodyParams}}
+{{/x-consumes-multipart}}
+{{#x-consumes-multipart}}
+  body: Multipart,
+{{/x-consumes-multipart}}
+{{/vendorExtensions}}
+) -> Result<Response, StatusCode>
+where 
+    I: AsRef<A> + Send + Sync,
+    A: Api,
+{
+{{#headerParams}}
+  {{#-first}}
+                // Header parameters
+  {{/-first}}
+                let header_{{{paramName}}} = headers.get(HeaderName::from_static("{{{nameInLowerCase}}}"));
+
+                let header_{{{paramName}}} = match header_{{{paramName}}} {
+                    Some(v) => match header::IntoHeaderValue::<{{{dataType}}}>::try_from((*v).clone()) {
+                        Ok(result) =>
+{{#required}}
+                            result.0,
+{{/required}}
+{{^required}}
+                            Some(result.0),
+{{/required}}
+                        Err(err) => {
+                            return Response::builder()
+                                        .status(StatusCode::BAD_REQUEST)
+                                        .body(Body::from(format!("Invalid header {{{baseName}}} - {}", err))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
+
+                        },
+                    },
+                    None => {
+{{#required}}
+                        return Response::builder()
+                                        .status(StatusCode::BAD_REQUEST)
+                                        .body(Body::from("Missing required header {{{baseName}}}")).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
+{{/required}}
+{{^required}}
+                        None
+{{/required}}
+                    }
+                };
+  {{#-last}}
+
+  {{/-last}}
+{{/headerParams}}
+
+{{#queryParams}}
+    let query_{{{paramName}}} = query_params.iter().filter(|e| e.0 == "{{{baseName}}}").map(|e| e.1.clone())
+  {{#isArray}}
+    {{^vendorExtensions.x-consumes-json}}
+                    .filter_map(|query_{{{paramName}}}| query_{{{paramName}}}.parse().ok())
+                    .collect::<Vec<_>>();
+      {{^required}}
+                let query_{{{paramName}}} = if !query_{{{paramName}}}.is_empty() {
+                    Some(query_{{{paramName}}})
+                } else {
+                    None
+                };
+      {{/required}}
+    {{/vendorExtensions.x-consumes-json}}
+    {{#vendorExtensions.x-consumes-json}}
+                    .next();
+                let query_{{{paramName}}} = match query_{{{paramName}}} {
+                    Some(query_{{{paramName}}}) => {
+                        let query_{{{paramName}}} =
+                            serde_json::from_str::<{{{dataType}}}>
+                                (&query_{{{paramName}}});
+                        match query_{{{paramName}}} {
+                            Ok(query_{{{paramName}}}) => Some(query_{{{paramName}}}),
+                            Err(e) => return Response::builder()
+                                .status(StatusCode::BAD_REQUEST)
+                                .body(Body::from(format!("Couldn't parse query parameter {{{baseName}}} - doesn't match schema: {}", e))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
+                        }
+                    },
+                    None => None,
+                };
+      {{#required}}
+                let query_{{{paramName}}} = match query_{{{paramName}}} {
+                    Some(query_{{{paramName}}}) => query_{{{paramName}}},
+                    None => return Response::builder()
+                        .status(StatusCode::BAD_REQUEST)
+                        .body(Body::from("Missing required query parameter {{{baseName}}}")).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
+                };
+      {{/required}}
+    {{/vendorExtensions.x-consumes-json}}
+  {{/isArray}}
+  {{^isArray}}
+                    .next();
+                let query_{{{paramName}}} = match query_{{{paramName}}} {
+                    Some(query_{{{paramName}}}) => {
+                        let query_{{{paramName}}} =
+    {{#vendorExtensions.x-consumes-json}}
+                            serde_json::from_str::<{{{dataType}}}>
+    {{/vendorExtensions.x-consumes-json}}
+    {{^vendorExtensions.x-consumes-json}}
+                            <{{{dataType}}} as std::str::FromStr>::from_str
+    {{/vendorExtensions.x-consumes-json}}
+                                (&query_{{{paramName}}});
+                        match query_{{{paramName}}} {
+                            Ok(query_{{{paramName}}}) => Some(query_{{{paramName}}}),
+                            Err(e) => return Response::builder()
+                                .status(StatusCode::BAD_REQUEST)
+                                .body(Body::from(format!("Couldn't parse query parameter {{{baseName}}} - doesn't match schema: {}", e))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR }),
+                        }
+                    },
+                    None => None,
+                };
+    {{#required}}
+                let query_{{{paramName}}} = match query_{{{paramName}}} {
+                    Some(query_{{{paramName}}}) => query_{{{paramName}}},
+                    None => return Response::builder()
+                        .status(StatusCode::BAD_REQUEST)
+                        .body(Body::from("Missing required query parameter {{{baseName}}}")).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR }),
+                };
+    {{/required}}
+  {{/isArray}}
+  {{#-last}}
+
+  {{/-last}}
+{{/queryParams}}
+
+  let result = api_impl.as_ref().{{#vendorExtensions}}{{{x-operation-id}}}{{/vendorExtensions}}(
+      method,
+      host,
+      cookies,
+      {{#headerParams}}
+      header_{{{paramName}}},
+      {{/headerParams}}
+      {{#pathParams}}
+      path_{{{paramName}}},
+      {{/pathParams}}
+      {{#queryParams}}
+      query_{{{paramName}}},
+      {{/queryParams}}
+      {{#vendorExtensions}}
+        {{#bodyParams}}
+          {{#-first}}
+            body,
+          {{/-first}}
+        {{/bodyParams}}
+        {{#x-consumes-multipart}}
+          body,
+        {{/x-consumes-multipart}}
+      {{/vendorExtensions}}
+  ).await;
+
+  let mut response = Response::builder();
+
+  let resp = match result {
+                                            Ok(rsp) => match rsp {
+{{#responses}}
+                                                {{{operationId}}}Response::{{#vendorExtensions}}{{x-response-id}}{{/vendorExtensions}}
+{{#dataType}}
+{{^headers}}
+                                                    (body)
+{{/headers}}
+{{#headers}}
+{{#-first}}
+                                                    {
+                                                        body,
+{{/-first}}
+                                                        {{{name}}}{{^-last}},{{/-last}}
+{{#-last}}
+                                                    }
+{{/-last}}
+{{/headers}}
+{{/dataType}}
+{{^dataType}}
+{{#headers}}
+{{#-first}}
+                                                    {
+{{/-first}}
+                                                        {{{name}}}{{^-last}},{{/-last}}
+{{#-last}}
+                                                    }
+{{/-last}}
+{{/headers}}
+{{/dataType}}
+                                                => {
+{{#headers}}
+  {{^required}}
+                                                    if let Some({{{name}}}) = {{{name}}} {
+  {{/required}}
+                                                    let {{{name}}} = match header::IntoHeaderValue({{{name}}}).try_into() {
+                                                        Ok(val) => val,
+                                                        Err(e) => {
+                                                            return Response::builder()
+                                                                    .status(StatusCode::INTERNAL_SERVER_ERROR)
+                                                                    .body(Body::from(format!("An internal server error occurred handling {{name}} header - {}", e))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
+                                                        }
+                                                    };
+
+                                                    
+                                                    {
+                                                      let mut response_headers = response.headers_mut().unwrap();
+                                                      response_headers.insert(
+                                                          HeaderName::from_static("{{{nameInLowerCase}}}"),
+                                                          {{name}}
+                                                      );
+                                                    }
+  {{^required}}
+                                                    }
+  {{/required}}
+{{/headers}}
+                                                    let mut response = response.status({{{code}}});
+{{#produces}}
+{{#-first}}
+{{#dataType}}
+{{#vendorExtensions}}
+                                                  {
+                                                    let mut response_headers = response.headers_mut().unwrap();
+                                                    response_headers.insert(
+                                                        CONTENT_TYPE,
+                                                        HeaderValue::from_str("{{{x-mime-type}}}").map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?);
+                                                  }
+{{/vendorExtensions}}
+{{/dataType}}
+{{/-first}}
+{{/produces}}
+{{#dataType}}
+{{#vendorExtensions}}
+{{#x-produces-json}}
+                                                    let body_content = serde_json::to_string(&body).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?;
+{{/x-produces-json}}
+{{#x-produces-bytes}}
+                                                    let body_content = body.0;
+{{/x-produces-bytes}}
+{{#x-produces-plain-text}}
+                                                    let body_content = body;
+{{/x-produces-plain-text}}
+{{/vendorExtensions}}
+                                                    response.body(Body::from(body_content))
+{{/dataType}}
+{{^dataType}}
+                                                    response.body(Body::empty())
+{{/dataType}}
+                                                },
+{{/responses}}
+                                            },
+                                            Err(_) => {
+                                                // Application code returned an error. This should not happen, as the implementation should
+                                                // return a valid response.
+                                                response.status(500).body(Body::empty())
+                                            },
+                                        };
+
+                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
+}
