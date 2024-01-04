@@ -88,7 +88,7 @@ where
         .with_state(api_impl)
 }
 
-/// Operation: AddPet - POST /pet
+/// AddPet - POST /v2/pet
 #[tracing::instrument(skip_all)]
 async fn add_pet<I, A>(
   method: Method,
@@ -159,7 +159,7 @@ where
                                         resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
 }
 
-/// Operation: DeletePet - DELETE /pet/{petId}
+/// DeletePet - DELETE /v2/pet/{petId}
 #[tracing::instrument(skip_all)]
 async fn delete_pet<I, A>(
   method: Method,
@@ -237,7 +237,7 @@ where
                                         resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
 }
 
-/// Operation: FindPetsByStatus - GET /pet/findByStatus
+/// FindPetsByStatus - GET /v2/pet/findByStatus
 #[tracing::instrument(skip_all)]
 async fn find_pets_by_status<I, A>(
   method: Method,
@@ -301,7 +301,7 @@ where
                                         resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
 }
 
-/// Operation: FindPetsByTags - GET /pet/findByTags
+/// FindPetsByTags - GET /v2/pet/findByTags
 #[tracing::instrument(skip_all)]
 async fn find_pets_by_tags<I, A>(
   method: Method,
@@ -365,7 +365,7 @@ where
                                         resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
 }
 
-/// Operation: GetPetById - GET /pet/{petId}
+/// GetPetById - GET /v2/pet/{petId}
 #[tracing::instrument(skip_all)]
 async fn get_pet_by_id<I, A>(
   method: Method,
@@ -434,7 +434,7 @@ where
                                         resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
 }
 
-/// Operation: UpdatePet - PUT /pet
+/// UpdatePet - PUT /v2/pet
 #[tracing::instrument(skip_all)]
 async fn update_pet<I, A>(
   method: Method,
@@ -515,7 +515,7 @@ where
                                         resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
 }
 
-/// Operation: UpdatePetWithForm - POST /pet/{petId}
+/// UpdatePetWithForm - POST /v2/pet/{petId}
 #[tracing::instrument(skip_all)]
 async fn update_pet_with_form<I, A>(
   method: Method,
@@ -566,7 +566,7 @@ where
                                         resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
 }
 
-/// Operation: UploadFile - POST /pet/{petId}/uploadImage
+/// UploadFile - POST /v2/pet/{petId}/uploadImage
 #[tracing::instrument(skip_all)]
 async fn upload_file<I, A>(
   method: Method,
@@ -627,7 +627,7 @@ where
                                         resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
 }
 
-/// Operation: DeleteOrder - DELETE /store/order/{orderId}
+/// DeleteOrder - DELETE /v2/store/order/{orderId}
 #[tracing::instrument(skip_all)]
 async fn delete_order<I, A>(
   method: Method,
@@ -683,7 +683,7 @@ where
                                         resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
 }
 
-/// Operation: GetInventory - GET /store/inventory
+/// GetInventory - GET /v2/store/inventory
 #[tracing::instrument(skip_all)]
 async fn get_inventory<I, A>(
   method: Method,
@@ -730,7 +730,7 @@ where
                                         resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
 }
 
-/// Operation: GetOrderById - GET /store/order/{orderId}
+/// GetOrderById - GET /v2/store/order/{orderId}
 #[tracing::instrument(skip_all)]
 async fn get_order_by_id<I, A>(
   method: Method,
@@ -799,7 +799,7 @@ where
                                         resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
 }
 
-/// Operation: PlaceOrder - POST /store/order
+/// PlaceOrder - POST /v2/store/order
 #[tracing::instrument(skip_all)]
 async fn place_order<I, A>(
   method: Method,
@@ -870,7 +870,7 @@ where
                                         resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
 }
 
-/// Operation: CreateUser - POST /user
+/// CreateUser - POST /v2/user
 #[tracing::instrument(skip_all)]
 async fn create_user<I, A>(
   method: Method,
@@ -928,7 +928,7 @@ where
                                         resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
 }
 
-/// Operation: CreateUsersWithArrayInput - POST /user/createWithArray
+/// CreateUsersWithArrayInput - POST /v2/user/createWithArray
 #[tracing::instrument(skip_all)]
 async fn create_users_with_array_input<I, A>(
   method: Method,
@@ -986,7 +986,7 @@ where
                                         resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
 }
 
-/// Operation: CreateUsersWithListInput - POST /user/createWithList
+/// CreateUsersWithListInput - POST /v2/user/createWithList
 #[tracing::instrument(skip_all)]
 async fn create_users_with_list_input<I, A>(
   method: Method,
@@ -1044,7 +1044,7 @@ where
                                         resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
 }
 
-/// Operation: DeleteUser - DELETE /user/{username}
+/// DeleteUser - DELETE /v2/user/{username}
 #[tracing::instrument(skip_all)]
 async fn delete_user<I, A>(
   method: Method,
@@ -1100,7 +1100,7 @@ where
                                         resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
 }
 
-/// Operation: GetUserByName - GET /user/{username}
+/// GetUserByName - GET /v2/user/{username}
 #[tracing::instrument(skip_all)]
 async fn get_user_by_name<I, A>(
   method: Method,
@@ -1169,7 +1169,7 @@ where
                                         resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
 }
 
-/// Operation: LoginUser - GET /user/login
+/// LoginUser - GET /v2/user/login
 #[tracing::instrument(skip_all)]
 async fn login_user<I, A>(
   method: Method,
@@ -1295,7 +1295,7 @@ where
                                         resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
 }
 
-/// Operation: LogoutUser - GET /user/logout
+/// LogoutUser - GET /v2/user/logout
 #[tracing::instrument(skip_all)]
 async fn logout_user<I, A>(
   method: Method,
@@ -1334,7 +1334,7 @@ where
                                         resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
 }
 
-/// Operation: UpdateUser - PUT /user/{username}
+/// UpdateUser - PUT /v2/user/{username}
 #[tracing::instrument(skip_all)]
 async fn update_user<I, A>(
   method: Method,

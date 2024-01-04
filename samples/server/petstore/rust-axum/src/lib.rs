@@ -242,9 +242,7 @@ pub trait Api {
 
                 /// Add a new pet to the store.
                 ///
-                /// Operation: AddPet
-                /// Method: POST
-                /// Path: /pet
+                /// AddPet - POST /v2/pet
                 async fn add_pet(
                 &self,
                 method: Method,
@@ -256,9 +254,7 @@ pub trait Api {
 
                 /// Deletes a pet.
                 ///
-                /// Operation: DeletePet
-                /// Method: DELETE
-                /// Path: /pet/{petId}
+                /// DeletePet - DELETE /v2/pet/{petId}
                 async fn delete_pet(
                 &self,
                 method: Method,
@@ -271,9 +267,7 @@ pub trait Api {
 
                 /// Finds Pets by status.
                 ///
-                /// Operation: FindPetsByStatus
-                /// Method: GET
-                /// Path: /pet/findByStatus
+                /// FindPetsByStatus - GET /v2/pet/findByStatus
                 async fn find_pets_by_status(
                 &self,
                 method: Method,
@@ -285,9 +279,7 @@ pub trait Api {
 
                 /// Finds Pets by tags.
                 ///
-                /// Operation: FindPetsByTags
-                /// Method: GET
-                /// Path: /pet/findByTags
+                /// FindPetsByTags - GET /v2/pet/findByTags
                 async fn find_pets_by_tags(
                 &self,
                 method: Method,
@@ -299,9 +291,7 @@ pub trait Api {
 
                 /// Find pet by ID.
                 ///
-                /// Operation: GetPetById
-                /// Method: GET
-                /// Path: /pet/{petId}
+                /// GetPetById - GET /v2/pet/{petId}
                 async fn get_pet_by_id(
                 &self,
                 method: Method,
@@ -313,9 +303,7 @@ pub trait Api {
 
                 /// Update an existing pet.
                 ///
-                /// Operation: UpdatePet
-                /// Method: PUT
-                /// Path: /pet
+                /// UpdatePet - PUT /v2/pet
                 async fn update_pet(
                 &self,
                 method: Method,
@@ -327,9 +315,7 @@ pub trait Api {
 
                 /// Updates a pet in the store with form data.
                 ///
-                /// Operation: UpdatePetWithForm
-                /// Method: POST
-                /// Path: /pet/{petId}
+                /// UpdatePetWithForm - POST /v2/pet/{petId}
                 async fn update_pet_with_form(
                 &self,
                 method: Method,
@@ -341,9 +327,7 @@ pub trait Api {
 
                 /// uploads an image.
                 ///
-                /// Operation: UploadFile
-                /// Method: POST
-                /// Path: /pet/{petId}/uploadImage
+                /// UploadFile - POST /v2/pet/{petId}/uploadImage
                 async fn upload_file(
                 &self,
                 method: Method,
@@ -356,9 +340,7 @@ pub trait Api {
 
                 /// Delete purchase order by ID.
                 ///
-                /// Operation: DeleteOrder
-                /// Method: DELETE
-                /// Path: /store/order/{orderId}
+                /// DeleteOrder - DELETE /v2/store/order/{orderId}
                 async fn delete_order(
                 &self,
                 method: Method,
@@ -370,9 +352,7 @@ pub trait Api {
 
                 /// Returns pet inventories by status.
                 ///
-                /// Operation: GetInventory
-                /// Method: GET
-                /// Path: /store/inventory
+                /// GetInventory - GET /v2/store/inventory
                 async fn get_inventory(
                 &self,
                 method: Method,
@@ -383,9 +363,7 @@ pub trait Api {
 
                 /// Find purchase order by ID.
                 ///
-                /// Operation: GetOrderById
-                /// Method: GET
-                /// Path: /store/order/{orderId}
+                /// GetOrderById - GET /v2/store/order/{orderId}
                 async fn get_order_by_id(
                 &self,
                 method: Method,
@@ -397,9 +375,7 @@ pub trait Api {
 
                 /// Place an order for a pet.
                 ///
-                /// Operation: PlaceOrder
-                /// Method: POST
-                /// Path: /store/order
+                /// PlaceOrder - POST /v2/store/order
                 async fn place_order(
                 &self,
                 method: Method,
@@ -411,9 +387,7 @@ pub trait Api {
 
                 /// Create user.
                 ///
-                /// Operation: CreateUser
-                /// Method: POST
-                /// Path: /user
+                /// CreateUser - POST /v2/user
                 async fn create_user(
                 &self,
                 method: Method,
@@ -425,9 +399,7 @@ pub trait Api {
 
                 /// Creates list of users with given input array.
                 ///
-                /// Operation: CreateUsersWithArrayInput
-                /// Method: POST
-                /// Path: /user/createWithArray
+                /// CreateUsersWithArrayInput - POST /v2/user/createWithArray
                 async fn create_users_with_array_input(
                 &self,
                 method: Method,
@@ -439,9 +411,7 @@ pub trait Api {
 
                 /// Creates list of users with given input array.
                 ///
-                /// Operation: CreateUsersWithListInput
-                /// Method: POST
-                /// Path: /user/createWithList
+                /// CreateUsersWithListInput - POST /v2/user/createWithList
                 async fn create_users_with_list_input(
                 &self,
                 method: Method,
@@ -453,9 +423,7 @@ pub trait Api {
 
                 /// Delete user.
                 ///
-                /// Operation: DeleteUser
-                /// Method: DELETE
-                /// Path: /user/{username}
+                /// DeleteUser - DELETE /v2/user/{username}
                 async fn delete_user(
                 &self,
                 method: Method,
@@ -467,9 +435,7 @@ pub trait Api {
 
                 /// Get user by user name.
                 ///
-                /// Operation: GetUserByName
-                /// Method: GET
-                /// Path: /user/{username}
+                /// GetUserByName - GET /v2/user/{username}
                 async fn get_user_by_name(
                 &self,
                 method: Method,
@@ -481,9 +447,7 @@ pub trait Api {
 
                 /// Logs user into the system.
                 ///
-                /// Operation: LoginUser
-                /// Method: GET
-                /// Path: /user/login
+                /// LoginUser - GET /v2/user/login
                 async fn login_user(
                 &self,
                 method: Method,
@@ -495,9 +459,7 @@ pub trait Api {
 
                 /// Logs out current logged in user session.
                 ///
-                /// Operation: LogoutUser
-                /// Method: GET
-                /// Path: /user/logout
+                /// LogoutUser - GET /v2/user/logout
                 async fn logout_user(
                 &self,
                 method: Method,
@@ -508,9 +470,7 @@ pub trait Api {
 
                 /// Updated user.
                 ///
-                /// Operation: UpdateUser
-                /// Method: PUT
-                /// Path: /user/{username}
+                /// UpdateUser - PUT /v2/user/{username}
                 async fn update_user(
                 &self,
                 method: Method,

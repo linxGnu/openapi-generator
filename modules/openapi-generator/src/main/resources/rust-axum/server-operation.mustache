@@ -1,4 +1,4 @@
-/// Operation: {{{operationId}}} - {{{httpMethod}}} {{{path}}}
+/// {{{operationId}}} - {{{httpMethod}}} {{{basePathWithoutHost}}}{{{path}}}
 #[tracing::instrument(skip_all)]
 async fn {{#vendorExtensions}}{{{x-operation-id}}}{{/vendorExtensions}}<I, A>(
   method: Method,
