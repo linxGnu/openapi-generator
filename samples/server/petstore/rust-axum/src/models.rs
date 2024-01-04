@@ -9,6 +9,7 @@ use crate::{models, types::*};
 
       
       
+            #[derive(Debug, Clone)]
             pub struct DeletePetHeaderParams {
                 pub api_key: Option<String>,
             }

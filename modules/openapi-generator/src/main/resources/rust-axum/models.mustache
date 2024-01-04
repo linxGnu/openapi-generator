@@ -14,7 +14,8 @@ use crate::{models, types::*};
       {{#operation}}
       
 {{#vendorExtensions}}
-  {{#headerParams.size}} 
+  {{#headerParams.size}}
+            #[derive(Debug, Clone)]
             pub struct {{{operationIdCamelCase}}}HeaderParams {
                 {{#headerParams}}
                 pub {{{paramName}}}: {{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}},
