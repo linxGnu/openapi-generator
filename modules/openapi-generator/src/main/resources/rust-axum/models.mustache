@@ -34,7 +34,6 @@ use crate::{models, types::*};
             {{#isEnum}}
             /// Note: inline enums are not fully supported by openapi-generator
             {{/isEnum}}
-                #[serde(rename = "{{{baseName}}}")]
             {{#hasValidation}}
                 #[validate(
                     {{#maxLength}}

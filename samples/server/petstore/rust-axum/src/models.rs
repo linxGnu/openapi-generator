@@ -18,7 +18,6 @@ use crate::{models, types::*};
     #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
     pub struct DeletePetPathParams {
             /// Pet id to delete
-                #[serde(rename = "petId")]
                 pub pet_id: i64,
     }
 
@@ -47,7 +46,6 @@ use crate::{models, types::*};
     #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
     pub struct GetPetByIdPathParams {
             /// ID of pet to return
-                #[serde(rename = "petId")]
                 pub pet_id: i64,
     }
 
@@ -58,7 +56,6 @@ use crate::{models, types::*};
     #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
     pub struct UpdatePetWithFormPathParams {
             /// ID of pet that needs to be updated
-                #[serde(rename = "petId")]
                 pub pet_id: i64,
     }
 
@@ -68,7 +65,6 @@ use crate::{models, types::*};
     #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
     pub struct UploadFilePathParams {
             /// ID of pet to update
-                #[serde(rename = "petId")]
                 pub pet_id: i64,
     }
 
@@ -78,7 +74,6 @@ use crate::{models, types::*};
     #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
     pub struct DeleteOrderPathParams {
             /// ID of the order that needs to be deleted
-                #[serde(rename = "orderId")]
                 pub order_id: String,
     }
 
@@ -89,7 +84,6 @@ use crate::{models, types::*};
     #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
     pub struct GetOrderByIdPathParams {
             /// ID of pet that needs to be fetched
-                #[serde(rename = "orderId")]
                 #[validate(
                         range(min = 1, max = 5),
                     )]
@@ -106,7 +100,6 @@ use crate::{models, types::*};
     #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
     pub struct DeleteUserPathParams {
             /// The name that needs to be deleted
-                #[serde(rename = "username")]
                 pub username: String,
     }
 
@@ -116,7 +109,6 @@ use crate::{models, types::*};
     #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
     pub struct GetUserByNamePathParams {
             /// The name that needs to be fetched. Use user1 for testing.
-                #[serde(rename = "username")]
                 pub username: String,
     }
 
@@ -145,7 +137,6 @@ use crate::{models, types::*};
     #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
     pub struct UpdateUserPathParams {
             /// name that need to be deleted
-                #[serde(rename = "username")]
                 pub username: String,
     }
 
