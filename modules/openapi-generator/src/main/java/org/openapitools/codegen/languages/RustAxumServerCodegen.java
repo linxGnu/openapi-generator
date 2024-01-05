@@ -527,9 +527,9 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
                     outputMime = firstProduces;
                 }
 
-                // As we don't support XML, fallback to octet as unknown file type
+                // As we don't support XML, fallback to plain text
                 if (isMimetypeXml(outputMime)) {
-                    outputMime = octetMimeType;
+                    outputMime = plainTextMimeType;
                 }
 
                 rsp.vendorExtensions.put("x-mime-type", outputMime);

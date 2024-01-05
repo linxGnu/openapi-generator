@@ -107,7 +107,7 @@ where
                     let mut response_headers = response.headers_mut().unwrap();
                     response_headers.insert(
                         CONTENT_TYPE,
-                        HeaderValue::from_str("application/octet-stream").map_err(|e| {
+                        HeaderValue::from_str("text/plain").map_err(|e| {
                             error!(error = ?e);
                             StatusCode::INTERNAL_SERVER_ERROR
                         })?,
@@ -252,7 +252,7 @@ where
                     let mut response_headers = response.headers_mut().unwrap();
                     response_headers.insert(
                         CONTENT_TYPE,
-                        HeaderValue::from_str("application/octet-stream").map_err(|e| {
+                        HeaderValue::from_str("text/plain").map_err(|e| {
                             error!(error = ?e);
                             StatusCode::INTERNAL_SERVER_ERROR
                         })?,
@@ -315,7 +315,7 @@ where
                     let mut response_headers = response.headers_mut().unwrap();
                     response_headers.insert(
                         CONTENT_TYPE,
-                        HeaderValue::from_str("application/octet-stream").map_err(|e| {
+                        HeaderValue::from_str("text/plain").map_err(|e| {
                             error!(error = ?e);
                             StatusCode::INTERNAL_SERVER_ERROR
                         })?,
@@ -378,7 +378,7 @@ where
                     let mut response_headers = response.headers_mut().unwrap();
                     response_headers.insert(
                         CONTENT_TYPE,
-                        HeaderValue::from_str("application/octet-stream").map_err(|e| {
+                        HeaderValue::from_str("text/plain").map_err(|e| {
                             error!(error = ?e);
                             StatusCode::INTERNAL_SERVER_ERROR
                         })?,
@@ -454,7 +454,7 @@ where
                     let mut response_headers = response.headers_mut().unwrap();
                     response_headers.insert(
                         CONTENT_TYPE,
-                        HeaderValue::from_str("application/octet-stream").map_err(|e| {
+                        HeaderValue::from_str("text/plain").map_err(|e| {
                             error!(error = ?e);
                             StatusCode::INTERNAL_SERVER_ERROR
                         })?,
@@ -738,7 +738,7 @@ where
                     let mut response_headers = response.headers_mut().unwrap();
                     response_headers.insert(
                         CONTENT_TYPE,
-                        HeaderValue::from_str("application/octet-stream").map_err(|e| {
+                        HeaderValue::from_str("text/plain").map_err(|e| {
                             error!(error = ?e);
                             StatusCode::INTERNAL_SERVER_ERROR
                         })?,
@@ -814,7 +814,7 @@ where
                     let mut response_headers = response.headers_mut().unwrap();
                     response_headers.insert(
                         CONTENT_TYPE,
-                        HeaderValue::from_str("application/octet-stream").map_err(|e| {
+                        HeaderValue::from_str("text/plain").map_err(|e| {
                             error!(error = ?e);
                             StatusCode::INTERNAL_SERVER_ERROR
                         })?,
@@ -1100,7 +1100,7 @@ where
                     let mut response_headers = response.headers_mut().unwrap();
                     response_headers.insert(
                         CONTENT_TYPE,
-                        HeaderValue::from_str("application/octet-stream").map_err(|e| {
+                        HeaderValue::from_str("text/plain").map_err(|e| {
                             error!(error = ?e);
                             StatusCode::INTERNAL_SERVER_ERROR
                         })?,
@@ -1220,7 +1220,7 @@ where
                     let mut response_headers = response.headers_mut().unwrap();
                     response_headers.insert(
                         CONTENT_TYPE,
-                        HeaderValue::from_str("application/octet-stream").map_err(|e| {
+                        HeaderValue::from_str("text/plain").map_err(|e| {
                             error!(error = ?e);
                             StatusCode::INTERNAL_SERVER_ERROR
                         })?,
