@@ -20,12 +20,12 @@
                   {{/minLength}}
               {{/maxLength}}
               {{#pattern}}
-                {{^isByteArray}}
+                {{#isString}}
                 regex = "RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}BodyValidator{{/lambda.uppercase}}",
-                {{/isByteArray}}
-                {{#isByteArray}}
-                custom ="validate_byte_{{#lambda.lowercase}}{{{operationIdCamelCase}}}BodyValidator{{/lambda.lowercase}}"
-                {{/isByteArray}}
+                {{/isString}}
+                {{^isString}}
+                custom ="validate_byte_{{#lambda.lowercase}}{{{operationIdCamelCase}}}BodyValidator{{/lambda.lowercase}}",
+                {{/isString}}
               {{/pattern}}
               {{#maximum}}
                   {{#minimum}}
@@ -63,37 +63,34 @@
       {{/x-consumes-json}}
       {{^x-consumes-json}}
         {{#isString}}
-          {{^hasValidation}}
-            #[validate]
-          {{/hasValidation}}
           body: &'a String,
         {{/isString}}
         {{^isString}}
-          body: &'a Bytes,
+          body: &'a [u8],
         {{/isString}}
       {{/x-consumes-json}}
     }
 
     {{#hasValidation}}
     {{#pattern}}
-    {{^isByteArray}}
+    {{#isString}}
     lazy_static::lazy_static! {
         static ref RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}BodyValidator{{/lambda.uppercase}}: regex::Regex = regex::Regex::new(r"{{ pattern }}").unwrap();
     }
-    {{/isByteArray}}
-    {{#isByteArray}}
+    {{/isString}}
+    {{^isString}}
     lazy_static::lazy_static! {
         static ref RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}BodyValidator{{/lambda.uppercase}}: regex::bytes::Regex = regex::bytes::Regex::new(r"{{ pattern }}").unwrap();
     }
     fn validate_byte_{{#lambda.lowercase}}{{{operationIdCamelCase}}}BodyValidator{{/lambda.lowercase}}(
-        b: &Bytes
+        b: &[u8]
     ) -> Result<(), validator::ValidationError> {
         if !RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}BodyValidator{{/lambda.uppercase}}.is_match(b) {
             return Err(validator::ValidationError::new("Character not allowed"));
         }
         Ok(())
     }
-    {{/isByteArray}}
+    {{/isString}}
     {{/pattern}}
     {{/hasValidation}}
   {{/vendorExtensions}}
@@ -220,33 +217,43 @@ where
  {{^x-consumes-multipart}}
   {{#bodyParam}}
   {{#vendorExtensions}}
-    {
-      {{#required}}
-        let b = {{{operationIdCamelCase}}}BodyValidator { body: &body };
-      {{/required}}
-      {{^required}}
-        {{#x-consumes-json}}
-          if let Some(body) = &body {
-            let b = {{{operationIdCamelCase}}}BodyValidator { body };
-        {{/x-consumes-json}}
-        {{^x-consumes-json}}
-          let b = {{{operationIdCamelCase}}}BodyValidator { body: &body }; 
-        {{/x-consumes-json}}
-      {{/required}}
-        if let Err(e) = b.validate() {
-          return Response::builder()
-              .status(StatusCode::BAD_REQUEST)
-              .body(Body::from(e.to_string()))
-              .map_err(|_| {
-                  StatusCode::BAD_REQUEST
-              });
+      {{#x-consumes-json}}
+        {
+          {{#required}}
+            let b = {{{operationIdCamelCase}}}BodyValidator { body: &body };
+          {{/required}}
+          {{^required}}
+            if let Some(body) = &body {
+              let b = {{{operationIdCamelCase}}}BodyValidator { body }; 
+          {{/required}}
+              if let Err(e) = b.validate() {
+                return Response::builder()
+                    .status(StatusCode::BAD_REQUEST)
+                    .body(Body::from(e.to_string()))
+                    .map_err(|_| {
+                        StatusCode::BAD_REQUEST
+                    });
+              }
+          {{^required}}
+            }
+          {{/required}}
         }
-      {{^required}}
-        {{#x-consumes-json}}
-          } 
-        {{/x-consumes-json}}
-      {{/required}}
-    }
+      {{/x-consumes-json}}
+      {{^x-consumes-json}}
+        {{#hasValidation}} 
+          {
+            let b = {{{operationIdCamelCase}}}BodyValidator { body: &body }; 
+            if let Err(e) = b.validate() {
+              return Response::builder()
+                  .status(StatusCode::BAD_REQUEST)
+                  .body(Body::from(e.to_string()))
+                  .map_err(|_| {
+                      StatusCode::BAD_REQUEST
+                  });
+            } 
+          }
+        {{/hasValidation}}
+      {{/x-consumes-json}}
  {{/vendorExtensions}}
  {{/bodyParam}}
 {{/x-consumes-multipart}}

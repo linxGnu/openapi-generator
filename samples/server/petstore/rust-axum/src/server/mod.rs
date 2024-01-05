@@ -109,17 +109,17 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    {
-        let b = AddPetBodyValidator { body: &body };
-        if let Err(e) = b.validate() {
-          return Response::builder()
-              .status(StatusCode::BAD_REQUEST)
-              .body(Body::from(e.to_string()))
-              .map_err(|_| {
-                  StatusCode::BAD_REQUEST
-              });
+        {
+            let b = AddPetBodyValidator { body: &body };
+              if let Err(e) = b.validate() {
+                return Response::builder()
+                    .status(StatusCode::BAD_REQUEST)
+                    .body(Body::from(e.to_string()))
+                    .map_err(|_| {
+                        StatusCode::BAD_REQUEST
+                    });
+              }
         }
-    }
 
   let result = api_impl.as_ref().add_pet(
       method,
@@ -461,17 +461,17 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    {
-        let b = UpdatePetBodyValidator { body: &body };
-        if let Err(e) = b.validate() {
-          return Response::builder()
-              .status(StatusCode::BAD_REQUEST)
-              .body(Body::from(e.to_string()))
-              .map_err(|_| {
-                  StatusCode::BAD_REQUEST
-              });
+        {
+            let b = UpdatePetBodyValidator { body: &body };
+              if let Err(e) = b.validate() {
+                return Response::builder()
+                    .status(StatusCode::BAD_REQUEST)
+                    .body(Body::from(e.to_string()))
+                    .map_err(|_| {
+                        StatusCode::BAD_REQUEST
+                    });
+              }
         }
-    }
 
   let result = api_impl.as_ref().update_pet(
       method,
@@ -833,17 +833,17 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    {
-        let b = PlaceOrderBodyValidator { body: &body };
-        if let Err(e) = b.validate() {
-          return Response::builder()
-              .status(StatusCode::BAD_REQUEST)
-              .body(Body::from(e.to_string()))
-              .map_err(|_| {
-                  StatusCode::BAD_REQUEST
-              });
+        {
+            let b = PlaceOrderBodyValidator { body: &body };
+              if let Err(e) = b.validate() {
+                return Response::builder()
+                    .status(StatusCode::BAD_REQUEST)
+                    .body(Body::from(e.to_string()))
+                    .map_err(|_| {
+                        StatusCode::BAD_REQUEST
+                    });
+              }
         }
-    }
 
   let result = api_impl.as_ref().place_order(
       method,
@@ -906,17 +906,17 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    {
-        let b = CreateUserBodyValidator { body: &body };
-        if let Err(e) = b.validate() {
-          return Response::builder()
-              .status(StatusCode::BAD_REQUEST)
-              .body(Body::from(e.to_string()))
-              .map_err(|_| {
-                  StatusCode::BAD_REQUEST
-              });
+        {
+            let b = CreateUserBodyValidator { body: &body };
+              if let Err(e) = b.validate() {
+                return Response::builder()
+                    .status(StatusCode::BAD_REQUEST)
+                    .body(Body::from(e.to_string()))
+                    .map_err(|_| {
+                        StatusCode::BAD_REQUEST
+                    });
+              }
         }
-    }
 
   let result = api_impl.as_ref().create_user(
       method,
@@ -966,17 +966,17 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    {
-        let b = CreateUsersWithArrayInputBodyValidator { body: &body };
-        if let Err(e) = b.validate() {
-          return Response::builder()
-              .status(StatusCode::BAD_REQUEST)
-              .body(Body::from(e.to_string()))
-              .map_err(|_| {
-                  StatusCode::BAD_REQUEST
-              });
+        {
+            let b = CreateUsersWithArrayInputBodyValidator { body: &body };
+              if let Err(e) = b.validate() {
+                return Response::builder()
+                    .status(StatusCode::BAD_REQUEST)
+                    .body(Body::from(e.to_string()))
+                    .map_err(|_| {
+                        StatusCode::BAD_REQUEST
+                    });
+              }
         }
-    }
 
   let result = api_impl.as_ref().create_users_with_array_input(
       method,
@@ -1026,17 +1026,17 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    {
-        let b = CreateUsersWithListInputBodyValidator { body: &body };
-        if let Err(e) = b.validate() {
-          return Response::builder()
-              .status(StatusCode::BAD_REQUEST)
-              .body(Body::from(e.to_string()))
-              .map_err(|_| {
-                  StatusCode::BAD_REQUEST
-              });
+        {
+            let b = CreateUsersWithListInputBodyValidator { body: &body };
+              if let Err(e) = b.validate() {
+                return Response::builder()
+                    .status(StatusCode::BAD_REQUEST)
+                    .body(Body::from(e.to_string()))
+                    .map_err(|_| {
+                        StatusCode::BAD_REQUEST
+                    });
+              }
         }
-    }
 
   let result = api_impl.as_ref().create_users_with_list_input(
       method,
@@ -1391,17 +1391,17 @@ where
             });
     }
 
-    {
-        let b = UpdateUserBodyValidator { body: &body };
-        if let Err(e) = b.validate() {
-          return Response::builder()
-              .status(StatusCode::BAD_REQUEST)
-              .body(Body::from(e.to_string()))
-              .map_err(|_| {
-                  StatusCode::BAD_REQUEST
-              });
+        {
+            let b = UpdateUserBodyValidator { body: &body };
+              if let Err(e) = b.validate() {
+                return Response::builder()
+                    .status(StatusCode::BAD_REQUEST)
+                    .body(Body::from(e.to_string()))
+                    .map_err(|_| {
+                        StatusCode::BAD_REQUEST
+                    });
+              }
         }
-    }
 
   let result = api_impl.as_ref().update_user(
       method,
