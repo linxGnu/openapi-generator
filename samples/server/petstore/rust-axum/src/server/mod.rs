@@ -7,32 +7,18 @@ use http::{header::CONTENT_TYPE, HeaderMap, HeaderName, HeaderValue, Method, Sta
 use tracing::error;
 use validator::Validate;
 
-use crate:: header;
+use crate::header;
 
 #[allow(unused_imports)]
 use crate::models;
 
-use crate::{Api,
-     AddPetResponse,
-     DeletePetResponse,
-     FindPetsByStatusResponse,
-     FindPetsByTagsResponse,
-     GetPetByIdResponse,
-     UpdatePetResponse,
-     UpdatePetWithFormResponse,
-     UploadFileResponse,
-     DeleteOrderResponse,
-     GetInventoryResponse,
-     GetOrderByIdResponse,
-     PlaceOrderResponse,
-     CreateUserResponse,
-     CreateUsersWithArrayInputResponse,
-     CreateUsersWithListInputResponse,
-     DeleteUserResponse,
-     GetUserByNameResponse,
-     LoginUserResponse,
-     LogoutUserResponse,
-     UpdateUserResponse
+use crate::{
+    AddPetResponse, Api, CreateUserResponse, CreateUsersWithArrayInputResponse,
+    CreateUsersWithListInputResponse, DeleteOrderResponse, DeletePetResponse, DeleteUserResponse,
+    FindPetsByStatusResponse, FindPetsByTagsResponse, GetInventoryResponse, GetOrderByIdResponse,
+    GetPetByIdResponse, GetUserByNameResponse, LoginUserResponse, LogoutUserResponse,
+    PlaceOrderResponse, UpdatePetResponse, UpdatePetWithFormResponse, UpdateUserResponse,
+    UploadFileResponse,
 };
 
 /// Setup API Server.
@@ -43,224 +29,203 @@ where
 {
     // build our application with a route
     Router::new()
-        .route("/v2/pet",
-            post(add_pet::<I, A>).put(update_pet::<I, A>)
+        .route("/v2/pet", post(add_pet::<I, A>).put(update_pet::<I, A>))
+        .route(
+            "/v2/pet/:pet_id",
+            delete(delete_pet::<I, A>)
+                .get(get_pet_by_id::<I, A>)
+                .post(update_pet_with_form::<I, A>),
         )
-        .route("/v2/pet/:pet_id",
-            delete(delete_pet::<I, A>).get(get_pet_by_id::<I, A>).post(update_pet_with_form::<I, A>)
+        .route("/v2/pet/:pet_id/uploadImage", post(upload_file::<I, A>))
+        .route("/v2/pet/findByStatus", get(find_pets_by_status::<I, A>))
+        .route("/v2/pet/findByTags", get(find_pets_by_tags::<I, A>))
+        .route("/v2/store/inventory", get(get_inventory::<I, A>))
+        .route("/v2/store/order", post(place_order::<I, A>))
+        .route(
+            "/v2/store/order/:order_id",
+            delete(delete_order::<I, A>).get(get_order_by_id::<I, A>),
         )
-        .route("/v2/pet/:pet_id/uploadImage",
-            post(upload_file::<I, A>)
+        .route("/v2/user", post(create_user::<I, A>))
+        .route(
+            "/v2/user/:username",
+            delete(delete_user::<I, A>)
+                .get(get_user_by_name::<I, A>)
+                .put(update_user::<I, A>),
         )
-        .route("/v2/pet/findByStatus",
-            get(find_pets_by_status::<I, A>)
+        .route(
+            "/v2/user/createWithArray",
+            post(create_users_with_array_input::<I, A>),
         )
-        .route("/v2/pet/findByTags",
-            get(find_pets_by_tags::<I, A>)
+        .route(
+            "/v2/user/createWithList",
+            post(create_users_with_list_input::<I, A>),
         )
-        .route("/v2/store/inventory",
-            get(get_inventory::<I, A>)
-        )
-        .route("/v2/store/order",
-            post(place_order::<I, A>)
-        )
-        .route("/v2/store/order/:order_id",
-            delete(delete_order::<I, A>).get(get_order_by_id::<I, A>)
-        )
-        .route("/v2/user",
-            post(create_user::<I, A>)
-        )
-        .route("/v2/user/:username",
-            delete(delete_user::<I, A>).get(get_user_by_name::<I, A>).put(update_user::<I, A>)
-        )
-        .route("/v2/user/createWithArray",
-            post(create_users_with_array_input::<I, A>)
-        )
-        .route("/v2/user/createWithList",
-            post(create_users_with_list_input::<I, A>)
-        )
-        .route("/v2/user/login",
-            get(login_user::<I, A>)
-        )
-        .route("/v2/user/logout",
-            get(logout_user::<I, A>)
-        )
+        .route("/v2/user/login", get(login_user::<I, A>))
+        .route("/v2/user/logout", get(logout_user::<I, A>))
         .with_state(api_impl)
 }
 
-    #[derive(validator::Validate)]
-    #[allow(dead_code)]    
-    struct AddPetBodyValidator<'a> {
-            #[validate]
-          body: &'a models::Pet,
-    }
-
+#[derive(validator::Validate)]
+#[allow(dead_code)]
+struct AddPetBodyValidator<'a> {
+    #[validate]
+    body: &'a models::Pet,
+}
 
 /// AddPet - POST /v2/pet
 #[tracing::instrument(skip_all)]
 async fn add_pet<I, A>(
-  method: Method,
-  host: Host,
-  cookies: CookieJar,
- State(api_impl): State<I>,
-          Json(body): Json<models::Pet>,
+    method: Method,
+    host: Host,
+    cookies: CookieJar,
+    State(api_impl): State<I>,
+    Json(body): Json<models::Pet>,
 ) -> Result<Response, StatusCode>
-where 
+where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-        {
-            let b = AddPetBodyValidator { body: &body };
-              if let Err(e) = b.validate() {
-                return Response::builder()
-                    .status(StatusCode::BAD_REQUEST)
-                    .body(Body::from(e.to_string()))
-                    .map_err(|_| {
-                        StatusCode::BAD_REQUEST
-                    });
-              }
+    {
+        let b = AddPetBodyValidator { body: &body };
+        if let Err(e) = b.validate() {
+            return Response::builder()
+                .status(StatusCode::BAD_REQUEST)
+                .body(Body::from(e.to_string()))
+                .map_err(|_| StatusCode::BAD_REQUEST);
         }
+    }
 
-  let result = api_impl.as_ref().add_pet(
-      method,
-      host,
-      cookies,
-            body,
-  ).await;
+    let result = api_impl.as_ref().add_pet(method, host, cookies, body).await;
 
-  let mut response = Response::builder();
+    let mut response = Response::builder();
 
-  let resp = match result {
-                                            Ok(rsp) => match rsp {
-                                                AddPetResponse::SuccessfulOperation
-                                                    (body)
-                                                => {
-                                                    let mut response = response.status(200);
-                                                  {
-                                                    let mut response_headers = response.headers_mut().unwrap();
-                                                    response_headers.insert(
-                                                        CONTENT_TYPE,
-                                                        HeaderValue::from_str("application/xml").map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?);
-                                                  }
-                                                    let body_content = body;
-                                                    response.body(Body::from(body_content))
-                                                },
-                                                AddPetResponse::InvalidInput
-                                                => {
-                                                    let mut response = response.status(405);
-                                                    response.body(Body::empty())
-                                                },
-                                            },
-                                            Err(_) => {
-                                                // Application code returned an error. This should not happen, as the implementation should
-                                                // return a valid response.
-                                                response.status(500).body(Body::empty())
-                                            },
-                                        };
+    let resp = match result {
+        Ok(rsp) => match rsp {
+            AddPetResponse::SuccessfulOperation(body) => {
+                let mut response = response.status(200);
+                {
+                    let mut response_headers = response.headers_mut().unwrap();
+                    response_headers.insert(
+                        CONTENT_TYPE,
+                        HeaderValue::from_str("application/xml").map_err(|e| {
+                            error!(error = ?e);
+                            StatusCode::INTERNAL_SERVER_ERROR
+                        })?,
+                    );
+                }
+                let body_content = body;
+                response.body(Body::from(body_content))
+            }
+            AddPetResponse::InvalidInput => {
+                let mut response = response.status(405);
+                response.body(Body::empty())
+            }
+        },
+        Err(_) => {
+            // Application code returned an error. This should not happen, as the implementation should
+            // return a valid response.
+            response.status(500).body(Body::empty())
+        }
+    };
 
-                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
+    resp.map_err(|e| {
+        error!(error = ?e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
 }
-
 
 /// DeletePet - DELETE /v2/pet/{petId}
 #[tracing::instrument(skip_all)]
 async fn delete_pet<I, A>(
-  method: Method,
-  host: Host,
-  cookies: CookieJar,
-  headers: HeaderMap,
-  Path(path_params): Path<models::DeletePetPathParams>,
- State(api_impl): State<I>,
+    method: Method,
+    host: Host,
+    cookies: CookieJar,
+    headers: HeaderMap,
+    Path(path_params): Path<models::DeletePetPathParams>,
+    State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
-where 
+where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
     // Header parameters
     let header_params = {
-                let header_api_key = headers.get(HeaderName::from_static("api_key"));
+        let header_api_key = headers.get(HeaderName::from_static("api_key"));
 
-                let header_api_key = match header_api_key {
-                    Some(v) => match header::IntoHeaderValue::<String>::try_from((*v).clone()) {
-                        Ok(result) =>
-                            Some(result.0),
-                        Err(err) => {
-                            return Response::builder()
-                                        .status(StatusCode::BAD_REQUEST)
-                                        .body(Body::from(format!("Invalid header api_key - {}", err))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
+        let header_api_key = match header_api_key {
+            Some(v) => match header::IntoHeaderValue::<String>::try_from((*v).clone()) {
+                Ok(result) => Some(result.0),
+                Err(err) => {
+                    return Response::builder()
+                        .status(StatusCode::BAD_REQUEST)
+                        .body(Body::from(format!("Invalid header api_key - {}", err)))
+                        .map_err(|e| {
+                            error!(error = ?e);
+                            StatusCode::INTERNAL_SERVER_ERROR
+                        });
+                }
+            },
+            None => None,
+        };
 
-                        },
-                    },
-                    None => {
-                        None
-                    }
-                };
+        models::DeletePetHeaderParams {
+            api_key: header_api_key,
+        }
+    };
 
-       models::DeletePetHeaderParams {
-          api_key: header_api_key,
-       }
-  };
-
-  // header params validation 
-  if let Err(e) = header_params.validate() {
+    // header params validation
+    if let Err(e) = header_params.validate() {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
             .body(Body::from(e.to_string()))
-            .map_err(|_| {
-                StatusCode::BAD_REQUEST
-            });
-  } 
+            .map_err(|_| StatusCode::BAD_REQUEST);
+    }
 
     // path params validation
     if let Err(e) = path_params.validate() {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
             .body(Body::from(e.to_string()))
-            .map_err(|_| {
-                StatusCode::BAD_REQUEST
-            });
+            .map_err(|_| StatusCode::BAD_REQUEST);
     }
 
+    let result = api_impl
+        .as_ref()
+        .delete_pet(method, host, cookies, header_params, path_params)
+        .await;
 
-  let result = api_impl.as_ref().delete_pet(
-      method,
-      host,
-      cookies,
-        header_params,
-        path_params,
-  ).await;
+    let mut response = Response::builder();
 
-  let mut response = Response::builder();
+    let resp = match result {
+        Ok(rsp) => match rsp {
+            DeletePetResponse::InvalidPetValue => {
+                let mut response = response.status(400);
+                response.body(Body::empty())
+            }
+        },
+        Err(_) => {
+            // Application code returned an error. This should not happen, as the implementation should
+            // return a valid response.
+            response.status(500).body(Body::empty())
+        }
+    };
 
-  let resp = match result {
-                                            Ok(rsp) => match rsp {
-                                                DeletePetResponse::InvalidPetValue
-                                                => {
-                                                    let mut response = response.status(400);
-                                                    response.body(Body::empty())
-                                                },
-                                            },
-                                            Err(_) => {
-                                                // Application code returned an error. This should not happen, as the implementation should
-                                                // return a valid response.
-                                                response.status(500).body(Body::empty())
-                                            },
-                                        };
-
-                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
+    resp.map_err(|e| {
+        error!(error = ?e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
 }
-
 
 /// FindPetsByStatus - GET /v2/pet/findByStatus
 #[tracing::instrument(skip_all)]
 async fn find_pets_by_status<I, A>(
-  method: Method,
-  host: Host,
-  cookies: CookieJar,
-  Query(query_params): Query<models::FindPetsByStatusQueryParams>,
- State(api_impl): State<I>,
+    method: Method,
+    host: Host,
+    cookies: CookieJar,
+    Query(query_params): Query<models::FindPetsByStatusQueryParams>,
+    State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
-where 
+where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
@@ -269,63 +234,61 @@ where
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
             .body(Body::from(e.to_string()))
-            .map_err(|_| {
-                StatusCode::BAD_REQUEST
-            });
+            .map_err(|_| StatusCode::BAD_REQUEST);
     }
 
+    let result = api_impl
+        .as_ref()
+        .find_pets_by_status(method, host, cookies, query_params)
+        .await;
 
-  let result = api_impl.as_ref().find_pets_by_status(
-      method,
-      host,
-      cookies,
-        query_params,
-  ).await;
+    let mut response = Response::builder();
 
-  let mut response = Response::builder();
+    let resp = match result {
+        Ok(rsp) => match rsp {
+            FindPetsByStatusResponse::SuccessfulOperation(body) => {
+                let mut response = response.status(200);
+                {
+                    let mut response_headers = response.headers_mut().unwrap();
+                    response_headers.insert(
+                        CONTENT_TYPE,
+                        HeaderValue::from_str("application/xml").map_err(|e| {
+                            error!(error = ?e);
+                            StatusCode::INTERNAL_SERVER_ERROR
+                        })?,
+                    );
+                }
+                let body_content = body;
+                response.body(Body::from(body_content))
+            }
+            FindPetsByStatusResponse::InvalidStatusValue => {
+                let mut response = response.status(400);
+                response.body(Body::empty())
+            }
+        },
+        Err(_) => {
+            // Application code returned an error. This should not happen, as the implementation should
+            // return a valid response.
+            response.status(500).body(Body::empty())
+        }
+    };
 
-  let resp = match result {
-                                            Ok(rsp) => match rsp {
-                                                FindPetsByStatusResponse::SuccessfulOperation
-                                                    (body)
-                                                => {
-                                                    let mut response = response.status(200);
-                                                  {
-                                                    let mut response_headers = response.headers_mut().unwrap();
-                                                    response_headers.insert(
-                                                        CONTENT_TYPE,
-                                                        HeaderValue::from_str("application/xml").map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?);
-                                                  }
-                                                    let body_content = body;
-                                                    response.body(Body::from(body_content))
-                                                },
-                                                FindPetsByStatusResponse::InvalidStatusValue
-                                                => {
-                                                    let mut response = response.status(400);
-                                                    response.body(Body::empty())
-                                                },
-                                            },
-                                            Err(_) => {
-                                                // Application code returned an error. This should not happen, as the implementation should
-                                                // return a valid response.
-                                                response.status(500).body(Body::empty())
-                                            },
-                                        };
-
-                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
+    resp.map_err(|e| {
+        error!(error = ?e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
 }
-
 
 /// FindPetsByTags - GET /v2/pet/findByTags
 #[tracing::instrument(skip_all)]
 async fn find_pets_by_tags<I, A>(
-  method: Method,
-  host: Host,
-  cookies: CookieJar,
-  Query(query_params): Query<models::FindPetsByTagsQueryParams>,
- State(api_impl): State<I>,
+    method: Method,
+    host: Host,
+    cookies: CookieJar,
+    Query(query_params): Query<models::FindPetsByTagsQueryParams>,
+    State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
-where 
+where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
@@ -334,63 +297,61 @@ where
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
             .body(Body::from(e.to_string()))
-            .map_err(|_| {
-                StatusCode::BAD_REQUEST
-            });
+            .map_err(|_| StatusCode::BAD_REQUEST);
     }
 
+    let result = api_impl
+        .as_ref()
+        .find_pets_by_tags(method, host, cookies, query_params)
+        .await;
 
-  let result = api_impl.as_ref().find_pets_by_tags(
-      method,
-      host,
-      cookies,
-        query_params,
-  ).await;
+    let mut response = Response::builder();
 
-  let mut response = Response::builder();
+    let resp = match result {
+        Ok(rsp) => match rsp {
+            FindPetsByTagsResponse::SuccessfulOperation(body) => {
+                let mut response = response.status(200);
+                {
+                    let mut response_headers = response.headers_mut().unwrap();
+                    response_headers.insert(
+                        CONTENT_TYPE,
+                        HeaderValue::from_str("application/xml").map_err(|e| {
+                            error!(error = ?e);
+                            StatusCode::INTERNAL_SERVER_ERROR
+                        })?,
+                    );
+                }
+                let body_content = body;
+                response.body(Body::from(body_content))
+            }
+            FindPetsByTagsResponse::InvalidTagValue => {
+                let mut response = response.status(400);
+                response.body(Body::empty())
+            }
+        },
+        Err(_) => {
+            // Application code returned an error. This should not happen, as the implementation should
+            // return a valid response.
+            response.status(500).body(Body::empty())
+        }
+    };
 
-  let resp = match result {
-                                            Ok(rsp) => match rsp {
-                                                FindPetsByTagsResponse::SuccessfulOperation
-                                                    (body)
-                                                => {
-                                                    let mut response = response.status(200);
-                                                  {
-                                                    let mut response_headers = response.headers_mut().unwrap();
-                                                    response_headers.insert(
-                                                        CONTENT_TYPE,
-                                                        HeaderValue::from_str("application/xml").map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?);
-                                                  }
-                                                    let body_content = body;
-                                                    response.body(Body::from(body_content))
-                                                },
-                                                FindPetsByTagsResponse::InvalidTagValue
-                                                => {
-                                                    let mut response = response.status(400);
-                                                    response.body(Body::empty())
-                                                },
-                                            },
-                                            Err(_) => {
-                                                // Application code returned an error. This should not happen, as the implementation should
-                                                // return a valid response.
-                                                response.status(500).body(Body::empty())
-                                            },
-                                        };
-
-                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
+    resp.map_err(|e| {
+        error!(error = ?e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
 }
-
 
 /// GetPetById - GET /v2/pet/{petId}
 #[tracing::instrument(skip_all)]
 async fn get_pet_by_id<I, A>(
-  method: Method,
-  host: Host,
-  cookies: CookieJar,
-  Path(path_params): Path<models::GetPetByIdPathParams>,
- State(api_impl): State<I>,
+    method: Method,
+    host: Host,
+    cookies: CookieJar,
+    Path(path_params): Path<models::GetPetByIdPathParams>,
+    State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
-where 
+where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
@@ -399,151 +360,145 @@ where
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
             .body(Body::from(e.to_string()))
-            .map_err(|_| {
-                StatusCode::BAD_REQUEST
-            });
+            .map_err(|_| StatusCode::BAD_REQUEST);
     }
 
+    let result = api_impl
+        .as_ref()
+        .get_pet_by_id(method, host, cookies, path_params)
+        .await;
 
-  let result = api_impl.as_ref().get_pet_by_id(
-      method,
-      host,
-      cookies,
-        path_params,
-  ).await;
+    let mut response = Response::builder();
 
-  let mut response = Response::builder();
+    let resp = match result {
+        Ok(rsp) => match rsp {
+            GetPetByIdResponse::SuccessfulOperation(body) => {
+                let mut response = response.status(200);
+                {
+                    let mut response_headers = response.headers_mut().unwrap();
+                    response_headers.insert(
+                        CONTENT_TYPE,
+                        HeaderValue::from_str("application/xml").map_err(|e| {
+                            error!(error = ?e);
+                            StatusCode::INTERNAL_SERVER_ERROR
+                        })?,
+                    );
+                }
+                let body_content = body;
+                response.body(Body::from(body_content))
+            }
+            GetPetByIdResponse::InvalidIDSupplied => {
+                let mut response = response.status(400);
+                response.body(Body::empty())
+            }
+            GetPetByIdResponse::PetNotFound => {
+                let mut response = response.status(404);
+                response.body(Body::empty())
+            }
+        },
+        Err(_) => {
+            // Application code returned an error. This should not happen, as the implementation should
+            // return a valid response.
+            response.status(500).body(Body::empty())
+        }
+    };
 
-  let resp = match result {
-                                            Ok(rsp) => match rsp {
-                                                GetPetByIdResponse::SuccessfulOperation
-                                                    (body)
-                                                => {
-                                                    let mut response = response.status(200);
-                                                  {
-                                                    let mut response_headers = response.headers_mut().unwrap();
-                                                    response_headers.insert(
-                                                        CONTENT_TYPE,
-                                                        HeaderValue::from_str("application/xml").map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?);
-                                                  }
-                                                    let body_content = body;
-                                                    response.body(Body::from(body_content))
-                                                },
-                                                GetPetByIdResponse::InvalidIDSupplied
-                                                => {
-                                                    let mut response = response.status(400);
-                                                    response.body(Body::empty())
-                                                },
-                                                GetPetByIdResponse::PetNotFound
-                                                => {
-                                                    let mut response = response.status(404);
-                                                    response.body(Body::empty())
-                                                },
-                                            },
-                                            Err(_) => {
-                                                // Application code returned an error. This should not happen, as the implementation should
-                                                // return a valid response.
-                                                response.status(500).body(Body::empty())
-                                            },
-                                        };
-
-                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
+    resp.map_err(|e| {
+        error!(error = ?e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
 }
 
-    #[derive(validator::Validate)]
-    #[allow(dead_code)]    
-    struct UpdatePetBodyValidator<'a> {
-            #[validate]
-          body: &'a models::Pet,
-    }
-
+#[derive(validator::Validate)]
+#[allow(dead_code)]
+struct UpdatePetBodyValidator<'a> {
+    #[validate]
+    body: &'a models::Pet,
+}
 
 /// UpdatePet - PUT /v2/pet
 #[tracing::instrument(skip_all)]
 async fn update_pet<I, A>(
-  method: Method,
-  host: Host,
-  cookies: CookieJar,
- State(api_impl): State<I>,
-          Json(body): Json<models::Pet>,
+    method: Method,
+    host: Host,
+    cookies: CookieJar,
+    State(api_impl): State<I>,
+    Json(body): Json<models::Pet>,
 ) -> Result<Response, StatusCode>
-where 
+where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-        {
-            let b = UpdatePetBodyValidator { body: &body };
-              if let Err(e) = b.validate() {
-                return Response::builder()
-                    .status(StatusCode::BAD_REQUEST)
-                    .body(Body::from(e.to_string()))
-                    .map_err(|_| {
-                        StatusCode::BAD_REQUEST
-                    });
-              }
+    {
+        let b = UpdatePetBodyValidator { body: &body };
+        if let Err(e) = b.validate() {
+            return Response::builder()
+                .status(StatusCode::BAD_REQUEST)
+                .body(Body::from(e.to_string()))
+                .map_err(|_| StatusCode::BAD_REQUEST);
         }
+    }
 
-  let result = api_impl.as_ref().update_pet(
-      method,
-      host,
-      cookies,
-            body,
-  ).await;
+    let result = api_impl
+        .as_ref()
+        .update_pet(method, host, cookies, body)
+        .await;
 
-  let mut response = Response::builder();
+    let mut response = Response::builder();
 
-  let resp = match result {
-                                            Ok(rsp) => match rsp {
-                                                UpdatePetResponse::SuccessfulOperation
-                                                    (body)
-                                                => {
-                                                    let mut response = response.status(200);
-                                                  {
-                                                    let mut response_headers = response.headers_mut().unwrap();
-                                                    response_headers.insert(
-                                                        CONTENT_TYPE,
-                                                        HeaderValue::from_str("application/xml").map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?);
-                                                  }
-                                                    let body_content = body;
-                                                    response.body(Body::from(body_content))
-                                                },
-                                                UpdatePetResponse::InvalidIDSupplied
-                                                => {
-                                                    let mut response = response.status(400);
-                                                    response.body(Body::empty())
-                                                },
-                                                UpdatePetResponse::PetNotFound
-                                                => {
-                                                    let mut response = response.status(404);
-                                                    response.body(Body::empty())
-                                                },
-                                                UpdatePetResponse::ValidationException
-                                                => {
-                                                    let mut response = response.status(405);
-                                                    response.body(Body::empty())
-                                                },
-                                            },
-                                            Err(_) => {
-                                                // Application code returned an error. This should not happen, as the implementation should
-                                                // return a valid response.
-                                                response.status(500).body(Body::empty())
-                                            },
-                                        };
+    let resp = match result {
+        Ok(rsp) => match rsp {
+            UpdatePetResponse::SuccessfulOperation(body) => {
+                let mut response = response.status(200);
+                {
+                    let mut response_headers = response.headers_mut().unwrap();
+                    response_headers.insert(
+                        CONTENT_TYPE,
+                        HeaderValue::from_str("application/xml").map_err(|e| {
+                            error!(error = ?e);
+                            StatusCode::INTERNAL_SERVER_ERROR
+                        })?,
+                    );
+                }
+                let body_content = body;
+                response.body(Body::from(body_content))
+            }
+            UpdatePetResponse::InvalidIDSupplied => {
+                let mut response = response.status(400);
+                response.body(Body::empty())
+            }
+            UpdatePetResponse::PetNotFound => {
+                let mut response = response.status(404);
+                response.body(Body::empty())
+            }
+            UpdatePetResponse::ValidationException => {
+                let mut response = response.status(405);
+                response.body(Body::empty())
+            }
+        },
+        Err(_) => {
+            // Application code returned an error. This should not happen, as the implementation should
+            // return a valid response.
+            response.status(500).body(Body::empty())
+        }
+    };
 
-                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
+    resp.map_err(|e| {
+        error!(error = ?e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
 }
-
 
 /// UpdatePetWithForm - POST /v2/pet/{petId}
 #[tracing::instrument(skip_all)]
 async fn update_pet_with_form<I, A>(
-  method: Method,
-  host: Host,
-  cookies: CookieJar,
-  Path(path_params): Path<models::UpdatePetWithFormPathParams>,
- State(api_impl): State<I>,
+    method: Method,
+    host: Host,
+    cookies: CookieJar,
+    Path(path_params): Path<models::UpdatePetWithFormPathParams>,
+    State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
-where 
+where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
@@ -552,51 +507,47 @@ where
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
             .body(Body::from(e.to_string()))
-            .map_err(|_| {
-                StatusCode::BAD_REQUEST
-            });
+            .map_err(|_| StatusCode::BAD_REQUEST);
     }
 
+    let result = api_impl
+        .as_ref()
+        .update_pet_with_form(method, host, cookies, path_params)
+        .await;
 
-  let result = api_impl.as_ref().update_pet_with_form(
-      method,
-      host,
-      cookies,
-        path_params,
-  ).await;
+    let mut response = Response::builder();
 
-  let mut response = Response::builder();
+    let resp = match result {
+        Ok(rsp) => match rsp {
+            UpdatePetWithFormResponse::InvalidInput => {
+                let mut response = response.status(405);
+                response.body(Body::empty())
+            }
+        },
+        Err(_) => {
+            // Application code returned an error. This should not happen, as the implementation should
+            // return a valid response.
+            response.status(500).body(Body::empty())
+        }
+    };
 
-  let resp = match result {
-                                            Ok(rsp) => match rsp {
-                                                UpdatePetWithFormResponse::InvalidInput
-                                                => {
-                                                    let mut response = response.status(405);
-                                                    response.body(Body::empty())
-                                                },
-                                            },
-                                            Err(_) => {
-                                                // Application code returned an error. This should not happen, as the implementation should
-                                                // return a valid response.
-                                                response.status(500).body(Body::empty())
-                                            },
-                                        };
-
-                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
+    resp.map_err(|e| {
+        error!(error = ?e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
 }
-
 
 /// UploadFile - POST /v2/pet/{petId}/uploadImage
 #[tracing::instrument(skip_all)]
 async fn upload_file<I, A>(
-  method: Method,
-  host: Host,
-  cookies: CookieJar,
-  Path(path_params): Path<models::UploadFilePathParams>,
- State(api_impl): State<I>,
-  body: Multipart,
+    method: Method,
+    host: Host,
+    cookies: CookieJar,
+    Path(path_params): Path<models::UploadFilePathParams>,
+    State(api_impl): State<I>,
+    body: Multipart,
 ) -> Result<Response, StatusCode>
-where 
+where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
@@ -605,59 +556,60 @@ where
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
             .body(Body::from(e.to_string()))
-            .map_err(|_| {
-                StatusCode::BAD_REQUEST
-            });
+            .map_err(|_| StatusCode::BAD_REQUEST);
     }
 
+    let result = api_impl
+        .as_ref()
+        .upload_file(method, host, cookies, path_params, body)
+        .await;
 
-  let result = api_impl.as_ref().upload_file(
-      method,
-      host,
-      cookies,
-        path_params,
-          body,
-  ).await;
+    let mut response = Response::builder();
 
-  let mut response = Response::builder();
+    let resp = match result {
+        Ok(rsp) => match rsp {
+            UploadFileResponse::SuccessfulOperation(body) => {
+                let mut response = response.status(200);
+                {
+                    let mut response_headers = response.headers_mut().unwrap();
+                    response_headers.insert(
+                        CONTENT_TYPE,
+                        HeaderValue::from_str("application/json").map_err(|e| {
+                            error!(error = ?e);
+                            StatusCode::INTERNAL_SERVER_ERROR
+                        })?,
+                    );
+                }
+                let body_content = serde_json::to_string(&body).map_err(|e| {
+                    error!(error = ?e);
+                    StatusCode::INTERNAL_SERVER_ERROR
+                })?;
+                response.body(Body::from(body_content))
+            }
+        },
+        Err(_) => {
+            // Application code returned an error. This should not happen, as the implementation should
+            // return a valid response.
+            response.status(500).body(Body::empty())
+        }
+    };
 
-  let resp = match result {
-                                            Ok(rsp) => match rsp {
-                                                UploadFileResponse::SuccessfulOperation
-                                                    (body)
-                                                => {
-                                                    let mut response = response.status(200);
-                                                  {
-                                                    let mut response_headers = response.headers_mut().unwrap();
-                                                    response_headers.insert(
-                                                        CONTENT_TYPE,
-                                                        HeaderValue::from_str("application/json").map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?);
-                                                  }
-                                                    let body_content = serde_json::to_string(&body).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?;
-                                                    response.body(Body::from(body_content))
-                                                },
-                                            },
-                                            Err(_) => {
-                                                // Application code returned an error. This should not happen, as the implementation should
-                                                // return a valid response.
-                                                response.status(500).body(Body::empty())
-                                            },
-                                        };
-
-                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
+    resp.map_err(|e| {
+        error!(error = ?e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
 }
-
 
 /// DeleteOrder - DELETE /v2/store/order/{orderId}
 #[tracing::instrument(skip_all)]
 async fn delete_order<I, A>(
-  method: Method,
-  host: Host,
-  cookies: CookieJar,
-  Path(path_params): Path<models::DeleteOrderPathParams>,
- State(api_impl): State<I>,
+    method: Method,
+    host: Host,
+    cookies: CookieJar,
+    Path(path_params): Path<models::DeleteOrderPathParams>,
+    State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
-where 
+where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
@@ -666,103 +618,100 @@ where
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
             .body(Body::from(e.to_string()))
-            .map_err(|_| {
-                StatusCode::BAD_REQUEST
-            });
+            .map_err(|_| StatusCode::BAD_REQUEST);
     }
 
+    let result = api_impl
+        .as_ref()
+        .delete_order(method, host, cookies, path_params)
+        .await;
 
-  let result = api_impl.as_ref().delete_order(
-      method,
-      host,
-      cookies,
-        path_params,
-  ).await;
+    let mut response = Response::builder();
 
-  let mut response = Response::builder();
+    let resp = match result {
+        Ok(rsp) => match rsp {
+            DeleteOrderResponse::InvalidIDSupplied => {
+                let mut response = response.status(400);
+                response.body(Body::empty())
+            }
+            DeleteOrderResponse::OrderNotFound => {
+                let mut response = response.status(404);
+                response.body(Body::empty())
+            }
+        },
+        Err(_) => {
+            // Application code returned an error. This should not happen, as the implementation should
+            // return a valid response.
+            response.status(500).body(Body::empty())
+        }
+    };
 
-  let resp = match result {
-                                            Ok(rsp) => match rsp {
-                                                DeleteOrderResponse::InvalidIDSupplied
-                                                => {
-                                                    let mut response = response.status(400);
-                                                    response.body(Body::empty())
-                                                },
-                                                DeleteOrderResponse::OrderNotFound
-                                                => {
-                                                    let mut response = response.status(404);
-                                                    response.body(Body::empty())
-                                                },
-                                            },
-                                            Err(_) => {
-                                                // Application code returned an error. This should not happen, as the implementation should
-                                                // return a valid response.
-                                                response.status(500).body(Body::empty())
-                                            },
-                                        };
-
-                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
+    resp.map_err(|e| {
+        error!(error = ?e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
 }
-
 
 /// GetInventory - GET /v2/store/inventory
 #[tracing::instrument(skip_all)]
 async fn get_inventory<I, A>(
-  method: Method,
-  host: Host,
-  cookies: CookieJar,
- State(api_impl): State<I>,
+    method: Method,
+    host: Host,
+    cookies: CookieJar,
+    State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
-where 
+where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    let result = api_impl.as_ref().get_inventory(method, host, cookies).await;
 
-  let result = api_impl.as_ref().get_inventory(
-      method,
-      host,
-      cookies,
-  ).await;
+    let mut response = Response::builder();
 
-  let mut response = Response::builder();
+    let resp = match result {
+        Ok(rsp) => match rsp {
+            GetInventoryResponse::SuccessfulOperation(body) => {
+                let mut response = response.status(200);
+                {
+                    let mut response_headers = response.headers_mut().unwrap();
+                    response_headers.insert(
+                        CONTENT_TYPE,
+                        HeaderValue::from_str("application/json").map_err(|e| {
+                            error!(error = ?e);
+                            StatusCode::INTERNAL_SERVER_ERROR
+                        })?,
+                    );
+                }
+                let body_content = serde_json::to_string(&body).map_err(|e| {
+                    error!(error = ?e);
+                    StatusCode::INTERNAL_SERVER_ERROR
+                })?;
+                response.body(Body::from(body_content))
+            }
+        },
+        Err(_) => {
+            // Application code returned an error. This should not happen, as the implementation should
+            // return a valid response.
+            response.status(500).body(Body::empty())
+        }
+    };
 
-  let resp = match result {
-                                            Ok(rsp) => match rsp {
-                                                GetInventoryResponse::SuccessfulOperation
-                                                    (body)
-                                                => {
-                                                    let mut response = response.status(200);
-                                                  {
-                                                    let mut response_headers = response.headers_mut().unwrap();
-                                                    response_headers.insert(
-                                                        CONTENT_TYPE,
-                                                        HeaderValue::from_str("application/json").map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?);
-                                                  }
-                                                    let body_content = serde_json::to_string(&body).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?;
-                                                    response.body(Body::from(body_content))
-                                                },
-                                            },
-                                            Err(_) => {
-                                                // Application code returned an error. This should not happen, as the implementation should
-                                                // return a valid response.
-                                                response.status(500).body(Body::empty())
-                                            },
-                                        };
-
-                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
+    resp.map_err(|e| {
+        error!(error = ?e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
 }
-
 
 /// GetOrderById - GET /v2/store/order/{orderId}
 #[tracing::instrument(skip_all)]
 async fn get_order_by_id<I, A>(
-  method: Method,
-  host: Host,
-  cookies: CookieJar,
-  Path(path_params): Path<models::GetOrderByIdPathParams>,
- State(api_impl): State<I>,
+    method: Method,
+    host: Host,
+    cookies: CookieJar,
+    Path(path_params): Path<models::GetOrderByIdPathParams>,
+    State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
-where 
+where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
@@ -771,321 +720,308 @@ where
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
             .body(Body::from(e.to_string()))
-            .map_err(|_| {
-                StatusCode::BAD_REQUEST
-            });
+            .map_err(|_| StatusCode::BAD_REQUEST);
     }
 
+    let result = api_impl
+        .as_ref()
+        .get_order_by_id(method, host, cookies, path_params)
+        .await;
 
-  let result = api_impl.as_ref().get_order_by_id(
-      method,
-      host,
-      cookies,
-        path_params,
-  ).await;
+    let mut response = Response::builder();
 
-  let mut response = Response::builder();
+    let resp = match result {
+        Ok(rsp) => match rsp {
+            GetOrderByIdResponse::SuccessfulOperation(body) => {
+                let mut response = response.status(200);
+                {
+                    let mut response_headers = response.headers_mut().unwrap();
+                    response_headers.insert(
+                        CONTENT_TYPE,
+                        HeaderValue::from_str("application/xml").map_err(|e| {
+                            error!(error = ?e);
+                            StatusCode::INTERNAL_SERVER_ERROR
+                        })?,
+                    );
+                }
+                let body_content = body;
+                response.body(Body::from(body_content))
+            }
+            GetOrderByIdResponse::InvalidIDSupplied => {
+                let mut response = response.status(400);
+                response.body(Body::empty())
+            }
+            GetOrderByIdResponse::OrderNotFound => {
+                let mut response = response.status(404);
+                response.body(Body::empty())
+            }
+        },
+        Err(_) => {
+            // Application code returned an error. This should not happen, as the implementation should
+            // return a valid response.
+            response.status(500).body(Body::empty())
+        }
+    };
 
-  let resp = match result {
-                                            Ok(rsp) => match rsp {
-                                                GetOrderByIdResponse::SuccessfulOperation
-                                                    (body)
-                                                => {
-                                                    let mut response = response.status(200);
-                                                  {
-                                                    let mut response_headers = response.headers_mut().unwrap();
-                                                    response_headers.insert(
-                                                        CONTENT_TYPE,
-                                                        HeaderValue::from_str("application/xml").map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?);
-                                                  }
-                                                    let body_content = body;
-                                                    response.body(Body::from(body_content))
-                                                },
-                                                GetOrderByIdResponse::InvalidIDSupplied
-                                                => {
-                                                    let mut response = response.status(400);
-                                                    response.body(Body::empty())
-                                                },
-                                                GetOrderByIdResponse::OrderNotFound
-                                                => {
-                                                    let mut response = response.status(404);
-                                                    response.body(Body::empty())
-                                                },
-                                            },
-                                            Err(_) => {
-                                                // Application code returned an error. This should not happen, as the implementation should
-                                                // return a valid response.
-                                                response.status(500).body(Body::empty())
-                                            },
-                                        };
-
-                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
+    resp.map_err(|e| {
+        error!(error = ?e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
 }
 
-    #[derive(validator::Validate)]
-    #[allow(dead_code)]    
-    struct PlaceOrderBodyValidator<'a> {
-            #[validate]
-          body: &'a models::Order,
-    }
-
+#[derive(validator::Validate)]
+#[allow(dead_code)]
+struct PlaceOrderBodyValidator<'a> {
+    #[validate]
+    body: &'a models::Order,
+}
 
 /// PlaceOrder - POST /v2/store/order
 #[tracing::instrument(skip_all)]
 async fn place_order<I, A>(
-  method: Method,
-  host: Host,
-  cookies: CookieJar,
- State(api_impl): State<I>,
-          Json(body): Json<models::Order>,
+    method: Method,
+    host: Host,
+    cookies: CookieJar,
+    State(api_impl): State<I>,
+    Json(body): Json<models::Order>,
 ) -> Result<Response, StatusCode>
-where 
+where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-        {
-            let b = PlaceOrderBodyValidator { body: &body };
-              if let Err(e) = b.validate() {
-                return Response::builder()
-                    .status(StatusCode::BAD_REQUEST)
-                    .body(Body::from(e.to_string()))
-                    .map_err(|_| {
-                        StatusCode::BAD_REQUEST
-                    });
-              }
+    {
+        let b = PlaceOrderBodyValidator { body: &body };
+        if let Err(e) = b.validate() {
+            return Response::builder()
+                .status(StatusCode::BAD_REQUEST)
+                .body(Body::from(e.to_string()))
+                .map_err(|_| StatusCode::BAD_REQUEST);
         }
-
-  let result = api_impl.as_ref().place_order(
-      method,
-      host,
-      cookies,
-            body,
-  ).await;
-
-  let mut response = Response::builder();
-
-  let resp = match result {
-                                            Ok(rsp) => match rsp {
-                                                PlaceOrderResponse::SuccessfulOperation
-                                                    (body)
-                                                => {
-                                                    let mut response = response.status(200);
-                                                  {
-                                                    let mut response_headers = response.headers_mut().unwrap();
-                                                    response_headers.insert(
-                                                        CONTENT_TYPE,
-                                                        HeaderValue::from_str("application/xml").map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?);
-                                                  }
-                                                    let body_content = body;
-                                                    response.body(Body::from(body_content))
-                                                },
-                                                PlaceOrderResponse::InvalidOrder
-                                                => {
-                                                    let mut response = response.status(400);
-                                                    response.body(Body::empty())
-                                                },
-                                            },
-                                            Err(_) => {
-                                                // Application code returned an error. This should not happen, as the implementation should
-                                                // return a valid response.
-                                                response.status(500).body(Body::empty())
-                                            },
-                                        };
-
-                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
-}
-
-    #[derive(validator::Validate)]
-    #[allow(dead_code)]    
-    struct CreateUserBodyValidator<'a> {
-            #[validate]
-          body: &'a models::User,
     }
 
+    let result = api_impl
+        .as_ref()
+        .place_order(method, host, cookies, body)
+        .await;
+
+    let mut response = Response::builder();
+
+    let resp = match result {
+        Ok(rsp) => match rsp {
+            PlaceOrderResponse::SuccessfulOperation(body) => {
+                let mut response = response.status(200);
+                {
+                    let mut response_headers = response.headers_mut().unwrap();
+                    response_headers.insert(
+                        CONTENT_TYPE,
+                        HeaderValue::from_str("application/xml").map_err(|e| {
+                            error!(error = ?e);
+                            StatusCode::INTERNAL_SERVER_ERROR
+                        })?,
+                    );
+                }
+                let body_content = body;
+                response.body(Body::from(body_content))
+            }
+            PlaceOrderResponse::InvalidOrder => {
+                let mut response = response.status(400);
+                response.body(Body::empty())
+            }
+        },
+        Err(_) => {
+            // Application code returned an error. This should not happen, as the implementation should
+            // return a valid response.
+            response.status(500).body(Body::empty())
+        }
+    };
+
+    resp.map_err(|e| {
+        error!(error = ?e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
+}
+
+#[derive(validator::Validate)]
+#[allow(dead_code)]
+struct CreateUserBodyValidator<'a> {
+    #[validate]
+    body: &'a models::User,
+}
 
 /// CreateUser - POST /v2/user
 #[tracing::instrument(skip_all)]
 async fn create_user<I, A>(
-  method: Method,
-  host: Host,
-  cookies: CookieJar,
- State(api_impl): State<I>,
-          Json(body): Json<models::User>,
+    method: Method,
+    host: Host,
+    cookies: CookieJar,
+    State(api_impl): State<I>,
+    Json(body): Json<models::User>,
 ) -> Result<Response, StatusCode>
-where 
+where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-        {
-            let b = CreateUserBodyValidator { body: &body };
-              if let Err(e) = b.validate() {
-                return Response::builder()
-                    .status(StatusCode::BAD_REQUEST)
-                    .body(Body::from(e.to_string()))
-                    .map_err(|_| {
-                        StatusCode::BAD_REQUEST
-                    });
-              }
+    {
+        let b = CreateUserBodyValidator { body: &body };
+        if let Err(e) = b.validate() {
+            return Response::builder()
+                .status(StatusCode::BAD_REQUEST)
+                .body(Body::from(e.to_string()))
+                .map_err(|_| StatusCode::BAD_REQUEST);
         }
-
-  let result = api_impl.as_ref().create_user(
-      method,
-      host,
-      cookies,
-            body,
-  ).await;
-
-  let mut response = Response::builder();
-
-  let resp = match result {
-                                            Ok(rsp) => match rsp {
-                                                CreateUserResponse::SuccessfulOperation
-                                                => {
-                                                    let mut response = response.status(0);
-                                                    response.body(Body::empty())
-                                                },
-                                            },
-                                            Err(_) => {
-                                                // Application code returned an error. This should not happen, as the implementation should
-                                                // return a valid response.
-                                                response.status(500).body(Body::empty())
-                                            },
-                                        };
-
-                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
-}
-
-    #[derive(validator::Validate)]
-    #[allow(dead_code)]    
-    struct CreateUsersWithArrayInputBodyValidator<'a> {
-            #[validate]
-          body: &'a Vec<models::User>,
     }
 
+    let result = api_impl
+        .as_ref()
+        .create_user(method, host, cookies, body)
+        .await;
+
+    let mut response = Response::builder();
+
+    let resp = match result {
+        Ok(rsp) => match rsp {
+            CreateUserResponse::SuccessfulOperation => {
+                let mut response = response.status(0);
+                response.body(Body::empty())
+            }
+        },
+        Err(_) => {
+            // Application code returned an error. This should not happen, as the implementation should
+            // return a valid response.
+            response.status(500).body(Body::empty())
+        }
+    };
+
+    resp.map_err(|e| {
+        error!(error = ?e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
+}
+
+#[derive(validator::Validate)]
+#[allow(dead_code)]
+struct CreateUsersWithArrayInputBodyValidator<'a> {
+    #[validate]
+    body: &'a Vec<models::User>,
+}
 
 /// CreateUsersWithArrayInput - POST /v2/user/createWithArray
 #[tracing::instrument(skip_all)]
 async fn create_users_with_array_input<I, A>(
-  method: Method,
-  host: Host,
-  cookies: CookieJar,
- State(api_impl): State<I>,
-          Json(body): Json<Vec<models::User>>,
+    method: Method,
+    host: Host,
+    cookies: CookieJar,
+    State(api_impl): State<I>,
+    Json(body): Json<Vec<models::User>>,
 ) -> Result<Response, StatusCode>
-where 
+where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-        {
-            let b = CreateUsersWithArrayInputBodyValidator { body: &body };
-              if let Err(e) = b.validate() {
-                return Response::builder()
-                    .status(StatusCode::BAD_REQUEST)
-                    .body(Body::from(e.to_string()))
-                    .map_err(|_| {
-                        StatusCode::BAD_REQUEST
-                    });
-              }
+    {
+        let b = CreateUsersWithArrayInputBodyValidator { body: &body };
+        if let Err(e) = b.validate() {
+            return Response::builder()
+                .status(StatusCode::BAD_REQUEST)
+                .body(Body::from(e.to_string()))
+                .map_err(|_| StatusCode::BAD_REQUEST);
         }
-
-  let result = api_impl.as_ref().create_users_with_array_input(
-      method,
-      host,
-      cookies,
-            body,
-  ).await;
-
-  let mut response = Response::builder();
-
-  let resp = match result {
-                                            Ok(rsp) => match rsp {
-                                                CreateUsersWithArrayInputResponse::SuccessfulOperation
-                                                => {
-                                                    let mut response = response.status(0);
-                                                    response.body(Body::empty())
-                                                },
-                                            },
-                                            Err(_) => {
-                                                // Application code returned an error. This should not happen, as the implementation should
-                                                // return a valid response.
-                                                response.status(500).body(Body::empty())
-                                            },
-                                        };
-
-                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
-}
-
-    #[derive(validator::Validate)]
-    #[allow(dead_code)]    
-    struct CreateUsersWithListInputBodyValidator<'a> {
-            #[validate]
-          body: &'a Vec<models::User>,
     }
 
+    let result = api_impl
+        .as_ref()
+        .create_users_with_array_input(method, host, cookies, body)
+        .await;
+
+    let mut response = Response::builder();
+
+    let resp = match result {
+        Ok(rsp) => match rsp {
+            CreateUsersWithArrayInputResponse::SuccessfulOperation => {
+                let mut response = response.status(0);
+                response.body(Body::empty())
+            }
+        },
+        Err(_) => {
+            // Application code returned an error. This should not happen, as the implementation should
+            // return a valid response.
+            response.status(500).body(Body::empty())
+        }
+    };
+
+    resp.map_err(|e| {
+        error!(error = ?e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
+}
+
+#[derive(validator::Validate)]
+#[allow(dead_code)]
+struct CreateUsersWithListInputBodyValidator<'a> {
+    #[validate]
+    body: &'a Vec<models::User>,
+}
 
 /// CreateUsersWithListInput - POST /v2/user/createWithList
 #[tracing::instrument(skip_all)]
 async fn create_users_with_list_input<I, A>(
-  method: Method,
-  host: Host,
-  cookies: CookieJar,
- State(api_impl): State<I>,
-          Json(body): Json<Vec<models::User>>,
+    method: Method,
+    host: Host,
+    cookies: CookieJar,
+    State(api_impl): State<I>,
+    Json(body): Json<Vec<models::User>>,
 ) -> Result<Response, StatusCode>
-where 
+where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-        {
-            let b = CreateUsersWithListInputBodyValidator { body: &body };
-              if let Err(e) = b.validate() {
-                return Response::builder()
-                    .status(StatusCode::BAD_REQUEST)
-                    .body(Body::from(e.to_string()))
-                    .map_err(|_| {
-                        StatusCode::BAD_REQUEST
-                    });
-              }
+    {
+        let b = CreateUsersWithListInputBodyValidator { body: &body };
+        if let Err(e) = b.validate() {
+            return Response::builder()
+                .status(StatusCode::BAD_REQUEST)
+                .body(Body::from(e.to_string()))
+                .map_err(|_| StatusCode::BAD_REQUEST);
         }
+    }
 
-  let result = api_impl.as_ref().create_users_with_list_input(
-      method,
-      host,
-      cookies,
-            body,
-  ).await;
+    let result = api_impl
+        .as_ref()
+        .create_users_with_list_input(method, host, cookies, body)
+        .await;
 
-  let mut response = Response::builder();
+    let mut response = Response::builder();
 
-  let resp = match result {
-                                            Ok(rsp) => match rsp {
-                                                CreateUsersWithListInputResponse::SuccessfulOperation
-                                                => {
-                                                    let mut response = response.status(0);
-                                                    response.body(Body::empty())
-                                                },
-                                            },
-                                            Err(_) => {
-                                                // Application code returned an error. This should not happen, as the implementation should
-                                                // return a valid response.
-                                                response.status(500).body(Body::empty())
-                                            },
-                                        };
+    let resp = match result {
+        Ok(rsp) => match rsp {
+            CreateUsersWithListInputResponse::SuccessfulOperation => {
+                let mut response = response.status(0);
+                response.body(Body::empty())
+            }
+        },
+        Err(_) => {
+            // Application code returned an error. This should not happen, as the implementation should
+            // return a valid response.
+            response.status(500).body(Body::empty())
+        }
+    };
 
-                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
+    resp.map_err(|e| {
+        error!(error = ?e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
 }
-
 
 /// DeleteUser - DELETE /v2/user/{username}
 #[tracing::instrument(skip_all)]
 async fn delete_user<I, A>(
-  method: Method,
-  host: Host,
-  cookies: CookieJar,
-  Path(path_params): Path<models::DeleteUserPathParams>,
- State(api_impl): State<I>,
+    method: Method,
+    host: Host,
+    cookies: CookieJar,
+    Path(path_params): Path<models::DeleteUserPathParams>,
+    State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
-where 
+where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
@@ -1094,55 +1030,50 @@ where
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
             .body(Body::from(e.to_string()))
-            .map_err(|_| {
-                StatusCode::BAD_REQUEST
-            });
+            .map_err(|_| StatusCode::BAD_REQUEST);
     }
 
+    let result = api_impl
+        .as_ref()
+        .delete_user(method, host, cookies, path_params)
+        .await;
 
-  let result = api_impl.as_ref().delete_user(
-      method,
-      host,
-      cookies,
-        path_params,
-  ).await;
+    let mut response = Response::builder();
 
-  let mut response = Response::builder();
+    let resp = match result {
+        Ok(rsp) => match rsp {
+            DeleteUserResponse::InvalidUsernameSupplied => {
+                let mut response = response.status(400);
+                response.body(Body::empty())
+            }
+            DeleteUserResponse::UserNotFound => {
+                let mut response = response.status(404);
+                response.body(Body::empty())
+            }
+        },
+        Err(_) => {
+            // Application code returned an error. This should not happen, as the implementation should
+            // return a valid response.
+            response.status(500).body(Body::empty())
+        }
+    };
 
-  let resp = match result {
-                                            Ok(rsp) => match rsp {
-                                                DeleteUserResponse::InvalidUsernameSupplied
-                                                => {
-                                                    let mut response = response.status(400);
-                                                    response.body(Body::empty())
-                                                },
-                                                DeleteUserResponse::UserNotFound
-                                                => {
-                                                    let mut response = response.status(404);
-                                                    response.body(Body::empty())
-                                                },
-                                            },
-                                            Err(_) => {
-                                                // Application code returned an error. This should not happen, as the implementation should
-                                                // return a valid response.
-                                                response.status(500).body(Body::empty())
-                                            },
-                                        };
-
-                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
+    resp.map_err(|e| {
+        error!(error = ?e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
 }
-
 
 /// GetUserByName - GET /v2/user/{username}
 #[tracing::instrument(skip_all)]
 async fn get_user_by_name<I, A>(
-  method: Method,
-  host: Host,
-  cookies: CookieJar,
-  Path(path_params): Path<models::GetUserByNamePathParams>,
- State(api_impl): State<I>,
+    method: Method,
+    host: Host,
+    cookies: CookieJar,
+    Path(path_params): Path<models::GetUserByNamePathParams>,
+    State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
-where 
+where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
@@ -1151,68 +1082,65 @@ where
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
             .body(Body::from(e.to_string()))
-            .map_err(|_| {
-                StatusCode::BAD_REQUEST
-            });
+            .map_err(|_| StatusCode::BAD_REQUEST);
     }
 
+    let result = api_impl
+        .as_ref()
+        .get_user_by_name(method, host, cookies, path_params)
+        .await;
 
-  let result = api_impl.as_ref().get_user_by_name(
-      method,
-      host,
-      cookies,
-        path_params,
-  ).await;
+    let mut response = Response::builder();
 
-  let mut response = Response::builder();
+    let resp = match result {
+        Ok(rsp) => match rsp {
+            GetUserByNameResponse::SuccessfulOperation(body) => {
+                let mut response = response.status(200);
+                {
+                    let mut response_headers = response.headers_mut().unwrap();
+                    response_headers.insert(
+                        CONTENT_TYPE,
+                        HeaderValue::from_str("application/xml").map_err(|e| {
+                            error!(error = ?e);
+                            StatusCode::INTERNAL_SERVER_ERROR
+                        })?,
+                    );
+                }
+                let body_content = body;
+                response.body(Body::from(body_content))
+            }
+            GetUserByNameResponse::InvalidUsernameSupplied => {
+                let mut response = response.status(400);
+                response.body(Body::empty())
+            }
+            GetUserByNameResponse::UserNotFound => {
+                let mut response = response.status(404);
+                response.body(Body::empty())
+            }
+        },
+        Err(_) => {
+            // Application code returned an error. This should not happen, as the implementation should
+            // return a valid response.
+            response.status(500).body(Body::empty())
+        }
+    };
 
-  let resp = match result {
-                                            Ok(rsp) => match rsp {
-                                                GetUserByNameResponse::SuccessfulOperation
-                                                    (body)
-                                                => {
-                                                    let mut response = response.status(200);
-                                                  {
-                                                    let mut response_headers = response.headers_mut().unwrap();
-                                                    response_headers.insert(
-                                                        CONTENT_TYPE,
-                                                        HeaderValue::from_str("application/xml").map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?);
-                                                  }
-                                                    let body_content = body;
-                                                    response.body(Body::from(body_content))
-                                                },
-                                                GetUserByNameResponse::InvalidUsernameSupplied
-                                                => {
-                                                    let mut response = response.status(400);
-                                                    response.body(Body::empty())
-                                                },
-                                                GetUserByNameResponse::UserNotFound
-                                                => {
-                                                    let mut response = response.status(404);
-                                                    response.body(Body::empty())
-                                                },
-                                            },
-                                            Err(_) => {
-                                                // Application code returned an error. This should not happen, as the implementation should
-                                                // return a valid response.
-                                                response.status(500).body(Body::empty())
-                                            },
-                                        };
-
-                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
+    resp.map_err(|e| {
+        error!(error = ?e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
 }
-
 
 /// LoginUser - GET /v2/user/login
 #[tracing::instrument(skip_all)]
 async fn login_user<I, A>(
-  method: Method,
-  host: Host,
-  cookies: CookieJar,
-  Query(query_params): Query<models::LoginUserQueryParams>,
- State(api_impl): State<I>,
+    method: Method,
+    host: Host,
+    cookies: CookieJar,
+    Query(query_params): Query<models::LoginUserQueryParams>,
+    State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
-where 
+where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
@@ -1221,173 +1149,158 @@ where
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
             .body(Body::from(e.to_string()))
-            .map_err(|_| {
-                StatusCode::BAD_REQUEST
-            });
+            .map_err(|_| StatusCode::BAD_REQUEST);
     }
 
+    let result = api_impl
+        .as_ref()
+        .login_user(method, host, cookies, query_params)
+        .await;
 
-  let result = api_impl.as_ref().login_user(
-      method,
-      host,
-      cookies,
-        query_params,
-  ).await;
+    let mut response = Response::builder();
 
-  let mut response = Response::builder();
-
-  let resp = match result {
-                                            Ok(rsp) => match rsp {
-                                                LoginUserResponse::SuccessfulOperation
-                                                    {
-                                                        body,
-                                                        set_cookie,
-                                                        x_rate_limit,
-                                                        x_expires_after
-                                                    }
-                                                => {
-                                                    if let Some(set_cookie) = set_cookie {
-                                                    let set_cookie = match header::IntoHeaderValue(set_cookie).try_into() {
-                                                        Ok(val) => val,
-                                                        Err(e) => {
-                                                            return Response::builder()
+    let resp = match result {
+        Ok(rsp) => match rsp {
+            LoginUserResponse::SuccessfulOperation {
+                body,
+                set_cookie,
+                x_rate_limit,
+                x_expires_after,
+            } => {
+                if let Some(set_cookie) = set_cookie {
+                    let set_cookie = match header::IntoHeaderValue(set_cookie).try_into() {
+                        Ok(val) => val,
+                        Err(e) => {
+                            return Response::builder()
                                                                     .status(StatusCode::INTERNAL_SERVER_ERROR)
                                                                     .body(Body::from(format!("An internal server error occurred handling set_cookie header - {}", e))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
-                                                        }
-                                                    };
+                        }
+                    };
 
-                                                    
-                                                    {
-                                                      let mut response_headers = response.headers_mut().unwrap();
-                                                      response_headers.insert(
-                                                          HeaderName::from_static("set-cookie"),
-                                                          set_cookie
-                                                      );
-                                                    }
-                                                    }
-                                                    if let Some(x_rate_limit) = x_rate_limit {
-                                                    let x_rate_limit = match header::IntoHeaderValue(x_rate_limit).try_into() {
-                                                        Ok(val) => val,
-                                                        Err(e) => {
-                                                            return Response::builder()
+                    {
+                        let mut response_headers = response.headers_mut().unwrap();
+                        response_headers.insert(HeaderName::from_static("set-cookie"), set_cookie);
+                    }
+                }
+                if let Some(x_rate_limit) = x_rate_limit {
+                    let x_rate_limit = match header::IntoHeaderValue(x_rate_limit).try_into() {
+                        Ok(val) => val,
+                        Err(e) => {
+                            return Response::builder()
                                                                     .status(StatusCode::INTERNAL_SERVER_ERROR)
                                                                     .body(Body::from(format!("An internal server error occurred handling x_rate_limit header - {}", e))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
-                                                        }
-                                                    };
+                        }
+                    };
 
-                                                    
-                                                    {
-                                                      let mut response_headers = response.headers_mut().unwrap();
-                                                      response_headers.insert(
-                                                          HeaderName::from_static("x-rate-limit"),
-                                                          x_rate_limit
-                                                      );
-                                                    }
-                                                    }
-                                                    if let Some(x_expires_after) = x_expires_after {
-                                                    let x_expires_after = match header::IntoHeaderValue(x_expires_after).try_into() {
-                                                        Ok(val) => val,
-                                                        Err(e) => {
-                                                            return Response::builder()
+                    {
+                        let mut response_headers = response.headers_mut().unwrap();
+                        response_headers
+                            .insert(HeaderName::from_static("x-rate-limit"), x_rate_limit);
+                    }
+                }
+                if let Some(x_expires_after) = x_expires_after {
+                    let x_expires_after = match header::IntoHeaderValue(x_expires_after).try_into()
+                    {
+                        Ok(val) => val,
+                        Err(e) => {
+                            return Response::builder()
                                                                     .status(StatusCode::INTERNAL_SERVER_ERROR)
                                                                     .body(Body::from(format!("An internal server error occurred handling x_expires_after header - {}", e))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
-                                                        }
-                                                    };
+                        }
+                    };
 
-                                                    
-                                                    {
-                                                      let mut response_headers = response.headers_mut().unwrap();
-                                                      response_headers.insert(
-                                                          HeaderName::from_static("x-expires-after"),
-                                                          x_expires_after
-                                                      );
-                                                    }
-                                                    }
-                                                    let mut response = response.status(200);
-                                                  {
-                                                    let mut response_headers = response.headers_mut().unwrap();
-                                                    response_headers.insert(
-                                                        CONTENT_TYPE,
-                                                        HeaderValue::from_str("application/xml").map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?);
-                                                  }
-                                                    let body_content = body;
-                                                    response.body(Body::from(body_content))
-                                                },
-                                                LoginUserResponse::InvalidUsername
-                                                => {
-                                                    let mut response = response.status(400);
-                                                    response.body(Body::empty())
-                                                },
-                                            },
-                                            Err(_) => {
-                                                // Application code returned an error. This should not happen, as the implementation should
-                                                // return a valid response.
-                                                response.status(500).body(Body::empty())
-                                            },
-                                        };
+                    {
+                        let mut response_headers = response.headers_mut().unwrap();
+                        response_headers
+                            .insert(HeaderName::from_static("x-expires-after"), x_expires_after);
+                    }
+                }
+                let mut response = response.status(200);
+                {
+                    let mut response_headers = response.headers_mut().unwrap();
+                    response_headers.insert(
+                        CONTENT_TYPE,
+                        HeaderValue::from_str("application/xml").map_err(|e| {
+                            error!(error = ?e);
+                            StatusCode::INTERNAL_SERVER_ERROR
+                        })?,
+                    );
+                }
+                let body_content = body;
+                response.body(Body::from(body_content))
+            }
+            LoginUserResponse::InvalidUsername => {
+                let mut response = response.status(400);
+                response.body(Body::empty())
+            }
+        },
+        Err(_) => {
+            // Application code returned an error. This should not happen, as the implementation should
+            // return a valid response.
+            response.status(500).body(Body::empty())
+        }
+    };
 
-                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
+    resp.map_err(|e| {
+        error!(error = ?e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
 }
-
 
 /// LogoutUser - GET /v2/user/logout
 #[tracing::instrument(skip_all)]
 async fn logout_user<I, A>(
-  method: Method,
-  host: Host,
-  cookies: CookieJar,
- State(api_impl): State<I>,
+    method: Method,
+    host: Host,
+    cookies: CookieJar,
+    State(api_impl): State<I>,
 ) -> Result<Response, StatusCode>
-where 
+where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    let result = api_impl.as_ref().logout_user(method, host, cookies).await;
 
-  let result = api_impl.as_ref().logout_user(
-      method,
-      host,
-      cookies,
-  ).await;
+    let mut response = Response::builder();
 
-  let mut response = Response::builder();
+    let resp = match result {
+        Ok(rsp) => match rsp {
+            LogoutUserResponse::SuccessfulOperation => {
+                let mut response = response.status(0);
+                response.body(Body::empty())
+            }
+        },
+        Err(_) => {
+            // Application code returned an error. This should not happen, as the implementation should
+            // return a valid response.
+            response.status(500).body(Body::empty())
+        }
+    };
 
-  let resp = match result {
-                                            Ok(rsp) => match rsp {
-                                                LogoutUserResponse::SuccessfulOperation
-                                                => {
-                                                    let mut response = response.status(0);
-                                                    response.body(Body::empty())
-                                                },
-                                            },
-                                            Err(_) => {
-                                                // Application code returned an error. This should not happen, as the implementation should
-                                                // return a valid response.
-                                                response.status(500).body(Body::empty())
-                                            },
-                                        };
-
-                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
+    resp.map_err(|e| {
+        error!(error = ?e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
 }
 
-    #[derive(validator::Validate)]
-    #[allow(dead_code)]    
-    struct UpdateUserBodyValidator<'a> {
-            #[validate]
-          body: &'a models::User,
-    }
-
+#[derive(validator::Validate)]
+#[allow(dead_code)]
+struct UpdateUserBodyValidator<'a> {
+    #[validate]
+    body: &'a models::User,
+}
 
 /// UpdateUser - PUT /v2/user/{username}
 #[tracing::instrument(skip_all)]
 async fn update_user<I, A>(
-  method: Method,
-  host: Host,
-  cookies: CookieJar,
-  Path(path_params): Path<models::UpdateUserPathParams>,
- State(api_impl): State<I>,
-          Json(body): Json<models::User>,
+    method: Method,
+    host: Host,
+    cookies: CookieJar,
+    Path(path_params): Path<models::UpdateUserPathParams>,
+    State(api_impl): State<I>,
+    Json(body): Json<models::User>,
 ) -> Result<Response, StatusCode>
-where 
+where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
@@ -1396,53 +1309,46 @@ where
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
             .body(Body::from(e.to_string()))
-            .map_err(|_| {
-                StatusCode::BAD_REQUEST
-            });
+            .map_err(|_| StatusCode::BAD_REQUEST);
     }
 
-        {
-            let b = UpdateUserBodyValidator { body: &body };
-              if let Err(e) = b.validate() {
-                return Response::builder()
-                    .status(StatusCode::BAD_REQUEST)
-                    .body(Body::from(e.to_string()))
-                    .map_err(|_| {
-                        StatusCode::BAD_REQUEST
-                    });
-              }
+    {
+        let b = UpdateUserBodyValidator { body: &body };
+        if let Err(e) = b.validate() {
+            return Response::builder()
+                .status(StatusCode::BAD_REQUEST)
+                .body(Body::from(e.to_string()))
+                .map_err(|_| StatusCode::BAD_REQUEST);
         }
+    }
 
-  let result = api_impl.as_ref().update_user(
-      method,
-      host,
-      cookies,
-        path_params,
-            body,
-  ).await;
+    let result = api_impl
+        .as_ref()
+        .update_user(method, host, cookies, path_params, body)
+        .await;
 
-  let mut response = Response::builder();
+    let mut response = Response::builder();
 
-  let resp = match result {
-                                            Ok(rsp) => match rsp {
-                                                UpdateUserResponse::InvalidUserSupplied
-                                                => {
-                                                    let mut response = response.status(400);
-                                                    response.body(Body::empty())
-                                                },
-                                                UpdateUserResponse::UserNotFound
-                                                => {
-                                                    let mut response = response.status(404);
-                                                    response.body(Body::empty())
-                                                },
-                                            },
-                                            Err(_) => {
-                                                // Application code returned an error. This should not happen, as the implementation should
-                                                // return a valid response.
-                                                response.status(500).body(Body::empty())
-                                            },
-                                        };
+    let resp = match result {
+        Ok(rsp) => match rsp {
+            UpdateUserResponse::InvalidUserSupplied => {
+                let mut response = response.status(400);
+                response.body(Body::empty())
+            }
+            UpdateUserResponse::UserNotFound => {
+                let mut response = response.status(404);
+                response.body(Body::empty())
+            }
+        },
+        Err(_) => {
+            // Application code returned an error. This should not happen, as the implementation should
+            // return a valid response.
+            response.status(500).body(Body::empty())
+        }
+    };
 
-                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
+    resp.map_err(|e| {
+        error!(error = ?e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
 }
-

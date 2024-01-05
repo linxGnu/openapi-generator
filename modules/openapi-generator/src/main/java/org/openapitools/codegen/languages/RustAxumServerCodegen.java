@@ -1091,7 +1091,7 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
         // only process files with .rs extension
         if ("rs".equals(FilenameUtils.getExtension(file.toString()))) {
             try {
-                Process p = Runtime.getRuntime().exec(new String[]{commandPrefix, file.toString()});
+                Process p = Runtime.getRuntime().exec(new String[]{commandPrefix, "--edition", "2021", file.toString()});
                 int exitValue = p.waitFor();
                 if (exitValue != 0) {
                     LOGGER.error("Error running the command ({} {}). Exit code: {}", commandPrefix, file, exitValue);
