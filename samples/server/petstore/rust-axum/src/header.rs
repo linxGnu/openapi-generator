@@ -119,7 +119,8 @@ impl TryFrom<IntoHeaderValue<String>> for HeaderValue {
     }
 }
 
-// bool
+// Bool
+
 impl TryFrom<HeaderValue> for IntoHeaderValue<bool> {
     type Error = String;
 
