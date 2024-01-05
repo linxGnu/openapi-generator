@@ -36,7 +36,7 @@ The generated library has a few optional features that can be activated through 
 
 See https://doc.rust-lang.org/cargo/reference/manifest.html#the-features-section for how to use features in your `Cargo.toml`.
 
-## Usage
+### Example
 
 ```rust
 struct ServerImpl {
@@ -46,21 +46,21 @@ struct ServerImpl {
 #[allow(unused_variables)]
 #[async_trait]
 impl {{{packageName}}}::Api for ServerImpl {
-  // Your implementation goes here
+  // API implementation goes here
 }
 
 pub async fn start_server(addr: &str) {
     // initialize tracing
     tracing_subscriber::fmt::init();
 
-    // Create a `TcpListener` using tokio.
-    let listener = TcpListener::bind(addr).await.unwrap();
+    // Init Axum router
+    let app = {{{packageName}}}::server::new(Arc::new(ServerImpl));
 
-    let api_impl = Arc::new(ServerImpl);
-
-    let app = apis::server::new(api_impl);
+    // Add layers to the router
+    let app = app.layer(...);
 
     // Run the server with graceful shutdown
+    let listener = TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app)
         .with_graceful_shutdown(shutdown_signal())
         .await
