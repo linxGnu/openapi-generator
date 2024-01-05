@@ -1,4 +1,5 @@
 Cargo.toml
+README.md
 src/header.rs
 src/lib.rs
 src/models.rs

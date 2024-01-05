@@ -192,6 +192,8 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
         supportingFiles.add(new SupportingFile("types.mustache", "src", "types.rs"));
         supportingFiles.add(new SupportingFile("header.mustache", "src", "header.rs"));
         supportingFiles.add(new SupportingFile("server-mod.mustache", "src/server", "mod.rs"));
+        supportingFiles.add(new SupportingFile("README.mustache", "", "README.md")
+                .doNotOverwrite());
     }
 
     public CodegenType getTag() {
