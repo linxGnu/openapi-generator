@@ -14,13 +14,12 @@ require 'date'
 require 'time'
 
 module Petstore
-  class OuterEnum
-    PLACED = "placed".freeze
-    APPROVED = "approved".freeze
-    SHIPPED = "delivered".freeze
+  class Cow
+    BLACK_AND_WHITE_COW = "BlackAndWhiteCow".freeze
+    BROWN_COW = "BrownCow".freeze
 
     def self.all_vars
-      @all_vars ||= [PLACED, APPROVED, SHIPPED].freeze
+      @all_vars ||= [BLACK_AND_WHITE_COW, BROWN_COW].freeze
     end
 
     # Builds the enum from string
@@ -34,8 +33,8 @@ module Petstore
     # @param [String] The enum value in the form of the string
     # @return [String] The enum value
     def build_from_hash(value)
-      return value if OuterEnum.all_vars.include?(value)
-      raise "Invalid ENUM value #{value} for class #OuterEnum"
+      return value if Cow.all_vars.include?(value)
+      raise "Invalid ENUM value #{value} for class #Cow"
     end
   end
 end
