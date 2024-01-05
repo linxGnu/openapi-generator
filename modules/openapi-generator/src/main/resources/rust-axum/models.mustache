@@ -15,12 +15,89 @@ use crate::{models, types::*};
       
 {{#vendorExtensions}}
   {{#headerParams.size}}
-            #[derive(Debug, Clone)]
-            pub struct {{{operationIdCamelCase}}}HeaderParams {
-                {{#headerParams}}
-                pub {{{paramName}}}: {{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}},
-                {{/headerParams}} 
-            }
+    #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
+    #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
+    pub struct {{{operationIdCamelCase}}}HeaderParams {
+        {{#headerParams}}
+            {{#hasValidation}}
+            #[validate(
+                {{#maxLength}}
+                    {{#minLength}}
+                    length(min = {{minLength}}, max = {{maxLength}}),
+                    {{/minLength}}
+                    {{^minLength}}
+                    length(max = {{maxLength}}),
+                    {{/minLength}}
+                {{/maxLength}}
+                {{^maxLength}}
+                    {{#minLength}}
+                    length(min = {{minLength}}),
+                    {{/minLength}}
+                {{/maxLength}}
+                {{#pattern}}
+                    {{^isByteArray}}
+                    regex = "RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}HeaderParams_{{{paramName}}}{{/lambda.uppercase}}",
+                    {{/isByteArray}}
+                    {{#isByteArray}}
+                    custom ="validate_byte_{{#lambda.lowercase}}{{{operationIdCamelCase}}}HeaderParams_{{{paramName}}}{{/lambda.lowercase}}"
+                    {{/isByteArray}}
+                {{/pattern}}
+                {{#maximum}}
+                    {{#minimum}}
+                    range(min = {{minimum}}, max = {{maximum}}),
+                    {{/minimum}}
+                    {{^minimum}}
+                    range(max = {{maximum}}),
+                    {{/minimum}}
+                {{/maximum}}
+                {{#minimum}}
+                    {{^maximum}}
+                    range(min = {{minimum}}),
+                    {{/maximum}}
+                {{/minimum}}
+                {{#maxItems}}
+                    {{#minItems}}
+                    length(min = {{minItems}}, max = {{maxItems}}),
+                    {{/minItems}}
+                    {{^minItems}}
+                    length(max = {{maxItems}}),
+                    {{/minItems}}
+                {{/maxItems}}
+                {{^maxItems}}
+                    {{#minItems}}
+                    length(min = {{minItems}}),
+                    {{/minItems}}
+                {{/maxItems}}
+                )]
+            {{/hasValidation}}
+        pub {{{paramName}}}: {{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}},
+        {{/headerParams}} 
+    }
+
+    {{#headerParams}}
+    {{#hasValidation}}
+    {{#pattern}}
+    {{^isByteArray}}
+    lazy_static::lazy_static! {
+        static ref RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}HeaderParams_{{{paramName}}}{{/lambda.uppercase}}: regex::Regex = regex::Regex::new(r"{{ pattern }}").unwrap();
+    }
+    {{/isByteArray}}
+    {{#isByteArray}}
+    lazy_static::lazy_static! {
+        static ref RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}HeaderParams_{{{paramName}}}{{/lambda.uppercase}}: regex::bytes::Regex = regex::bytes::Regex::new(r"{{ pattern }}").unwrap();
+    }
+    fn validate_byte_{{#lambda.lowercase}}{{{operationIdCamelCase}}}HeaderParams_{{{paramName}}}{{/lambda.lowercase}}(
+        b: &ByteArray
+    ) -> Result<(), validator::ValidationError> {
+        if !RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}HeaderParams_{{{paramName}}}{{/lambda.uppercase}}.is_match(b) {
+            return Err(validator::ValidationError::new("Character not allowed"));
+        }
+        Ok(())
+    }
+    {{/isByteArray}}
+    {{/pattern}}
+    {{/hasValidation}}
+    {{/headerParams}} 
             
   {{/headerParams.size}}
   {{#x-has-path-params}}

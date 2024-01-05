@@ -201,6 +201,16 @@ where
        }
   };
 
+  // header params validation 
+  if let Err(e) = header_params.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+  } 
+
     // path params validation
     if let Err(e) = path_params.validate() {
         return Response::builder()

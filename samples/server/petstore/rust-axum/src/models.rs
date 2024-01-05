@@ -9,10 +9,12 @@ use crate::{models, types::*};
 
       
       
-            #[derive(Debug, Clone)]
-            pub struct DeletePetHeaderParams {
-                pub api_key: Option<String>,
-            }
+    #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
+    #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
+    pub struct DeletePetHeaderParams {
+        pub api_key: Option<String>,
+    }
+
             
     #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
     #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))] 
