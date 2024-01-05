@@ -46,11 +46,16 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
     private static final String bytesType = "ByteArray";
     private static final String octetMimeType = "application/octet-stream";
     private static final String plainTextMimeType = "text/plain";
+
+    private static final String xmlMimeType = "application/xml";
+    private static final String textXmlMimeType = "text/xml";
+
     private static final String jsonMimeType = "application/json";
     // RFC 7386 support
     private static final String mergePatchJsonMimeType = "application/merge-patch+json";
     // RFC 7807 Support
     private static final String problemJsonMimeType = "application/problem+json";
+    private static final String problemXmlMimeType = "application/problem+xml";
 
     //    private static final String problemXmlMimeType = "application/problem+xml";
 
@@ -307,6 +312,12 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
         return "\"" + super.toEnumValue(value, datatype) + "\"";
     }
 
+    private boolean isMimetypeXml(String mimetype) {
+        return mimetype.toLowerCase(Locale.ROOT).startsWith(xmlMimeType) ||
+                mimetype.toLowerCase(Locale.ROOT).startsWith(problemXmlMimeType) ||
+                mimetype.toLowerCase(Locale.ROOT).startsWith(textXmlMimeType);
+    }
+
     private boolean isMimetypeJson(String mimetype) {
         return mimetype.toLowerCase(Locale.ROOT).startsWith(jsonMimeType) ||
                 mimetype.toLowerCase(Locale.ROOT).startsWith(mergePatchJsonMimeType) ||
@@ -514,6 +525,11 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
                     producesPlainText = isMimetypePlain(firstProduces);
 
                     outputMime = firstProduces;
+                }
+
+                // As we don't support XML, fallback to octet as unknown file type
+                if (isMimetypeXml(outputMime)) {
+                    outputMime = octetMimeType;
                 }
 
                 rsp.vendorExtensions.put("x-mime-type", outputMime);
