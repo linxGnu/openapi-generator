@@ -638,10 +638,6 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
             }
         }
 
-        if (consumesJson) {
-            op.vendorExtensions.put("usesJson", true);
-        }
-
         String underscoredOperationId = underscore(op.operationId).toUpperCase(Locale.ROOT);
         if (op.bodyParam != null) {
             // Default to consuming json

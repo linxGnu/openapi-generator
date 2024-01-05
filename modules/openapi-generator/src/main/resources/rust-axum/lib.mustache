@@ -54,16 +54,21 @@ pub trait Api {
                   query_params: models::{{{operationIdCamelCase}}}QueryParams,
                 {{/queryParams.size}}
                 {{^x-consumes-multipart}}
-                  {{#usesJson}}
-                    {{#bodyParam}}
-                      body: {{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}},
-                    {{/bodyParam}}
-                  {{/usesJson}}
-                  {{^usesJson}}
-                    {{#bodyParam}}
-                      body: Bytes,
-                    {{/bodyParam}}
-                  {{/usesJson}}
+                  {{#bodyParam}}
+                  {{#vendorExtensions}}
+                    {{#x-consumes-json}}
+                        body: {{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}},
+                    {{/x-consumes-json}}
+                    {{^x-consumes-json}}
+                      {{#isString}}
+                        body: String,
+                      {{/isString}}
+                      {{^isString}}
+                        body: Bytes,
+                      {{/isString}}
+                    {{/x-consumes-json}}
+                  {{/vendorExtensions}}
+                  {{/bodyParam}}
                 {{/x-consumes-multipart}}
                 {{#x-consumes-multipart}}
                     body: Multipart,

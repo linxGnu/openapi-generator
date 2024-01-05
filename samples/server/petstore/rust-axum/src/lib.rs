@@ -248,7 +248,7 @@ pub trait Api {
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                      body: models::Pet,
+                        body: models::Pet,
                 ) -> Result<AddPetResponse, String>;
 
 
@@ -309,7 +309,7 @@ pub trait Api {
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                      body: models::Pet,
+                        body: models::Pet,
                 ) -> Result<UpdatePetResponse, String>;
 
 
@@ -381,7 +381,7 @@ pub trait Api {
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                      body: models::Order,
+                        body: models::Order,
                 ) -> Result<PlaceOrderResponse, String>;
 
 
@@ -393,7 +393,7 @@ pub trait Api {
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                      body: models::User,
+                        body: models::User,
                 ) -> Result<CreateUserResponse, String>;
 
 
@@ -405,7 +405,7 @@ pub trait Api {
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                      body: Vec<models::User>,
+                        body: Vec<models::User>,
                 ) -> Result<CreateUsersWithArrayInputResponse, String>;
 
 
@@ -417,7 +417,7 @@ pub trait Api {
                 method: Method,
                 host: Host,
                 cookies: CookieJar,
-                      body: Vec<models::User>,
+                        body: Vec<models::User>,
                 ) -> Result<CreateUsersWithListInputResponse, String>;
 
 
@@ -477,7 +477,7 @@ pub trait Api {
                 host: Host,
                 cookies: CookieJar,
                   path_params: models::UpdateUserPathParams,
-                      body: models::User,
+                        body: models::User,
                 ) -> Result<UpdateUserResponse, String>;
 
 }
