@@ -59,8 +59,6 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
     private static final String problemJsonMimeType = "application/problem+json";
     private static final String problemXmlMimeType = "application/problem+xml";
 
-    //    private static final String problemXmlMimeType = "application/problem+xml";
-
     private final Logger LOGGER = LoggerFactory.getLogger(RustAxumServerCodegen.class);
     // Grouping (Method, Operation) by Path.
     private final Map<String, ArrayList<MethodOperation>> pathMethodOpMap = new HashMap<>();
@@ -77,7 +75,8 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
 
         modifyFeatureSet(features -> features
                 .wireFormatFeatures(EnumSet.of(
-                        WireFormatFeature.JSON
+                        WireFormatFeature.JSON,
+                        WireFormatFeature.Custom
                 ))
                 .excludeGlobalFeatures(
                         GlobalFeature.Info,
