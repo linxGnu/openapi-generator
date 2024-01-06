@@ -61,14 +61,20 @@
           {{/hasValidation}}
           body: &'a {{{dataType}}},
       {{/x-consumes-json}}
-      {{^x-consumes-json}}
+      {{#x-consumes-form-urlencoded}}
+          {{^hasValidation}}
+            #[validate]
+          {{/hasValidation}}
+          body: &'a {{{dataType}}},
+      {{/x-consumes-form-urlencoded}}
+      {{#x-consumes-plain-text}}
         {{#isString}}
           body: &'a String,
         {{/isString}}
         {{^isString}}
           body: &'a [u8],
         {{/isString}}
-      {{/x-consumes-json}}
+      {{/x-consumes-plain-text}}
     }
 
     {{#hasValidation}}
@@ -122,14 +128,17 @@ async fn {{#vendorExtensions}}{{{x-operation-id}}}{{/vendorExtensions}}<I, A>(
       {{#x-consumes-json}}
           Json(body): Json<{{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}}>,
       {{/x-consumes-json}}
-      {{^x-consumes-json}}
+      {{#x-consumes-form-urlencoded}}
+          Form(body): Form<{{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}}>,
+      {{/x-consumes-form-urlencoded}}
+      {{#x-consumes-plain-text}}
         {{#isString}}
           body: String,
         {{/isString}}
         {{^isString}}
           body: Bytes,
         {{/isString}}
-      {{/x-consumes-json}}
+      {{/x-consumes-plain-text}}
     {{/vendorExtensions}}
   {{/bodyParam}}
 {{/x-consumes-multipart}}
@@ -229,7 +238,7 @@ where
  {{^x-consumes-multipart}}
   {{#bodyParam}}
   {{#vendorExtensions}}
-      {{#x-consumes-json}}
+      {{^x-consumes-plain-text}}
         {
           {{#required}}
             let b = {{{operationIdCamelCase}}}BodyValidator { body: &body };
@@ -250,8 +259,8 @@ where
             }
           {{/required}}
         }
-      {{/x-consumes-json}}
-      {{^x-consumes-json}}
+      {{/x-consumes-plain-text}}
+      {{#x-consumes-plain-text}}
         {{#hasValidation}} 
           {
             let b = {{{operationIdCamelCase}}}BodyValidator { body: &body }; 
@@ -265,7 +274,7 @@ where
             } 
           }
         {{/hasValidation}}
-      {{/x-consumes-json}}
+      {{/x-consumes-plain-text}}
  {{/vendorExtensions}}
  {{/bodyParam}}
 {{/x-consumes-multipart}}
@@ -372,8 +381,11 @@ where
 {{#dataType}}
 {{#vendorExtensions}}
 {{#x-produces-json}}
-                                                    let body_content = serde_json::to_string(&body).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?;
+                                                    let body_content = Json(body);
 {{/x-produces-json}}
+{{#x-produces-form-urlencoded}}
+                                                    let body_content = Form(body);
+{{/x-produces-form-urlencoded}}
 {{#x-produces-bytes}}
                                                     let body_content = body.0;
 {{/x-produces-bytes}}

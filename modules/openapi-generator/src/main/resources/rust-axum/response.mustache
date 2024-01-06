@@ -21,8 +21,13 @@ pub enum {{{operationId}}}Response {
           {{#x-produces-plain-text}}
     (String)
           {{/x-produces-plain-text}}
+          {{#x-produces-bytes}}
+    (ByteArray),
+          {{/x-produces-bytes}}
           {{^x-produces-plain-text}}
+          {{^x-produces-bytes}}
     ({{{dataType}}})
+          {{/x-produces-bytes}}
           {{/x-produces-plain-text}}
         {{/vendorExtensions}}
       {{/hasHeaders}}
@@ -31,11 +36,16 @@ pub enum {{{operationId}}}Response {
         {{#vendorExtensions}}
           {{#x-produces-plain-text}}
         body: String,
-            {{/x-produces-plain-text}}
-            {{^x-produces-plain-text}}
+          {{/x-produces-plain-text}}
+          {{#x-produces-bytes}}
+        body: ByteArray,
+          {{/x-produces-bytes}}
+          {{^x-produces-plain-text}}
+          {{^x-produces-bytes}}
         body: {{{dataType}}},
-            {{/x-produces-plain-text}}
-          {{/vendorExtensions}}
+          {{/x-produces-bytes}}
+          {{/x-produces-plain-text}}
+        {{/vendorExtensions}}
       {{/hasHeaders}}
     {{/dataType}}
     {{#headers}}
