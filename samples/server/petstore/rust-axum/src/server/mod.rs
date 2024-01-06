@@ -586,10 +586,14 @@ where
                     );
                 }
 
-                let body_content = serde_json::to_string(&body).map_err(|e| {
-                    error!(error = ?e);
-                    StatusCode::INTERNAL_SERVER_ERROR
-                })?;
+                let body_content = tokio::task::spawn_blocking(move || {
+                    serde_json::to_string(&body).map_err(|e| {
+                        error!(error = ?e);
+                        StatusCode::INTERNAL_SERVER_ERROR
+                    })
+                })
+                .await
+                .unwrap()?;
                 response.body(Body::from(body_content))
             }
         },
@@ -689,10 +693,14 @@ where
                     );
                 }
 
-                let body_content = serde_json::to_string(&body).map_err(|e| {
-                    error!(error = ?e);
-                    StatusCode::INTERNAL_SERVER_ERROR
-                })?;
+                let body_content = tokio::task::spawn_blocking(move || {
+                    serde_json::to_string(&body).map_err(|e| {
+                        error!(error = ?e);
+                        StatusCode::INTERNAL_SERVER_ERROR
+                    })
+                })
+                .await
+                .unwrap()?;
                 response.body(Body::from(body_content))
             }
         },

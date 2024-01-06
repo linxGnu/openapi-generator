@@ -374,16 +374,24 @@ where
 {{#dataType}}
 {{#vendorExtensions}}
 {{#x-produces-json}}
-                                                  let body_content = serde_json::to_string(&body).map_err(|e| {
+                                                  let body_content =  tokio::task::spawn_blocking(move || {
+                                                                        serde_json::to_string(&body).map_err(|e| {
                                                                           error!(error = ?e);
                                                                           StatusCode::INTERNAL_SERVER_ERROR
-                                                                        })?;
+                                                                        })
+                                                                      })
+                                                                      .await
+                                                                      .unwrap()?;
 {{/x-produces-json}}
 {{#x-produces-form-urlencoded}}
-                                                  let body_content = serde_urlencoded::to_string(body).map_err(|e| {
-                                                                                                            error!(error = ?e);
-                                                                                                            StatusCode::INTERNAL_SERVER_ERROR
-                                                                                                          })?;
+                                                  let body_content =  tokio::task::spawn_blocking(move || {
+                                                                        serde_urlencoded::to_string(body).map_err(|e| {
+                                                                          error!(error = ?e);
+                                                                          StatusCode::INTERNAL_SERVER_ERROR
+                                                                        })
+                                                                      })
+                                                                      .await
+                                                                      .unwrap()?;
 {{/x-produces-form-urlencoded}}
 {{#x-produces-bytes}}
                                                   let body_content = body.0;
