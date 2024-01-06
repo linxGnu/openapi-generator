@@ -541,6 +541,17 @@ impl std::str::FromStr for {{{classname}}} {
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct {{{classname}}}(Box<serde_json::value::RawValue>);
 
+{{#anyOf}}
+
+impl TryFrom<&{{{classname}}}> for {{{.}}} {
+    type Error = serde_json::Error;
+
+    fn try_from(v: &{{{classname}}}) -> Result<Self, Self::Error> {
+        serde_json::from_str(v.0.get())
+    }
+}
+{{/anyOf}}
+
 /// Converts Query Parameters representation (style=form, explode=false) to a {{{classname}}} value
 /// as specified in https://swagger.io/docs/specification/serialization/
 /// Should be implemented in a serde deserializer
@@ -566,6 +577,16 @@ impl PartialEq for {{{classname}}} {
 {{/oneOf}}
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct {{{classname}}}(Box<serde_json::value::RawValue>);
+{{#oneOf}}
+
+impl TryFrom<&{{{classname}}}> for {{{.}}} {
+    type Error = serde_json::Error;
+
+    fn try_from(v: &{{{classname}}}) -> Result<Self, Self::Error> {
+        serde_json::from_str(v.0.get())
+    }
+}
+{{/oneOf}}
 
 /// Converts Query Parameters representation (style=form, explode=false) to a {{{classname}}} value
 /// as specified in https://swagger.io/docs/specification/serialization/

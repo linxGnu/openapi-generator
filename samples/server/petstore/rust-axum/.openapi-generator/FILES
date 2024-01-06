@@ -1,3 +1,4 @@
+.gitignore
 Cargo.toml
 README.md
 src/header.rs

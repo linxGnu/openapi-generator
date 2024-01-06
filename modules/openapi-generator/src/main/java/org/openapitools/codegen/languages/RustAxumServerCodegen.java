@@ -199,6 +199,7 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
          * it will be processed by the template engine.  Otherwise, it will be copied
          */
         supportingFiles.add(new SupportingFile("Cargo.mustache", "", "Cargo.toml"));
+        supportingFiles.add(new SupportingFile("gitignore", "", ".gitignore"));
         supportingFiles.add(new SupportingFile("lib.mustache", "src", "lib.rs"));
         supportingFiles.add(new SupportingFile("models.mustache", "src", "models.rs"));
         supportingFiles.add(new SupportingFile("types.mustache", "src", "types.rs"));
