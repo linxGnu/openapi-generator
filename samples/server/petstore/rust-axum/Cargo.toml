@@ -34,6 +34,7 @@ lazy_static = "1"
 regex = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["raw_value"] }
+serde_urlencoded = "0.7"
 tracing = { version = "0.1", features = ["attributes"] }
 uuid = { version = "1" }
 validator = { version = "0.16", features = ["derive"] }

@@ -55,18 +55,12 @@
               {{/maxItems}}
               )]
       {{/hasValidation}}
-      {{#x-consumes-json}}
+      {{^x-consumes-plain-text}}
           {{^hasValidation}}
             #[validate]
           {{/hasValidation}}
           body: &'a {{{dataType}}},
-      {{/x-consumes-json}}
-      {{#x-consumes-form-urlencoded}}
-          {{^hasValidation}}
-            #[validate]
-          {{/hasValidation}}
-          body: &'a {{{dataType}}},
-      {{/x-consumes-form-urlencoded}}
+      {{/x-consumes-plain-text}}
       {{#x-consumes-plain-text}}
         {{#isString}}
           body: &'a String,
@@ -239,9 +233,9 @@ where
   {{#bodyParam}}
   {{#vendorExtensions}}
       {{^x-consumes-plain-text}}
-        {
           {{#required}}
-            let b = {{{operationIdCamelCase}}}BodyValidator { body: &body };
+            {
+              let b = {{{operationIdCamelCase}}}BodyValidator { body: &body };
           {{/required}}
           {{^required}}
             if let Some(body) = &body {
@@ -255,10 +249,7 @@ where
                         StatusCode::BAD_REQUEST
                     });
               }
-          {{^required}}
             }
-          {{/required}}
-        }
       {{/x-consumes-plain-text}}
       {{#x-consumes-plain-text}}
         {{#hasValidation}} 
@@ -363,7 +354,8 @@ where
                                                     }
   {{/required}}
 {{/headers}}
-                                                    let mut response = response.status({{{code}}});
+
+                                                  let mut response = response.status({{{code}}});
 {{#produces}}
 {{#-first}}
 {{#dataType}}
@@ -374,6 +366,7 @@ where
                                                         CONTENT_TYPE,
                                                         HeaderValue::from_str("{{{x-mime-type}}}").map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?);
                                                   }
+
 {{/vendorExtensions}}
 {{/dataType}}
 {{/-first}}
@@ -381,22 +374,28 @@ where
 {{#dataType}}
 {{#vendorExtensions}}
 {{#x-produces-json}}
-                                                    let body_content = Json(body);
+                                                  let body_content = serde_json::to_string(&body).map_err(|e| {
+                                                                          error!(error = ?e);
+                                                                          StatusCode::INTERNAL_SERVER_ERROR
+                                                                        })?;
 {{/x-produces-json}}
 {{#x-produces-form-urlencoded}}
-                                                    let body_content = Form(body);
+                                                  let body_content = serde_urlencoded::to_string(body).map_err(|e| {
+                                                                                                            error!(error = ?e);
+                                                                                                            StatusCode::INTERNAL_SERVER_ERROR
+                                                                                                          })?;
 {{/x-produces-form-urlencoded}}
 {{#x-produces-bytes}}
-                                                    let body_content = body.0;
+                                                  let body_content = body.0;
 {{/x-produces-bytes}}
 {{#x-produces-plain-text}}
-                                                    let body_content = body;
+                                                  let body_content = body;
 {{/x-produces-plain-text}}
 {{/vendorExtensions}}
-                                                    response.body(Body::from(body_content))
+                                                  response.body(Body::from(body_content))
 {{/dataType}}
 {{^dataType}}
-                                                    response.body(Body::empty())
+                                                  response.body(Body::empty())
 {{/dataType}}
                                                 },
 {{/responses}}

@@ -113,6 +113,7 @@ where
                         })?,
                     );
                 }
+
                 let body_content = body;
                 response.body(Body::from(body_content))
             }
@@ -258,6 +259,7 @@ where
                         })?,
                     );
                 }
+
                 let body_content = body;
                 response.body(Body::from(body_content))
             }
@@ -321,6 +323,7 @@ where
                         })?,
                     );
                 }
+
                 let body_content = body;
                 response.body(Body::from(body_content))
             }
@@ -384,6 +387,7 @@ where
                         })?,
                     );
                 }
+
                 let body_content = body;
                 response.body(Body::from(body_content))
             }
@@ -460,6 +464,7 @@ where
                         })?,
                     );
                 }
+
                 let body_content = body;
                 response.body(Body::from(body_content))
             }
@@ -580,6 +585,7 @@ where
                         })?,
                     );
                 }
+
                 let body_content = serde_json::to_string(&body).map_err(|e| {
                     error!(error = ?e);
                     StatusCode::INTERNAL_SERVER_ERROR
@@ -682,6 +688,7 @@ where
                         })?,
                     );
                 }
+
                 let body_content = serde_json::to_string(&body).map_err(|e| {
                     error!(error = ?e);
                     StatusCode::INTERNAL_SERVER_ERROR
@@ -744,6 +751,7 @@ where
                         })?,
                     );
                 }
+
                 let body_content = body;
                 response.body(Body::from(body_content))
             }
@@ -820,6 +828,7 @@ where
                         })?,
                     );
                 }
+
                 let body_content = body;
                 response.body(Body::from(body_content))
             }
@@ -1106,6 +1115,7 @@ where
                         })?,
                     );
                 }
+
                 let body_content = body;
                 response.body(Body::from(body_content))
             }
@@ -1215,6 +1225,7 @@ where
                             .insert(HeaderName::from_static("x-expires-after"), x_expires_after);
                     }
                 }
+
                 let mut response = response.status(200);
                 {
                     let mut response_headers = response.headers_mut().unwrap();
@@ -1226,6 +1237,7 @@ where
                         })?,
                     );
                 }
+
                 let body_content = body;
                 response.body(Body::from(body_content))
             }
