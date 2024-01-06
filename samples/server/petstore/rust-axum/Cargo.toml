@@ -36,8 +36,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["raw_value"] }
 serde_urlencoded = "0.7"
 tokio = { version = "1", default-features = false, features = [
-    "rt",
-    "macros",
+    "signal",
     "rt-multi-thread",
 ] }
 tracing = { version = "0.1", features = ["attributes"] }
@@ -45,5 +44,4 @@ uuid = { version = "1" }
 validator = { version = "0.16", features = ["derive"] }
 
 [dev-dependencies]
-tokio = { version = "1", features = ["full"] }
 tracing-subscriber = "0.3"
