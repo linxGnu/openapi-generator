@@ -182,7 +182,7 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
         cliOptions.clear();
         cliOptions.add(new CliOption(CodegenConstants.PACKAGE_NAME,
                 "Rust crate name (convention: snake_case).")
-                .defaultValue("openapi_client"));
+                .defaultValue("openapi"));
         cliOptions.add(new CliOption(CodegenConstants.PACKAGE_VERSION,
                 "Rust crate version."));
 
@@ -242,7 +242,7 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
             LOGGER.warn("generateAliasAsModel is set to false, which means array/map will be generated as model instead and the resulting code may have issues. Please enable `generateAliasAsModel` to address the issue.");
         }
 
-        setPackageName((String) additionalProperties.getOrDefault(CodegenConstants.PACKAGE_NAME, "openapi_client"));
+        setPackageName((String) additionalProperties.getOrDefault(CodegenConstants.PACKAGE_NAME, "openapi"));
 
         if (additionalProperties.containsKey(CodegenConstants.PACKAGE_VERSION)) {
             setPackageVersion((String) additionalProperties.get(CodegenConstants.PACKAGE_VERSION));
