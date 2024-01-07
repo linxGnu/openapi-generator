@@ -587,7 +587,7 @@ where
                 }
 
                 let body_content = tokio::task::spawn_blocking(move || {
-                    serde_json::to_string(&body).map_err(|e| {
+                    serde_json::to_vec(&body).map_err(|e| {
                         error!(error = ?e);
                         StatusCode::INTERNAL_SERVER_ERROR
                     })
@@ -694,7 +694,7 @@ where
                 }
 
                 let body_content = tokio::task::spawn_blocking(move || {
-                    serde_json::to_string(&body).map_err(|e| {
+                    serde_json::to_vec(&body).map_err(|e| {
                         error!(error = ?e);
                         StatusCode::INTERNAL_SERVER_ERROR
                     })
