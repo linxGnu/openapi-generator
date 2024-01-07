@@ -7,7 +7,7 @@ title: Documentation for the rust-axum Generator
 | Property | Value | Notes |
 | -------- | ----- | ----- |
 | generator name | rust-axum | pass this to the generate command after -g |
-| generator stability | STABLE | |
+| generator stability | BETA | |
 | generator type | SERVER | |
 | generator language | Rust | |
 | generator default templating engine | mustache | |
