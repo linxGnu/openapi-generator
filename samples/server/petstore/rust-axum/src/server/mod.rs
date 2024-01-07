@@ -5,7 +5,7 @@ use axum_extra::extract::{CookieJar, Multipart};
 use bytes::Bytes;
 use http::{header::CONTENT_TYPE, HeaderMap, HeaderName, HeaderValue, Method, StatusCode};
 use tracing::error;
-use validator::Validate;
+use validator::{Validate, ValidationErrors};
 
 use crate::header;
 
@@ -72,6 +72,14 @@ struct AddPetBodyValidator<'a> {
     body: &'a models::Pet,
 }
 
+#[tracing::instrument(skip_all)]
+fn add_pet_validation(body: models::Pet) -> Result<(models::Pet,), ValidationErrors> {
+    let b = AddPetBodyValidator { body: &body };
+    b.validate()?;
+
+    Ok((body,))
+}
+
 /// AddPet - POST /v2/pet
 #[tracing::instrument(skip_all)]
 async fn add_pet<I, A>(
@@ -85,15 +93,17 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    {
-        let b = AddPetBodyValidator { body: &body };
-        if let Err(e) = b.validate() {
-            return Response::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .body(Body::from(e.to_string()))
-                .map_err(|_| StatusCode::BAD_REQUEST);
-        }
-    }
+    #[allow(clippy::redundant_closure)]
+    let validation = tokio::task::spawn_blocking(move || add_pet_validation(body))
+        .await
+        .unwrap();
+
+    let Ok((body,)) = validation else {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(validation.unwrap_err().to_string()))
+            .map_err(|_| StatusCode::BAD_REQUEST);
+    };
 
     let result = api_impl.as_ref().add_pet(method, host, cookies, body).await;
 
@@ -135,6 +145,17 @@ where
     })
 }
 
+#[tracing::instrument(skip_all)]
+fn delete_pet_validation(
+    header_params: models::DeletePetHeaderParams,
+    path_params: models::DeletePetPathParams,
+) -> Result<(models::DeletePetHeaderParams, models::DeletePetPathParams), ValidationErrors> {
+    header_params.validate()?;
+    path_params.validate()?;
+
+    Ok((header_params, path_params))
+}
+
 /// DeletePet - DELETE /v2/pet/{petId}
 #[tracing::instrument(skip_all)]
 async fn delete_pet<I, A>(
@@ -174,21 +195,18 @@ where
         }
     };
 
-    // header params validation
-    if let Err(e) = header_params.validate() {
-        return Response::builder()
-            .status(StatusCode::BAD_REQUEST)
-            .body(Body::from(e.to_string()))
-            .map_err(|_| StatusCode::BAD_REQUEST);
-    }
+    #[allow(clippy::redundant_closure)]
+    let validation =
+        tokio::task::spawn_blocking(move || delete_pet_validation(header_params, path_params))
+            .await
+            .unwrap();
 
-    // path params validation
-    if let Err(e) = path_params.validate() {
+    let Ok((header_params, path_params)) = validation else {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
-            .body(Body::from(e.to_string()))
+            .body(Body::from(validation.unwrap_err().to_string()))
             .map_err(|_| StatusCode::BAD_REQUEST);
-    }
+    };
 
     let result = api_impl
         .as_ref()
@@ -217,6 +235,15 @@ where
     })
 }
 
+#[tracing::instrument(skip_all)]
+fn find_pets_by_status_validation(
+    query_params: models::FindPetsByStatusQueryParams,
+) -> Result<(models::FindPetsByStatusQueryParams,), ValidationErrors> {
+    query_params.validate()?;
+
+    Ok((query_params,))
+}
+
 /// FindPetsByStatus - GET /v2/pet/findByStatus
 #[tracing::instrument(skip_all)]
 async fn find_pets_by_status<I, A>(
@@ -230,13 +257,18 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    // query params validation
-    if let Err(e) = query_params.validate() {
+    #[allow(clippy::redundant_closure)]
+    let validation =
+        tokio::task::spawn_blocking(move || find_pets_by_status_validation(query_params))
+            .await
+            .unwrap();
+
+    let Ok((query_params,)) = validation else {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
-            .body(Body::from(e.to_string()))
+            .body(Body::from(validation.unwrap_err().to_string()))
             .map_err(|_| StatusCode::BAD_REQUEST);
-    }
+    };
 
     let result = api_impl
         .as_ref()
@@ -281,6 +313,15 @@ where
     })
 }
 
+#[tracing::instrument(skip_all)]
+fn find_pets_by_tags_validation(
+    query_params: models::FindPetsByTagsQueryParams,
+) -> Result<(models::FindPetsByTagsQueryParams,), ValidationErrors> {
+    query_params.validate()?;
+
+    Ok((query_params,))
+}
+
 /// FindPetsByTags - GET /v2/pet/findByTags
 #[tracing::instrument(skip_all)]
 async fn find_pets_by_tags<I, A>(
@@ -294,13 +335,18 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    // query params validation
-    if let Err(e) = query_params.validate() {
+    #[allow(clippy::redundant_closure)]
+    let validation =
+        tokio::task::spawn_blocking(move || find_pets_by_tags_validation(query_params))
+            .await
+            .unwrap();
+
+    let Ok((query_params,)) = validation else {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
-            .body(Body::from(e.to_string()))
+            .body(Body::from(validation.unwrap_err().to_string()))
             .map_err(|_| StatusCode::BAD_REQUEST);
-    }
+    };
 
     let result = api_impl
         .as_ref()
@@ -345,6 +391,15 @@ where
     })
 }
 
+#[tracing::instrument(skip_all)]
+fn get_pet_by_id_validation(
+    path_params: models::GetPetByIdPathParams,
+) -> Result<(models::GetPetByIdPathParams,), ValidationErrors> {
+    path_params.validate()?;
+
+    Ok((path_params,))
+}
+
 /// GetPetById - GET /v2/pet/{petId}
 #[tracing::instrument(skip_all)]
 async fn get_pet_by_id<I, A>(
@@ -358,13 +413,17 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    // path params validation
-    if let Err(e) = path_params.validate() {
+    #[allow(clippy::redundant_closure)]
+    let validation = tokio::task::spawn_blocking(move || get_pet_by_id_validation(path_params))
+        .await
+        .unwrap();
+
+    let Ok((path_params,)) = validation else {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
-            .body(Body::from(e.to_string()))
+            .body(Body::from(validation.unwrap_err().to_string()))
             .map_err(|_| StatusCode::BAD_REQUEST);
-    }
+    };
 
     let result = api_impl
         .as_ref()
@@ -420,6 +479,14 @@ struct UpdatePetBodyValidator<'a> {
     body: &'a models::Pet,
 }
 
+#[tracing::instrument(skip_all)]
+fn update_pet_validation(body: models::Pet) -> Result<(models::Pet,), ValidationErrors> {
+    let b = UpdatePetBodyValidator { body: &body };
+    b.validate()?;
+
+    Ok((body,))
+}
+
 /// UpdatePet - PUT /v2/pet
 #[tracing::instrument(skip_all)]
 async fn update_pet<I, A>(
@@ -433,15 +500,17 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    {
-        let b = UpdatePetBodyValidator { body: &body };
-        if let Err(e) = b.validate() {
-            return Response::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .body(Body::from(e.to_string()))
-                .map_err(|_| StatusCode::BAD_REQUEST);
-        }
-    }
+    #[allow(clippy::redundant_closure)]
+    let validation = tokio::task::spawn_blocking(move || update_pet_validation(body))
+        .await
+        .unwrap();
+
+    let Ok((body,)) = validation else {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(validation.unwrap_err().to_string()))
+            .map_err(|_| StatusCode::BAD_REQUEST);
+    };
 
     let result = api_impl
         .as_ref()
@@ -494,6 +563,15 @@ where
     })
 }
 
+#[tracing::instrument(skip_all)]
+fn update_pet_with_form_validation(
+    path_params: models::UpdatePetWithFormPathParams,
+) -> Result<(models::UpdatePetWithFormPathParams,), ValidationErrors> {
+    path_params.validate()?;
+
+    Ok((path_params,))
+}
+
 /// UpdatePetWithForm - POST /v2/pet/{petId}
 #[tracing::instrument(skip_all)]
 async fn update_pet_with_form<I, A>(
@@ -507,13 +585,18 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    // path params validation
-    if let Err(e) = path_params.validate() {
+    #[allow(clippy::redundant_closure)]
+    let validation =
+        tokio::task::spawn_blocking(move || update_pet_with_form_validation(path_params))
+            .await
+            .unwrap();
+
+    let Ok((path_params,)) = validation else {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
-            .body(Body::from(e.to_string()))
+            .body(Body::from(validation.unwrap_err().to_string()))
             .map_err(|_| StatusCode::BAD_REQUEST);
-    }
+    };
 
     let result = api_impl
         .as_ref()
@@ -542,6 +625,15 @@ where
     })
 }
 
+#[tracing::instrument(skip_all)]
+fn upload_file_validation(
+    path_params: models::UploadFilePathParams,
+) -> Result<(models::UploadFilePathParams,), ValidationErrors> {
+    path_params.validate()?;
+
+    Ok((path_params,))
+}
+
 /// UploadFile - POST /v2/pet/{petId}/uploadImage
 #[tracing::instrument(skip_all)]
 async fn upload_file<I, A>(
@@ -556,13 +648,17 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    // path params validation
-    if let Err(e) = path_params.validate() {
+    #[allow(clippy::redundant_closure)]
+    let validation = tokio::task::spawn_blocking(move || upload_file_validation(path_params))
+        .await
+        .unwrap();
+
+    let Ok((path_params,)) = validation else {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
-            .body(Body::from(e.to_string()))
+            .body(Body::from(validation.unwrap_err().to_string()))
             .map_err(|_| StatusCode::BAD_REQUEST);
-    }
+    };
 
     let result = api_impl
         .as_ref()
@@ -610,6 +706,15 @@ where
     })
 }
 
+#[tracing::instrument(skip_all)]
+fn delete_order_validation(
+    path_params: models::DeleteOrderPathParams,
+) -> Result<(models::DeleteOrderPathParams,), ValidationErrors> {
+    path_params.validate()?;
+
+    Ok((path_params,))
+}
+
 /// DeleteOrder - DELETE /v2/store/order/{orderId}
 #[tracing::instrument(skip_all)]
 async fn delete_order<I, A>(
@@ -623,13 +728,17 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    // path params validation
-    if let Err(e) = path_params.validate() {
+    #[allow(clippy::redundant_closure)]
+    let validation = tokio::task::spawn_blocking(move || delete_order_validation(path_params))
+        .await
+        .unwrap();
+
+    let Ok((path_params,)) = validation else {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
-            .body(Body::from(e.to_string()))
+            .body(Body::from(validation.unwrap_err().to_string()))
             .map_err(|_| StatusCode::BAD_REQUEST);
-    }
+    };
 
     let result = api_impl
         .as_ref()
@@ -662,6 +771,11 @@ where
     })
 }
 
+#[tracing::instrument(skip_all)]
+fn get_inventory_validation() -> Result<(), ValidationErrors> {
+    Ok(())
+}
+
 /// GetInventory - GET /v2/store/inventory
 #[tracing::instrument(skip_all)]
 async fn get_inventory<I, A>(
@@ -674,6 +788,18 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    #[allow(clippy::redundant_closure)]
+    let validation = tokio::task::spawn_blocking(move || get_inventory_validation())
+        .await
+        .unwrap();
+
+    let Ok(()) = validation else {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(validation.unwrap_err().to_string()))
+            .map_err(|_| StatusCode::BAD_REQUEST);
+    };
+
     let result = api_impl.as_ref().get_inventory(method, host, cookies).await;
 
     let mut response = Response::builder();
@@ -717,6 +843,15 @@ where
     })
 }
 
+#[tracing::instrument(skip_all)]
+fn get_order_by_id_validation(
+    path_params: models::GetOrderByIdPathParams,
+) -> Result<(models::GetOrderByIdPathParams,), ValidationErrors> {
+    path_params.validate()?;
+
+    Ok((path_params,))
+}
+
 /// GetOrderById - GET /v2/store/order/{orderId}
 #[tracing::instrument(skip_all)]
 async fn get_order_by_id<I, A>(
@@ -730,13 +865,17 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    // path params validation
-    if let Err(e) = path_params.validate() {
+    #[allow(clippy::redundant_closure)]
+    let validation = tokio::task::spawn_blocking(move || get_order_by_id_validation(path_params))
+        .await
+        .unwrap();
+
+    let Ok((path_params,)) = validation else {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
-            .body(Body::from(e.to_string()))
+            .body(Body::from(validation.unwrap_err().to_string()))
             .map_err(|_| StatusCode::BAD_REQUEST);
-    }
+    };
 
     let result = api_impl
         .as_ref()
@@ -792,6 +931,14 @@ struct PlaceOrderBodyValidator<'a> {
     body: &'a models::Order,
 }
 
+#[tracing::instrument(skip_all)]
+fn place_order_validation(body: models::Order) -> Result<(models::Order,), ValidationErrors> {
+    let b = PlaceOrderBodyValidator { body: &body };
+    b.validate()?;
+
+    Ok((body,))
+}
+
 /// PlaceOrder - POST /v2/store/order
 #[tracing::instrument(skip_all)]
 async fn place_order<I, A>(
@@ -805,15 +952,17 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    {
-        let b = PlaceOrderBodyValidator { body: &body };
-        if let Err(e) = b.validate() {
-            return Response::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .body(Body::from(e.to_string()))
-                .map_err(|_| StatusCode::BAD_REQUEST);
-        }
-    }
+    #[allow(clippy::redundant_closure)]
+    let validation = tokio::task::spawn_blocking(move || place_order_validation(body))
+        .await
+        .unwrap();
+
+    let Ok((body,)) = validation else {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(validation.unwrap_err().to_string()))
+            .map_err(|_| StatusCode::BAD_REQUEST);
+    };
 
     let result = api_impl
         .as_ref()
@@ -865,6 +1014,14 @@ struct CreateUserBodyValidator<'a> {
     body: &'a models::User,
 }
 
+#[tracing::instrument(skip_all)]
+fn create_user_validation(body: models::User) -> Result<(models::User,), ValidationErrors> {
+    let b = CreateUserBodyValidator { body: &body };
+    b.validate()?;
+
+    Ok((body,))
+}
+
 /// CreateUser - POST /v2/user
 #[tracing::instrument(skip_all)]
 async fn create_user<I, A>(
@@ -878,15 +1035,17 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    {
-        let b = CreateUserBodyValidator { body: &body };
-        if let Err(e) = b.validate() {
-            return Response::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .body(Body::from(e.to_string()))
-                .map_err(|_| StatusCode::BAD_REQUEST);
-        }
-    }
+    #[allow(clippy::redundant_closure)]
+    let validation = tokio::task::spawn_blocking(move || create_user_validation(body))
+        .await
+        .unwrap();
+
+    let Ok((body,)) = validation else {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(validation.unwrap_err().to_string()))
+            .map_err(|_| StatusCode::BAD_REQUEST);
+    };
 
     let result = api_impl
         .as_ref()
@@ -922,6 +1081,16 @@ struct CreateUsersWithArrayInputBodyValidator<'a> {
     body: &'a Vec<models::User>,
 }
 
+#[tracing::instrument(skip_all)]
+fn create_users_with_array_input_validation(
+    body: Vec<models::User>,
+) -> Result<(Vec<models::User>,), ValidationErrors> {
+    let b = CreateUsersWithArrayInputBodyValidator { body: &body };
+    b.validate()?;
+
+    Ok((body,))
+}
+
 /// CreateUsersWithArrayInput - POST /v2/user/createWithArray
 #[tracing::instrument(skip_all)]
 async fn create_users_with_array_input<I, A>(
@@ -935,15 +1104,18 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    {
-        let b = CreateUsersWithArrayInputBodyValidator { body: &body };
-        if let Err(e) = b.validate() {
-            return Response::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .body(Body::from(e.to_string()))
-                .map_err(|_| StatusCode::BAD_REQUEST);
-        }
-    }
+    #[allow(clippy::redundant_closure)]
+    let validation =
+        tokio::task::spawn_blocking(move || create_users_with_array_input_validation(body))
+            .await
+            .unwrap();
+
+    let Ok((body,)) = validation else {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(validation.unwrap_err().to_string()))
+            .map_err(|_| StatusCode::BAD_REQUEST);
+    };
 
     let result = api_impl
         .as_ref()
@@ -979,6 +1151,16 @@ struct CreateUsersWithListInputBodyValidator<'a> {
     body: &'a Vec<models::User>,
 }
 
+#[tracing::instrument(skip_all)]
+fn create_users_with_list_input_validation(
+    body: Vec<models::User>,
+) -> Result<(Vec<models::User>,), ValidationErrors> {
+    let b = CreateUsersWithListInputBodyValidator { body: &body };
+    b.validate()?;
+
+    Ok((body,))
+}
+
 /// CreateUsersWithListInput - POST /v2/user/createWithList
 #[tracing::instrument(skip_all)]
 async fn create_users_with_list_input<I, A>(
@@ -992,15 +1174,18 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    {
-        let b = CreateUsersWithListInputBodyValidator { body: &body };
-        if let Err(e) = b.validate() {
-            return Response::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .body(Body::from(e.to_string()))
-                .map_err(|_| StatusCode::BAD_REQUEST);
-        }
-    }
+    #[allow(clippy::redundant_closure)]
+    let validation =
+        tokio::task::spawn_blocking(move || create_users_with_list_input_validation(body))
+            .await
+            .unwrap();
+
+    let Ok((body,)) = validation else {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(validation.unwrap_err().to_string()))
+            .map_err(|_| StatusCode::BAD_REQUEST);
+    };
 
     let result = api_impl
         .as_ref()
@@ -1029,6 +1214,15 @@ where
     })
 }
 
+#[tracing::instrument(skip_all)]
+fn delete_user_validation(
+    path_params: models::DeleteUserPathParams,
+) -> Result<(models::DeleteUserPathParams,), ValidationErrors> {
+    path_params.validate()?;
+
+    Ok((path_params,))
+}
+
 /// DeleteUser - DELETE /v2/user/{username}
 #[tracing::instrument(skip_all)]
 async fn delete_user<I, A>(
@@ -1042,13 +1236,17 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    // path params validation
-    if let Err(e) = path_params.validate() {
+    #[allow(clippy::redundant_closure)]
+    let validation = tokio::task::spawn_blocking(move || delete_user_validation(path_params))
+        .await
+        .unwrap();
+
+    let Ok((path_params,)) = validation else {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
-            .body(Body::from(e.to_string()))
+            .body(Body::from(validation.unwrap_err().to_string()))
             .map_err(|_| StatusCode::BAD_REQUEST);
-    }
+    };
 
     let result = api_impl
         .as_ref()
@@ -1081,6 +1279,15 @@ where
     })
 }
 
+#[tracing::instrument(skip_all)]
+fn get_user_by_name_validation(
+    path_params: models::GetUserByNamePathParams,
+) -> Result<(models::GetUserByNamePathParams,), ValidationErrors> {
+    path_params.validate()?;
+
+    Ok((path_params,))
+}
+
 /// GetUserByName - GET /v2/user/{username}
 #[tracing::instrument(skip_all)]
 async fn get_user_by_name<I, A>(
@@ -1094,13 +1301,17 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    // path params validation
-    if let Err(e) = path_params.validate() {
+    #[allow(clippy::redundant_closure)]
+    let validation = tokio::task::spawn_blocking(move || get_user_by_name_validation(path_params))
+        .await
+        .unwrap();
+
+    let Ok((path_params,)) = validation else {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
-            .body(Body::from(e.to_string()))
+            .body(Body::from(validation.unwrap_err().to_string()))
             .map_err(|_| StatusCode::BAD_REQUEST);
-    }
+    };
 
     let result = api_impl
         .as_ref()
@@ -1149,6 +1360,15 @@ where
     })
 }
 
+#[tracing::instrument(skip_all)]
+fn login_user_validation(
+    query_params: models::LoginUserQueryParams,
+) -> Result<(models::LoginUserQueryParams,), ValidationErrors> {
+    query_params.validate()?;
+
+    Ok((query_params,))
+}
+
 /// LoginUser - GET /v2/user/login
 #[tracing::instrument(skip_all)]
 async fn login_user<I, A>(
@@ -1162,13 +1382,17 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    // query params validation
-    if let Err(e) = query_params.validate() {
+    #[allow(clippy::redundant_closure)]
+    let validation = tokio::task::spawn_blocking(move || login_user_validation(query_params))
+        .await
+        .unwrap();
+
+    let Ok((query_params,)) = validation else {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
-            .body(Body::from(e.to_string()))
+            .body(Body::from(validation.unwrap_err().to_string()))
             .map_err(|_| StatusCode::BAD_REQUEST);
-    }
+    };
 
     let result = api_impl
         .as_ref()
@@ -1267,6 +1491,11 @@ where
     })
 }
 
+#[tracing::instrument(skip_all)]
+fn logout_user_validation() -> Result<(), ValidationErrors> {
+    Ok(())
+}
+
 /// LogoutUser - GET /v2/user/logout
 #[tracing::instrument(skip_all)]
 async fn logout_user<I, A>(
@@ -1279,6 +1508,18 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
+    #[allow(clippy::redundant_closure)]
+    let validation = tokio::task::spawn_blocking(move || logout_user_validation())
+        .await
+        .unwrap();
+
+    let Ok(()) = validation else {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(validation.unwrap_err().to_string()))
+            .map_err(|_| StatusCode::BAD_REQUEST);
+    };
+
     let result = api_impl.as_ref().logout_user(method, host, cookies).await;
 
     let mut response = Response::builder();
@@ -1310,6 +1551,18 @@ struct UpdateUserBodyValidator<'a> {
     body: &'a models::User,
 }
 
+#[tracing::instrument(skip_all)]
+fn update_user_validation(
+    path_params: models::UpdateUserPathParams,
+    body: models::User,
+) -> Result<(models::UpdateUserPathParams, models::User), ValidationErrors> {
+    path_params.validate()?;
+    let b = UpdateUserBodyValidator { body: &body };
+    b.validate()?;
+
+    Ok((path_params, body))
+}
+
 /// UpdateUser - PUT /v2/user/{username}
 #[tracing::instrument(skip_all)]
 async fn update_user<I, A>(
@@ -1324,23 +1577,17 @@ where
     I: AsRef<A> + Send + Sync,
     A: Api,
 {
-    // path params validation
-    if let Err(e) = path_params.validate() {
+    #[allow(clippy::redundant_closure)]
+    let validation = tokio::task::spawn_blocking(move || update_user_validation(path_params, body))
+        .await
+        .unwrap();
+
+    let Ok((path_params, body)) = validation else {
         return Response::builder()
             .status(StatusCode::BAD_REQUEST)
-            .body(Body::from(e.to_string()))
+            .body(Body::from(validation.unwrap_err().to_string()))
             .map_err(|_| StatusCode::BAD_REQUEST);
-    }
-
-    {
-        let b = UpdateUserBodyValidator { body: &body };
-        if let Err(e) = b.validate() {
-            return Response::builder()
-                .status(StatusCode::BAD_REQUEST)
-                .body(Body::from(e.to_string()))
-                .map_err(|_| StatusCode::BAD_REQUEST);
-        }
-    }
+    };
 
     let result = api_impl
         .as_ref()

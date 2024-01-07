@@ -97,6 +97,117 @@
   {{/bodyParam}}
 {{/x-consumes-multipart}}
 
+#[tracing::instrument(skip_all)]
+fn {{#vendorExtensions}}{{{x-operation-id}}}_validation{{/vendorExtensions}}(
+{{#headerParams.size}}
+  header_params: models::{{{operationIdCamelCase}}}HeaderParams,
+{{/headerParams.size}} 
+{{#pathParams.size}}
+  path_params: models::{{{operationIdCamelCase}}}PathParams,
+{{/pathParams.size}}
+{{#queryParams.size}}
+  query_params: models::{{{operationIdCamelCase}}}QueryParams,
+{{/queryParams.size}}
+{{^x-consumes-multipart}}
+  {{#bodyParam}}
+  {{#vendorExtensions}}
+    {{^x-consumes-plain-text}}
+        body: {{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}},
+    {{/x-consumes-plain-text}}
+    {{#x-consumes-plain-text}}
+      {{#isString}}
+        body: String,
+      {{/isString}}
+      {{^isString}}
+        body: Bytes,
+      {{/isString}}
+    {{/x-consumes-plain-text}}
+  {{/vendorExtensions}}
+  {{/bodyParam}}
+{{/x-consumes-multipart}}
+) -> Result<(
+{{#headerParams.size}}
+  models::{{{operationIdCamelCase}}}HeaderParams,
+{{/headerParams.size}} 
+{{#pathParams.size}}
+  models::{{{operationIdCamelCase}}}PathParams,
+{{/pathParams.size}}
+{{#queryParams.size}}
+  models::{{{operationIdCamelCase}}}QueryParams,
+{{/queryParams.size}}
+{{^x-consumes-multipart}}
+  {{#bodyParam}}
+  {{#vendorExtensions}}
+    {{^x-consumes-plain-text}}
+        {{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}},
+    {{/x-consumes-plain-text}}
+    {{#x-consumes-plain-text}}
+      {{#isString}}
+        String,
+      {{/isString}}
+      {{^isString}}
+        Bytes,
+      {{/isString}}
+    {{/x-consumes-plain-text}}
+  {{/vendorExtensions}}
+  {{/bodyParam}}
+{{/x-consumes-multipart}}
+), ValidationErrors> 
+{
+{{#headerParams.size}}
+  header_params.validate()?;
+{{/headerParams.size}}
+{{#pathParams.size}}
+  path_params.validate()?;
+{{/pathParams.size}}
+{{#queryParams.size}}
+  query_params.validate()?;
+{{/queryParams.size}}
+{{^x-consumes-multipart}}
+  {{#bodyParam}}
+  {{#vendorExtensions}}
+      {{^x-consumes-plain-text}}
+          {{#required}}
+              let b = {{{operationIdCamelCase}}}BodyValidator { body: &body };
+              b.validate()?;
+          {{/required}}
+          {{^required}}
+            if let Some(body) = &body {
+              let b = {{{operationIdCamelCase}}}BodyValidator { body }; 
+              b.validate()?;
+            }
+          {{/required}}
+      {{/x-consumes-plain-text}}
+      {{#x-consumes-plain-text}}
+        {{#hasValidation}} 
+            let b = {{{operationIdCamelCase}}}BodyValidator { body: &body }; 
+            b.validate()?;
+        {{/hasValidation}}
+      {{/x-consumes-plain-text}}
+ {{/vendorExtensions}}
+ {{/bodyParam}}
+{{/x-consumes-multipart}}
+
+Ok((
+{{#headerParams.size}}
+  header_params,
+{{/headerParams.size}} 
+{{#pathParams.size}}
+  path_params,
+{{/pathParams.size}}
+{{#queryParams.size}}
+  query_params,
+{{/queryParams.size}}
+{{^x-consumes-multipart}}
+  {{#bodyParam}}
+  {{#vendorExtensions}}
+    body,
+  {{/vendorExtensions}}
+  {{/bodyParam}}
+{{/x-consumes-multipart}}  
+))
+}
+
 /// {{{operationId}}} - {{{httpMethod}}} {{{basePathWithoutHost}}}{{{path}}}
 #[tracing::instrument(skip_all)]
 async fn {{#vendorExtensions}}{{{x-operation-id}}}{{/vendorExtensions}}<I, A>(
@@ -106,11 +217,9 @@ async fn {{#vendorExtensions}}{{{x-operation-id}}}{{/vendorExtensions}}<I, A>(
 {{#headerParams.size}}
   headers: HeaderMap,
 {{/headerParams.size}}
-{{#vendorExtensions}}
-  {{#x-has-path-params}}
+{{#pathParams.size}}
   Path(path_params): Path<models::{{{operationIdCamelCase}}}PathParams>,
-  {{/x-has-path-params}}
-{{/vendorExtensions}}
+{{/pathParams.size}}
 {{#queryParams.size}}
   Query(query_params): Query<models::{{{operationIdCamelCase}}}QueryParams>,
 {{/queryParams.size}}
@@ -192,84 +301,48 @@ where
 
   {{/-last}} 
 {{/headerParams}}
-{{#headerParams.size}}
-  // header params validation 
-  if let Err(e) = header_params.validate() {
-        return Response::builder()
-            .status(StatusCode::BAD_REQUEST)
-            .body(Body::from(e.to_string()))
-            .map_err(|_| {
-                StatusCode::BAD_REQUEST
-            });
-  } 
 
-{{/headerParams.size}}
-{{#vendorExtensions}}
- {{#pathParams.size}}
-    // path params validation
-    if let Err(e) = path_params.validate() {
-        return Response::builder()
-            .status(StatusCode::BAD_REQUEST)
-            .body(Body::from(e.to_string()))
-            .map_err(|_| {
-                StatusCode::BAD_REQUEST
-            });
-    }
+  #[allow(clippy::redundant_closure)]
+  let validation = tokio::task::spawn_blocking(move ||
+    {{#vendorExtensions}}{{{x-operation-id}}}_validation{{/vendorExtensions}}(
+    {{#headerParams.size}}
+      header_params,
+    {{/headerParams.size}}
+    {{#pathParams.size}}
+      path_params,
+    {{/pathParams.size}}
+    {{#queryParams.size}}
+      query_params,
+    {{/queryParams.size}}
+    {{^x-consumes-multipart}}
+      {{#bodyParam}}
+        body,
+      {{/bodyParam}}
+    {{/x-consumes-multipart}}
+    )
+  ).await.unwrap();
 
- {{/pathParams.size}}
- {{#queryParams.size}}
-    // query params validation
-    if let Err(e) = query_params.validate() {
-        return Response::builder()
+  let Ok((
+  {{#headerParams.size}}
+    header_params,
+  {{/headerParams.size}}
+  {{#pathParams.size}}
+    path_params,
+  {{/pathParams.size}}
+  {{#queryParams.size}}
+    query_params,
+  {{/queryParams.size}}
+  {{^x-consumes-multipart}}
+    {{#bodyParam}}
+      body,
+    {{/bodyParam}}
+  {{/x-consumes-multipart}}
+  )) = validation else {
+    return Response::builder()
             .status(StatusCode::BAD_REQUEST)
-            .body(Body::from(e.to_string()))
-            .map_err(|_| {
-                StatusCode::BAD_REQUEST
-            });
-    }
-
- {{/queryParams.size}}
- {{^x-consumes-multipart}}
-  {{#bodyParam}}
-  {{#vendorExtensions}}
-      {{^x-consumes-plain-text}}
-          {{#required}}
-            {
-              let b = {{{operationIdCamelCase}}}BodyValidator { body: &body };
-          {{/required}}
-          {{^required}}
-            if let Some(body) = &body {
-              let b = {{{operationIdCamelCase}}}BodyValidator { body }; 
-          {{/required}}
-              if let Err(e) = b.validate() {
-                return Response::builder()
-                    .status(StatusCode::BAD_REQUEST)
-                    .body(Body::from(e.to_string()))
-                    .map_err(|_| {
-                        StatusCode::BAD_REQUEST
-                    });
-              }
-            }
-      {{/x-consumes-plain-text}}
-      {{#x-consumes-plain-text}}
-        {{#hasValidation}} 
-          {
-            let b = {{{operationIdCamelCase}}}BodyValidator { body: &body }; 
-            if let Err(e) = b.validate() {
-              return Response::builder()
-                  .status(StatusCode::BAD_REQUEST)
-                  .body(Body::from(e.to_string()))
-                  .map_err(|_| {
-                      StatusCode::BAD_REQUEST
-                  });
-            } 
-          }
-        {{/hasValidation}}
-      {{/x-consumes-plain-text}}
- {{/vendorExtensions}}
- {{/bodyParam}}
-{{/x-consumes-multipart}}
-{{/vendorExtensions}}
+            .body(Body::from(validation.unwrap_err().to_string()))
+            .map_err(|_| StatusCode::BAD_REQUEST);
+  };
 
   let result = api_impl.as_ref().{{#vendorExtensions}}{{{x-operation-id}}}{{/vendorExtensions}}(
       method,

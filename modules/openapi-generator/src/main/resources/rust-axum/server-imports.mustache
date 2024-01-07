@@ -5,7 +5,7 @@ use axum_extra::extract::{CookieJar, Multipart};
 use bytes::Bytes;
 use http::{header::CONTENT_TYPE, HeaderMap, HeaderName, HeaderValue, Method, StatusCode};
 use tracing::error;
-use validator::Validate;
+use validator::{Validate, ValidationErrors};
 
 use crate:: header;
 
