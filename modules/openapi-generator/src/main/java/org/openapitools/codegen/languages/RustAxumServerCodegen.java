@@ -179,12 +179,12 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
         typeMapping.put("date", "chrono::naive::NaiveDate");
         typeMapping.put("DateTime", "chrono::DateTime::<chrono::Utc>");
         typeMapping.put("password", "String");
-        typeMapping.put("File", "");
-        typeMapping.put("file", "");
+        typeMapping.put("File", "ByteArray");
+        typeMapping.put("file", "ByteArray");
         typeMapping.put("array", "Vec");
         typeMapping.put("map", "std::collections::HashMap");
-        typeMapping.put("object", "serde_json::Value");
-        typeMapping.put("AnyType", "serde_json::Value");
+        typeMapping.put("object", "crate::types::Object");
+        typeMapping.put("AnyType", "crate::types::Object");
 
         importMapping = new HashMap<>();
 
@@ -438,18 +438,20 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
         op.vendorExtensions.put("x-has-path-params", hasPathParams);
         op.vendorExtensions.put("x-path-format-string", formatPath);
 
-        // group route by path
-        String axumPath = op.path;
-        for (CodegenParameter param : op.pathParams) {
-            // Replace {baseName} with {paramName} for format string
-            String paramSearch = "{" + param.baseName + "}";
-            String paramReplace = ":" + param.paramName;
+        if (!op.isCallbackRequest) {
+            // group route by path
+            String axumPath = op.path;
+            for (CodegenParameter param : op.pathParams) {
+                // Replace {baseName} with {paramName} for format string
+                String paramSearch = "{" + param.baseName + "}";
+                String paramReplace = ":" + param.paramName;
 
-            axumPath = axumPath.replace(paramSearch, paramReplace);
+                axumPath = axumPath.replace(paramSearch, paramReplace);
+            }
+            pathMethodOpMap
+                    .computeIfAbsent(axumPath, (key) -> new ArrayList<>())
+                    .add(new MethodOperation(op.httpMethod.toLowerCase(Locale.ROOT), underscoredOperationId));
         }
-        pathMethodOpMap
-                .computeIfAbsent(axumPath, (key) -> new ArrayList<>())
-                .add(new MethodOperation(op.httpMethod.toLowerCase(Locale.ROOT), underscoredOperationId));
 
         String vendorExtensionHttpMethod = op.httpMethod.toUpperCase(Locale.ROOT);
         op.vendorExtensions.put("x-http-method", vendorExtensionHttpMethod);
@@ -624,10 +626,10 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
                 } else {
                     rsp.vendorExtensions.put("x-produces-json", true);
                     // If the data type is just "object", then ensure that the
-                    // Rust data type is "serde_json::Value".  This allows us
+                    // Rust data type is "crate::types::Object".  This allows us
                     // to define APIs that can return arbitrary JSON bodies.
                     if ("object".equals(rsp.dataType)) {
-                        rsp.dataType = "serde_json::Value";
+                        rsp.dataType = "crate::types::Object";
                     }
                 }
             }
@@ -1121,9 +1123,9 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
         // blob and return the json value to the user of the API and let the user determine
         // the type from the value. If the property has no type, at this point it will have
         // baseType "object" allowing us to identify such properties. Moreover, set to not
-        // nullable, we can use the serde_json::Value::Null enum variant.
+        // nullable, we can use the crate::types::Object::Null enum variant.
         if ("object".equals(property.baseType)) {
-            property.dataType = "serde_json::Value";
+            property.dataType = "crate::types::Object";
             property.isNullable = false;
         }
     }

@@ -7,7 +7,7 @@ use http::{header::CONTENT_TYPE, HeaderMap, HeaderName, HeaderValue, Method, Sta
 use tracing::error;
 use validator::{Validate, ValidationErrors};
 
-use crate::header;
+use crate::{header, types::*};
 
 #[allow(unused_imports)]
 use crate::models;
@@ -73,7 +73,7 @@ struct AddPetBodyValidator<'a> {
 }
 
 #[tracing::instrument(skip_all)]
-fn add_pet_validation(body: models::Pet) -> Result<(models::Pet,), ValidationErrors> {
+fn add_pet_validation(body: models::Pet) -> std::result::Result<(models::Pet,), ValidationErrors> {
     let b = AddPetBodyValidator { body: &body };
     b.validate()?;
 
@@ -149,7 +149,10 @@ where
 fn delete_pet_validation(
     header_params: models::DeletePetHeaderParams,
     path_params: models::DeletePetPathParams,
-) -> Result<(models::DeletePetHeaderParams, models::DeletePetPathParams), ValidationErrors> {
+) -> std::result::Result<
+    (models::DeletePetHeaderParams, models::DeletePetPathParams),
+    ValidationErrors,
+> {
     header_params.validate()?;
     path_params.validate()?;
 
@@ -238,7 +241,7 @@ where
 #[tracing::instrument(skip_all)]
 fn find_pets_by_status_validation(
     query_params: models::FindPetsByStatusQueryParams,
-) -> Result<(models::FindPetsByStatusQueryParams,), ValidationErrors> {
+) -> std::result::Result<(models::FindPetsByStatusQueryParams,), ValidationErrors> {
     query_params.validate()?;
 
     Ok((query_params,))
@@ -316,7 +319,7 @@ where
 #[tracing::instrument(skip_all)]
 fn find_pets_by_tags_validation(
     query_params: models::FindPetsByTagsQueryParams,
-) -> Result<(models::FindPetsByTagsQueryParams,), ValidationErrors> {
+) -> std::result::Result<(models::FindPetsByTagsQueryParams,), ValidationErrors> {
     query_params.validate()?;
 
     Ok((query_params,))
@@ -394,7 +397,7 @@ where
 #[tracing::instrument(skip_all)]
 fn get_pet_by_id_validation(
     path_params: models::GetPetByIdPathParams,
-) -> Result<(models::GetPetByIdPathParams,), ValidationErrors> {
+) -> std::result::Result<(models::GetPetByIdPathParams,), ValidationErrors> {
     path_params.validate()?;
 
     Ok((path_params,))
@@ -480,7 +483,9 @@ struct UpdatePetBodyValidator<'a> {
 }
 
 #[tracing::instrument(skip_all)]
-fn update_pet_validation(body: models::Pet) -> Result<(models::Pet,), ValidationErrors> {
+fn update_pet_validation(
+    body: models::Pet,
+) -> std::result::Result<(models::Pet,), ValidationErrors> {
     let b = UpdatePetBodyValidator { body: &body };
     b.validate()?;
 
@@ -566,7 +571,7 @@ where
 #[tracing::instrument(skip_all)]
 fn update_pet_with_form_validation(
     path_params: models::UpdatePetWithFormPathParams,
-) -> Result<(models::UpdatePetWithFormPathParams,), ValidationErrors> {
+) -> std::result::Result<(models::UpdatePetWithFormPathParams,), ValidationErrors> {
     path_params.validate()?;
 
     Ok((path_params,))
@@ -628,7 +633,7 @@ where
 #[tracing::instrument(skip_all)]
 fn upload_file_validation(
     path_params: models::UploadFilePathParams,
-) -> Result<(models::UploadFilePathParams,), ValidationErrors> {
+) -> std::result::Result<(models::UploadFilePathParams,), ValidationErrors> {
     path_params.validate()?;
 
     Ok((path_params,))
@@ -709,7 +714,7 @@ where
 #[tracing::instrument(skip_all)]
 fn delete_order_validation(
     path_params: models::DeleteOrderPathParams,
-) -> Result<(models::DeleteOrderPathParams,), ValidationErrors> {
+) -> std::result::Result<(models::DeleteOrderPathParams,), ValidationErrors> {
     path_params.validate()?;
 
     Ok((path_params,))
@@ -772,7 +777,7 @@ where
 }
 
 #[tracing::instrument(skip_all)]
-fn get_inventory_validation() -> Result<(), ValidationErrors> {
+fn get_inventory_validation() -> std::result::Result<(), ValidationErrors> {
     Ok(())
 }
 
@@ -846,7 +851,7 @@ where
 #[tracing::instrument(skip_all)]
 fn get_order_by_id_validation(
     path_params: models::GetOrderByIdPathParams,
-) -> Result<(models::GetOrderByIdPathParams,), ValidationErrors> {
+) -> std::result::Result<(models::GetOrderByIdPathParams,), ValidationErrors> {
     path_params.validate()?;
 
     Ok((path_params,))
@@ -932,7 +937,9 @@ struct PlaceOrderBodyValidator<'a> {
 }
 
 #[tracing::instrument(skip_all)]
-fn place_order_validation(body: models::Order) -> Result<(models::Order,), ValidationErrors> {
+fn place_order_validation(
+    body: models::Order,
+) -> std::result::Result<(models::Order,), ValidationErrors> {
     let b = PlaceOrderBodyValidator { body: &body };
     b.validate()?;
 
@@ -1015,7 +1022,9 @@ struct CreateUserBodyValidator<'a> {
 }
 
 #[tracing::instrument(skip_all)]
-fn create_user_validation(body: models::User) -> Result<(models::User,), ValidationErrors> {
+fn create_user_validation(
+    body: models::User,
+) -> std::result::Result<(models::User,), ValidationErrors> {
     let b = CreateUserBodyValidator { body: &body };
     b.validate()?;
 
@@ -1084,7 +1093,7 @@ struct CreateUsersWithArrayInputBodyValidator<'a> {
 #[tracing::instrument(skip_all)]
 fn create_users_with_array_input_validation(
     body: Vec<models::User>,
-) -> Result<(Vec<models::User>,), ValidationErrors> {
+) -> std::result::Result<(Vec<models::User>,), ValidationErrors> {
     let b = CreateUsersWithArrayInputBodyValidator { body: &body };
     b.validate()?;
 
@@ -1154,7 +1163,7 @@ struct CreateUsersWithListInputBodyValidator<'a> {
 #[tracing::instrument(skip_all)]
 fn create_users_with_list_input_validation(
     body: Vec<models::User>,
-) -> Result<(Vec<models::User>,), ValidationErrors> {
+) -> std::result::Result<(Vec<models::User>,), ValidationErrors> {
     let b = CreateUsersWithListInputBodyValidator { body: &body };
     b.validate()?;
 
@@ -1217,7 +1226,7 @@ where
 #[tracing::instrument(skip_all)]
 fn delete_user_validation(
     path_params: models::DeleteUserPathParams,
-) -> Result<(models::DeleteUserPathParams,), ValidationErrors> {
+) -> std::result::Result<(models::DeleteUserPathParams,), ValidationErrors> {
     path_params.validate()?;
 
     Ok((path_params,))
@@ -1282,7 +1291,7 @@ where
 #[tracing::instrument(skip_all)]
 fn get_user_by_name_validation(
     path_params: models::GetUserByNamePathParams,
-) -> Result<(models::GetUserByNamePathParams,), ValidationErrors> {
+) -> std::result::Result<(models::GetUserByNamePathParams,), ValidationErrors> {
     path_params.validate()?;
 
     Ok((path_params,))
@@ -1363,7 +1372,7 @@ where
 #[tracing::instrument(skip_all)]
 fn login_user_validation(
     query_params: models::LoginUserQueryParams,
-) -> Result<(models::LoginUserQueryParams,), ValidationErrors> {
+) -> std::result::Result<(models::LoginUserQueryParams,), ValidationErrors> {
     query_params.validate()?;
 
     Ok((query_params,))
@@ -1492,7 +1501,7 @@ where
 }
 
 #[tracing::instrument(skip_all)]
-fn logout_user_validation() -> Result<(), ValidationErrors> {
+fn logout_user_validation() -> std::result::Result<(), ValidationErrors> {
     Ok(())
 }
 
@@ -1555,7 +1564,7 @@ struct UpdateUserBodyValidator<'a> {
 fn update_user_validation(
     path_params: models::UpdateUserPathParams,
     body: models::User,
-) -> Result<(models::UpdateUserPathParams, models::User), ValidationErrors> {
+) -> std::result::Result<(models::UpdateUserPathParams, models::User), ValidationErrors> {
     path_params.validate()?;
     let b = UpdateUserBodyValidator { body: &body };
     b.validate()?;

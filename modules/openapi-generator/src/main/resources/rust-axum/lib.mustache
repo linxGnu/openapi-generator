@@ -9,6 +9,8 @@ use bytes::Bytes;
 use http::Method;
 use serde::{Deserialize, Serialize};
 
+use types::*;
+
 pub const BASE_PATH: &str = "{{{basePathWithoutHost}}}";
 {{#appVersion}}
 pub const API_VERSION: &str = "{{{.}}}";
@@ -53,6 +55,7 @@ pub trait Api {
                 {{#queryParams.size}}
                   query_params: models::{{{operationIdCamelCase}}}QueryParams,
                 {{/queryParams.size}}
+                {{^x-consumes-multipart-related}}
                 {{^x-consumes-multipart}}
                   {{#bodyParam}}
                   {{#vendorExtensions}}
@@ -70,9 +73,13 @@ pub trait Api {
                   {{/vendorExtensions}}
                   {{/bodyParam}}
                 {{/x-consumes-multipart}}
+                {{/x-consumes-multipart-related}}
                 {{#x-consumes-multipart}}
                     body: Multipart,
                 {{/x-consumes-multipart}}
+                {{#x-consumes-multipart-related}}
+                    body: axum::body::Body,
+                {{/x-consumes-multipart-related}}
                 ) -> Result<{{{operationId}}}Response, String>;
             {{/vendorExtensions}}
 

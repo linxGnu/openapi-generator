@@ -88,11 +88,11 @@ use crate::{models, types::*};
     }
     fn validate_byte_{{#lambda.lowercase}}{{{operationIdCamelCase}}}HeaderParams_{{{paramName}}}{{/lambda.lowercase}}(
         b: &ByteArray
-    ) -> Result<(), validator::ValidationError> {
-        if !RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}HeaderParams_{{{paramName}}}{{/lambda.uppercase}}.is_match(b) {
+    ) -> std::result::Result<(), validator::ValidationError> {
+        if !RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}HeaderParams_{{{paramName}}}{{/lambda.uppercase}}.is_match(&b.0) {
             return Err(validator::ValidationError::new("Character not allowed"));
         }
-        Ok(())
+        std::result::Result::Ok(())
     }
     {{/isByteArray}}
     {{/pattern}}
@@ -167,8 +167,8 @@ use crate::{models, types::*};
             {{/required}}
             {{^required}}
             {{#isNullable}}
-                #[serde(deserialize_with = "nullable_format::deserialize_optional_nullable")]
-                #[serde(default = "nullable_format::default_optional_nullable")]
+                #[serde(deserialize_with = "deserialize_optional_nullable")]
+                #[serde(default = "default_optional_nullable")]
             {{/isNullable}}
                 #[serde(skip_serializing_if="Option::is_none")]
                 pub {{{paramName}}}: Option<{{#isNullable}}Nullable<{{/isNullable}}{{{dataType}}}{{#isNullable}}>{{/isNullable}}>,
@@ -190,11 +190,11 @@ use crate::{models, types::*};
     }
     fn validate_byte_{{#lambda.lowercase}}{{{operationIdCamelCase}}}PathParams_{{{paramName}}}{{/lambda.lowercase}}(
         b: &ByteArray
-    ) -> Result<(), validator::ValidationError> {
-        if !RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}PathParams_{{{paramName}}}{{/lambda.uppercase}}.is_match(b) {
+    ) -> std::result::Result<(), validator::ValidationError> {
+        if !RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}PathParams_{{{paramName}}}{{/lambda.uppercase}}.is_match(&b.0) {
             return Err(validator::ValidationError::new("Character not allowed"));
         }
-        Ok(())
+        std::result::Result::Ok(())
     }
     {{/isByteArray}}
     {{/pattern}}
@@ -271,8 +271,8 @@ use crate::{models, types::*};
             {{/required}}
             {{^required}}
             {{#isNullable}}
-                #[serde(deserialize_with = "nullable_format::deserialize_optional_nullable")]
-                #[serde(default = "nullable_format::default_optional_nullable")]
+                #[serde(deserialize_with = "deserialize_optional_nullable")]
+                #[serde(default = "default_optional_nullable")]
             {{/isNullable}}
                 #[serde(skip_serializing_if="Option::is_none")]
                 pub {{{paramName}}}: Option<{{#isNullable}}Nullable<{{/isNullable}}{{{dataType}}}{{#isNullable}}>{{/isNullable}}>,
@@ -295,11 +295,11 @@ use crate::{models, types::*};
     }
     fn validate_byte_{{#lambda.lowercase}}{{{operationIdCamelCase}}}QueryParams_{{{paramName}}}{{/lambda.lowercase}}(
         b: &ByteArray
-    ) -> Result<(), validator::ValidationError> {
-        if !RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}QueryParams_{{{paramName}}}{{/lambda.uppercase}}.is_match(b) {
+    ) -> std::result::Result<(), validator::ValidationError> {
+        if !RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}QueryParams_{{{paramName}}}{{/lambda.uppercase}}.is_match(&b.0) {
             return Err(validator::ValidationError::new("Character not allowed"));
         }
-        Ok(())
+        std::result::Result::Ok(())
     }
     {{/isByteArray}}
     {{/pattern}}
@@ -374,6 +374,12 @@ impl std::str::FromStr for {{{classname}}} {
 #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
 pub struct {{{classname}}}({{{dataType}}});
 
+impl validator::Validate for {{{classname}}} {
+    fn validate(&self) -> std::result::Result<(), validator::ValidationErrors> {
+        std::result::Result::Ok(())
+    }
+}
+
 impl std::convert::From<{{{dataType}}}> for {{{classname}}} {
     fn from(x: {{{dataType}}}) -> Self {
         {{{classname}}}(x)
@@ -442,9 +448,13 @@ impl ::std::str::FromStr for {{{classname}}} {
 {{! vec}}
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
-pub struct {{{classname}}}(
-    Vec<{{{arrayModelType}}}>
-);
+pub struct {{{classname}}}(Vec<{{{arrayModelType}}}>);
+
+impl validator::Validate for {{{classname}}} {
+    fn validate(&self) -> std::result::Result<(), validator::ValidationErrors> {
+        std::result::Result::Ok(())
+    }
+}
 
 impl std::convert::From<Vec<{{{arrayModelType}}}>> for {{{classname}}} {
     fn from(x: Vec<{{{arrayModelType}}}>) -> Self {
@@ -541,16 +551,12 @@ impl std::str::FromStr for {{{classname}}} {
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct {{{classname}}}(Box<serde_json::value::RawValue>);
 
-{{#anyOf}}
-
-impl TryFrom<&{{{classname}}}> for {{{.}}} {
-    type Error = serde_json::Error;
-
-    fn try_from(v: &{{{classname}}}) -> Result<Self, Self::Error> {
-        serde_json::from_str(v.0.get())
+impl validator::Validate for {{{classname}}}
+{
+    fn validate(&self) -> std::result::Result<(), validator::ValidationErrors> {
+        std::result::Result::Ok(())
     }
 }
-{{/anyOf}}
 
 /// Converts Query Parameters representation (style=form, explode=false) to a {{{classname}}} value
 /// as specified in https://swagger.io/docs/specification/serialization/
@@ -558,7 +564,7 @@ impl TryFrom<&{{{classname}}}> for {{{.}}} {
 impl std::str::FromStr for {{{classname}}} {
     type Err = serde_json::Error;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
+    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
         serde_json::from_str(s)
     }
 }
@@ -577,16 +583,13 @@ impl PartialEq for {{{classname}}} {
 {{/oneOf}}
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct {{{classname}}}(Box<serde_json::value::RawValue>);
-{{#oneOf}}
 
-impl TryFrom<&{{{classname}}}> for {{{.}}} {
-    type Error = serde_json::Error;
-
-    fn try_from(v: &{{{classname}}}) -> Result<Self, Self::Error> {
-        serde_json::from_str(v.0.get())
+impl validator::Validate for {{{classname}}}
+{
+    fn validate(&self) -> std::result::Result<(), validator::ValidationErrors> {
+        std::result::Result::Ok(())
     }
 }
-{{/oneOf}}
 
 /// Converts Query Parameters representation (style=form, explode=false) to a {{{classname}}} value
 /// as specified in https://swagger.io/docs/specification/serialization/
@@ -594,7 +597,7 @@ impl TryFrom<&{{{classname}}}> for {{{.}}} {
 impl std::str::FromStr for {{{classname}}} {
     type Err = serde_json::Error;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
+    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
         serde_json::from_str(s)
     }
 }
@@ -675,8 +678,8 @@ pub struct {{{classname}}} {
 {{/required}}
 {{^required}}
 {{#isNullable}}
-    #[serde(deserialize_with = "nullable_format::deserialize_optional_nullable")]
-    #[serde(default = "nullable_format::default_optional_nullable")]
+    #[serde(deserialize_with = "deserialize_optional_nullable")]
+    #[serde(default = "default_optional_nullable")]
 {{/isNullable}}
     #[serde(skip_serializing_if="Option::is_none")]
     pub {{{name}}}: Option<{{#isNullable}}Nullable<{{/isNullable}}{{{dataType}}}{{#isNullable}}>{{/isNullable}}>,
@@ -699,11 +702,11 @@ lazy_static::lazy_static! {
 }
 fn validate_byte_{{#lambda.lowercase}}{{{classname}}}_{{{name}}}{{/lambda.lowercase}}(
     b: &ByteArray
-) -> Result<(), validator::ValidationError> {
-    if !RE_{{#lambda.uppercase}}{{{classname}}}_{{{name}}}{{/lambda.uppercase}}.is_match(b) {
+) -> std::result::Result<(), validator::ValidationError> {
+    if !RE_{{#lambda.uppercase}}{{{classname}}}_{{{name}}}{{/lambda.uppercase}}.is_match(&b.0) {
         return Err(validator::ValidationError::new("Character not allowed"));
     }
-    Ok(())
+    std::result::Result::Ok(())
 }
 {{/isByteArray}}
 {{/pattern}}

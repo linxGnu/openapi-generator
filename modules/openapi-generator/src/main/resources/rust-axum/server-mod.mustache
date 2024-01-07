@@ -8,6 +8,7 @@ use crate::{Api{{#apiInfo}}{{#apis}}{{#operations}}{{#operation}},
   {{#apis}}
     {{#operations}}
       {{#operation}}
+{{>server-operation-validate}}
 {{>server-operation}}
       {{/operation}}
     {{/operations}}

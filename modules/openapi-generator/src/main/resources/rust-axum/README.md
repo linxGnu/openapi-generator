@@ -14,5 +14,6 @@ The following tree shows which templates include which:
 - `server-mod.mustache`
     - `server-imports.mustache`
     - `server-route.mustache`
+    - `server-operation-validate.mustache`
     - `server-operation.mustache`
 - `types.mustache`

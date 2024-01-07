@@ -17,15 +17,111 @@ use bytes::Bytes;
 use http::Method;
 use serde::{Deserialize, Serialize};
 
+use types::*;
+
 pub const BASE_PATH: &str = "/v2";
 pub const API_VERSION: &str = "1.0.0";
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub enum TestSpecialTagsResponse {
+    /// successful operation
+    SuccessfulOperation(models::Client),
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub enum Call123exampleResponse {
+    /// success
+    Success,
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub enum FakeOuterBooleanSerializeResponse {
+    /// Output boolean
+    OutputBoolean(bool),
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub enum FakeOuterCompositeSerializeResponse {
+    /// Output composite
+    OutputComposite(models::OuterComposite),
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub enum FakeOuterNumberSerializeResponse {
+    /// Output number
+    OutputNumber(f64),
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub enum FakeOuterStringSerializeResponse {
+    /// Output string
+    OutputString(String),
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub enum FakeResponseWithNumericalDescriptionResponse {
+    /// 1234
+    Status200,
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub enum HyphenParamResponse {
+    /// Success
+    Success,
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub enum TestBodyWithQueryParamsResponse {
+    /// Success
+    Success,
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub enum TestClientModelResponse {
+    /// successful operation
+    SuccessfulOperation(models::Client),
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[must_use]
 #[allow(clippy::large_enum_variant)]
-pub enum AddPetResponse {
+pub enum TestEndpointParametersResponse {
+    /// Invalid username supplied
+    InvalidUsernameSupplied,
+    /// User not found
+    UserNotFound,
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[must_use]
+#[allow(clippy::large_enum_variant)]
+pub enum TestEnumParametersResponse {
+    /// Invalid request
+    InvalidRequest,
+    /// Not found
+    NotFound,
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub enum TestInlineAdditionalPropertiesResponse {
     /// successful operation
-    SuccessfulOperation(String),
+    SuccessfulOperation,
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub enum TestJsonFormDataResponse {
+    /// successful operation
+    SuccessfulOperation,
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub enum TestClassnameResponse {
+    /// successful operation
+    SuccessfulOperation(models::Client),
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub enum AddPetResponse {
     /// Invalid input
     InvalidInput,
 }
@@ -72,8 +168,6 @@ pub enum GetPetByIdResponse {
 #[must_use]
 #[allow(clippy::large_enum_variant)]
 pub enum UpdatePetResponse {
-    /// successful operation
-    SuccessfulOperation(String),
     /// Invalid ID supplied
     InvalidIDSupplied,
     /// Pet not found
@@ -179,7 +273,6 @@ pub enum LoginUserResponse {
     /// successful operation
     SuccessfulOperation {
         body: String,
-        set_cookie: Option<String>,
         x_rate_limit: Option<i32>,
         x_expires_after: Option<chrono::DateTime<chrono::Utc>>,
     },
@@ -207,6 +300,153 @@ pub enum UpdateUserResponse {
 #[async_trait]
 #[allow(clippy::ptr_arg)]
 pub trait Api {
+    /// To test special tags.
+    ///
+    /// TestSpecialTags - PATCH /v2/another-fake/dummy
+    async fn test_special_tags(
+        &self,
+        method: Method,
+        host: Host,
+        cookies: CookieJar,
+        body: models::Client,
+    ) -> Result<TestSpecialTagsResponse, String>;
+
+    /// Call123example - GET /v2/fake/operation-with-numeric-id
+    async fn call123example(
+        &self,
+        method: Method,
+        host: Host,
+        cookies: CookieJar,
+    ) -> Result<Call123exampleResponse, String>;
+
+    /// FakeOuterBooleanSerialize - POST /v2/fake/outer/boolean
+    async fn fake_outer_boolean_serialize(
+        &self,
+        method: Method,
+        host: Host,
+        cookies: CookieJar,
+        body: Option<models::OuterBoolean>,
+    ) -> Result<FakeOuterBooleanSerializeResponse, String>;
+
+    /// FakeOuterCompositeSerialize - POST /v2/fake/outer/composite
+    async fn fake_outer_composite_serialize(
+        &self,
+        method: Method,
+        host: Host,
+        cookies: CookieJar,
+        body: Option<models::OuterComposite>,
+    ) -> Result<FakeOuterCompositeSerializeResponse, String>;
+
+    /// FakeOuterNumberSerialize - POST /v2/fake/outer/number
+    async fn fake_outer_number_serialize(
+        &self,
+        method: Method,
+        host: Host,
+        cookies: CookieJar,
+        body: Option<models::OuterNumber>,
+    ) -> Result<FakeOuterNumberSerializeResponse, String>;
+
+    /// FakeOuterStringSerialize - POST /v2/fake/outer/string
+    async fn fake_outer_string_serialize(
+        &self,
+        method: Method,
+        host: Host,
+        cookies: CookieJar,
+        body: Option<models::OuterString>,
+    ) -> Result<FakeOuterStringSerializeResponse, String>;
+
+    /// FakeResponseWithNumericalDescription - GET /v2/fake/response-with-numerical-description
+    async fn fake_response_with_numerical_description(
+        &self,
+        method: Method,
+        host: Host,
+        cookies: CookieJar,
+    ) -> Result<FakeResponseWithNumericalDescriptionResponse, String>;
+
+    /// HyphenParam - GET /v2/fake/hyphenParam/{hyphen-param}
+    async fn hyphen_param(
+        &self,
+        method: Method,
+        host: Host,
+        cookies: CookieJar,
+        path_params: models::HyphenParamPathParams,
+    ) -> Result<HyphenParamResponse, String>;
+
+    /// TestBodyWithQueryParams - PUT /v2/fake/body-with-query-params
+    async fn test_body_with_query_params(
+        &self,
+        method: Method,
+        host: Host,
+        cookies: CookieJar,
+        query_params: models::TestBodyWithQueryParamsQueryParams,
+        body: models::User,
+    ) -> Result<TestBodyWithQueryParamsResponse, String>;
+
+    /// To test \"client\" model.
+    ///
+    /// TestClientModel - PATCH /v2/fake
+    async fn test_client_model(
+        &self,
+        method: Method,
+        host: Host,
+        cookies: CookieJar,
+        body: models::Client,
+    ) -> Result<TestClientModelResponse, String>;
+
+    /// Fake endpoint for testing various parameters  假端點  偽のエンドポイント  가짜 엔드 포인트.
+    ///
+    /// TestEndpointParameters - POST /v2/fake
+    async fn test_endpoint_parameters(
+        &self,
+        method: Method,
+        host: Host,
+        cookies: CookieJar,
+    ) -> Result<TestEndpointParametersResponse, String>;
+
+    /// To test enum parameters.
+    ///
+    /// TestEnumParameters - GET /v2/fake
+    async fn test_enum_parameters(
+        &self,
+        method: Method,
+        host: Host,
+        cookies: CookieJar,
+        header_params: models::TestEnumParametersHeaderParams,
+        query_params: models::TestEnumParametersQueryParams,
+    ) -> Result<TestEnumParametersResponse, String>;
+
+    /// test inline additionalProperties.
+    ///
+    /// TestInlineAdditionalProperties - POST /v2/fake/inline-additionalProperties
+    async fn test_inline_additional_properties(
+        &self,
+        method: Method,
+        host: Host,
+        cookies: CookieJar,
+        body: std::collections::HashMap<String, String>,
+    ) -> Result<TestInlineAdditionalPropertiesResponse, String>;
+
+    /// test json serialization of form data.
+    ///
+    /// TestJsonFormData - GET /v2/fake/jsonFormData
+    async fn test_json_form_data(
+        &self,
+        method: Method,
+        host: Host,
+        cookies: CookieJar,
+    ) -> Result<TestJsonFormDataResponse, String>;
+
+    /// To test class name in snake case.
+    ///
+    /// TestClassname - PATCH /v2/fake_classname_test
+    async fn test_classname(
+        &self,
+        method: Method,
+        host: Host,
+        cookies: CookieJar,
+        body: models::Client,
+    ) -> Result<TestClassnameResponse, String>;
+
     /// Add a new pet to the store.
     ///
     /// AddPet - POST /v2/pet
@@ -299,7 +539,7 @@ pub trait Api {
 
     /// Delete purchase order by ID.
     ///
-    /// DeleteOrder - DELETE /v2/store/order/{orderId}
+    /// DeleteOrder - DELETE /v2/store/order/{order_id}
     async fn delete_order(
         &self,
         method: Method,
@@ -320,7 +560,7 @@ pub trait Api {
 
     /// Find purchase order by ID.
     ///
-    /// GetOrderById - GET /v2/store/order/{orderId}
+    /// GetOrderById - GET /v2/store/order/{order_id}
     async fn get_order_by_id(
         &self,
         method: Method,

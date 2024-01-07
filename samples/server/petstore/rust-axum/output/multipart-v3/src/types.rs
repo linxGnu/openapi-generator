@@ -1,7 +1,45 @@
-use std::mem;
+use std::{mem, str::FromStr};
 
 use base64::{engine::general_purpose, Engine};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
+
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+#[allow(dead_code)]
+pub struct Object(serde_json::Value);
+
+impl validator::Validate for Object {
+    fn validate(&self) -> Result<(), validator::ValidationErrors> {
+        Ok(())
+    }
+}
+
+impl FromStr for Object {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(Self(serde_json::Value::String(s.to_owned())))
+    }
+}
+
+/// Serde helper function to create a default `Option<Nullable<T>>` while
+/// deserializing
+pub fn default_optional_nullable<T>() -> Option<Nullable<T>> {
+    None
+}
+
+/// Serde helper function to deserialize into an `Option<Nullable<T>>`
+pub fn deserialize_optional_nullable<'de, D, T>(
+    deserializer: D,
+) -> Result<Option<Nullable<T>>, D::Error>
+where
+    D: Deserializer<'de>,
+    T: Deserialize<'de>,
+{
+    Option::<T>::deserialize(deserializer).map(|val| match val {
+        Some(inner) => Some(Nullable::Present(inner)),
+        None => Some(Nullable::Null),
+    })
+}
 
 /// The Nullable type. Represents a value which may be specified as null on an API.
 /// Note that this is distinct from a value that is optional and not present!
@@ -25,7 +63,7 @@ impl<T> Nullable<T> {
     /// # Examples
     ///
     /// ```
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// let x: Nullable<u32> = Nullable::Present(2);
     /// assert_eq!(x.is_present(), true);
@@ -46,7 +84,7 @@ impl<T> Nullable<T> {
     /// # Examples
     ///
     /// ```
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// let x: Nullable<u32> = Nullable::Present(2);
     /// assert_eq!(x.is_null(), false);
@@ -77,7 +115,7 @@ impl<T> Nullable<T> {
     /// [`usize`]: ../../std/primitive.usize.html
     ///
     /// ```
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// let num_as_str: Nullable<String> = Nullable::Present("10".to_string());
     /// // First, cast `Nullable<String>` to `Nullable<&String>` with `as_ref`,
@@ -98,7 +136,7 @@ impl<T> Nullable<T> {
     /// # Examples
     ///
     /// ```
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// let mut x = Nullable::Present(2);
     /// match x.as_mut() {
@@ -131,14 +169,14 @@ impl<T> Nullable<T> {
     /// # Examples
     ///
     /// ```
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// let x = Nullable::Present("value");
     /// assert_eq!(x.expect("the world is ending"), "value");
     /// ```
     ///
     /// ```{.should_panic}
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// let x: Nullable<&str> = Nullable::Null;
     /// x.expect("the world is ending"); // panics with `the world is ending`
@@ -166,14 +204,14 @@ impl<T> Nullable<T> {
     /// # Examples
     ///
     /// ```
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// let x = Nullable::Present("air");
     /// assert_eq!(x.unwrap(), "air");
     /// ```
     ///
     /// ```{.should_panic}
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// let x: Nullable<&str> = Nullable::Null;
     /// assert_eq!(x.unwrap(), "air"); // fails
@@ -191,7 +229,7 @@ impl<T> Nullable<T> {
     /// # Examples
     ///
     /// ```
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// assert_eq!(Nullable::Present("car").unwrap_or("bike"), "car");
     /// assert_eq!(Nullable::Null.unwrap_or("bike"), "bike");
@@ -209,7 +247,7 @@ impl<T> Nullable<T> {
     /// # Examples
     ///
     /// ```
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// let k = 10;
     /// assert_eq!(Nullable::Present(4).unwrap_or_else(|| 2 * k), 4);
@@ -237,7 +275,7 @@ impl<T> Nullable<T> {
     /// [`usize`]: ../../std/primitive.usize.html
     ///
     /// ```
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// let maybe_some_string = Nullable::Present(String::from("Hello, World!"));
     /// // `Nullable::map` takes self *by value*, consuming `maybe_some_string`
@@ -259,7 +297,7 @@ impl<T> Nullable<T> {
     /// # Examples
     ///
     /// ```
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// let x = Nullable::Present("foo");
     /// assert_eq!(x.map_or(42, |v| v.len()), 3);
@@ -281,7 +319,7 @@ impl<T> Nullable<T> {
     /// # Examples
     ///
     /// ```
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// let k = 21;
     ///
@@ -309,7 +347,7 @@ impl<T> Nullable<T> {
     /// # Examples
     ///
     /// ```
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// let x = Nullable::Present("foo");
     /// assert_eq!(x.ok_or(0), Ok("foo"));
@@ -335,7 +373,7 @@ impl<T> Nullable<T> {
     /// # Examples
     ///
     /// ```
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// let x = Nullable::Present("foo");
     /// assert_eq!(x.ok_or_else(|| 0), Ok("foo"));
@@ -360,7 +398,7 @@ impl<T> Nullable<T> {
     /// # Examples
     ///
     /// ```
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// let x = Nullable::Present(2);
     /// let y: Nullable<&str> = Nullable::Null;
@@ -394,7 +432,7 @@ impl<T> Nullable<T> {
     /// # Examples
     ///
     /// ```
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// fn sq(x: u32) -> Nullable<u32> { Nullable::Present(x * x) }
     /// fn nope(_: u32) -> Nullable<u32> { Nullable::Null }
@@ -417,7 +455,7 @@ impl<T> Nullable<T> {
     /// # Examples
     ///
     /// ```
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// let x = Nullable::Present(2);
     /// let y = Nullable::Null;
@@ -449,7 +487,7 @@ impl<T> Nullable<T> {
     /// # Examples
     ///
     /// ```
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// fn nobody() -> Nullable<&'static str> { Nullable::Null }
     /// fn vikings() -> Nullable<&'static str> { Nullable::Present("vikings") }
@@ -476,7 +514,7 @@ impl<T> Nullable<T> {
     /// # Examples
     ///
     /// ```
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// let mut x = Nullable::Present(2);
     /// x.take();
@@ -499,7 +537,7 @@ impl<'a, T: Clone> Nullable<&'a T> {
     /// # Examples
     ///
     /// ```
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// let x = 12;
     /// let opt_x = Nullable::Present(&x);
@@ -522,7 +560,7 @@ impl<T: Default> Nullable<T> {
     /// # Examples
     ///
     /// ```
-    /// # use rust_axum_test::types::Nullable;
+    /// # use multipart_v3::types::Nullable;
     ///
     /// let x = Nullable::Present(42);
     /// assert_eq!(42, x.unwrap_or_default());
@@ -550,6 +588,47 @@ impl<T> Default for Nullable<T> {
 impl<T> From<T> for Nullable<T> {
     fn from(val: T) -> Nullable<T> {
         Nullable::Present(val)
+    }
+}
+
+impl<T> Serialize for Nullable<T>
+where
+    T: Serialize,
+{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match *self {
+            Nullable::Present(ref inner) => serializer.serialize_some(&inner),
+            Nullable::Null => serializer.serialize_none(),
+        }
+    }
+}
+
+impl<'de, T> Deserialize<'de> for Nullable<T>
+where
+    T: serde::de::DeserializeOwned,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Nullable<T>, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        // In order to deserialize a required, but nullable, value, we first have to check whether
+        // the value is present at all. To do this, we deserialize to a serde_json::Value, which
+        // fails if the value is missing, or gives serde_json::Value::Null if the value is present.
+        // If that succeeds as null, we can easily return a Null.
+        // If that succeeds as some value, we deserialize that value and return a Present.
+        // If that errors, we return the error.
+        let presence: Result<::serde_json::Value, _> =
+            serde::Deserialize::deserialize(deserializer);
+        match presence {
+            Ok(serde_json::Value::Null) => Ok(Nullable::Null),
+            Ok(some_value) => serde_json::from_value(some_value)
+                .map(Nullable::Present)
+                .map_err(serde::de::Error::custom),
+            Err(x) => Err(x),
+        }
     }
 }
 

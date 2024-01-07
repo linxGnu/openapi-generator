@@ -61,7 +61,7 @@ tokio = { version = "1", default-features = false, features = [
     "rt-multi-thread",
 ] }
 tracing = { version = "0.1", features = ["attributes"] }
-uuid = { version = "1" }
+uuid = { version = "1", features = ["serde"] }
 validator = { version = "0.16", features = ["derive"] }
 
 [dev-dependencies]
