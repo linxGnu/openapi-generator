@@ -67,6 +67,9 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
     protected String apiPath = "rust-axum";
     protected String packageName;
     protected String packageVersion;
+    protected Boolean disableValidator = false;
+    protected Boolean allowBlockingValidator = false;
+    protected Boolean allowBlockingResponseSerialize = false;
     protected String externCrateName;
     protected int serverPort = 8080;
 
@@ -186,6 +189,26 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
         cliOptions.add(new CliOption(CodegenConstants.PACKAGE_VERSION,
                 "Rust crate version."));
 
+        CliOption optDisableValidator = new CliOption("disableValidator", "Disable validating request-data (header, path, query, body) " +
+                "against OpenAPI Schema Specification.");
+        optDisableValidator.setType("bool");
+        optDisableValidator.defaultValue(disableValidator.toString());
+        cliOptions.add(optDisableValidator);
+
+        CliOption optAllowBlockingValidator = new CliOption("allowBlockingValidator", "By default, validation process, which might perform a lot of compute in a " +
+                "future without yielding, is executed on a blocking thread via tokio::task::spawn_blocking. Set this option to true will override this behaviour and allow blocking " +
+                "call to happen. It helps to improve the performance when validating request-data (header, path, query, body) is low cost.");
+        optAllowBlockingValidator.setType("bool");
+        optAllowBlockingValidator.defaultValue(allowBlockingValidator.toString());
+        cliOptions.add(optAllowBlockingValidator);
+
+        CliOption optAllowBlockingResponseSerialize = new CliOption("allowBlockingResponseSerialize", "By default, json/form-urlencoded response serialization, which might " +
+                "perform a lot of compute in a future without yielding, is executed on a blocking thread via tokio::task::spawn_blocking. Set this option to true will override this behaviour and allow blocking " +
+                "call to happen. It helps to improve the performance when response serialization (e.g. returns tiny data) is low cost.");
+        optAllowBlockingResponseSerialize.setType("bool");
+        optAllowBlockingResponseSerialize.defaultValue(allowBlockingResponseSerialize.toString());
+        cliOptions.add(optAllowBlockingResponseSerialize);
+
         /*
          * Additional Properties.  These values can be passed to the templates and
          * are available in models, apis, and supporting files
@@ -250,6 +273,24 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
 
         additionalProperties.put(CodegenConstants.PACKAGE_NAME, packageName);
         additionalProperties.put("externCrateName", externCrateName);
+
+        if (additionalProperties.containsKey("disableValidator")) {
+            disableValidator = convertPropertyToBooleanAndWriteBack("disableValidator");
+        } else {
+            additionalProperties.put("disableValidator", disableValidator);
+        }
+
+        if (additionalProperties.containsKey("allowBlockingValidator")) {
+            allowBlockingValidator = convertPropertyToBooleanAndWriteBack("allowBlockingValidator");
+        } else {
+            additionalProperties.put("allowBlockingValidator", allowBlockingValidator);
+        }
+
+        if (additionalProperties.containsKey("allowBlockingResponseSerialize")) {
+            allowBlockingValidator = convertPropertyToBooleanAndWriteBack("allowBlockingResponseSerialize");
+        } else {
+            additionalProperties.put("allowBlockingResponseSerialize", allowBlockingResponseSerialize);
+        }
     }
 
     public void setPackageName(String packageName) {

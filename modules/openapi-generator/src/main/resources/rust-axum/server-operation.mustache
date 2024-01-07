@@ -302,30 +302,36 @@ where
   {{/-last}} 
 {{/headerParams}}
 
-  #[allow(clippy::redundant_closure)]
-  let validation = tokio::task::spawn_blocking(move ||
+  {{^disableValidator}}
+    {{^allowBlockingValidator}}
+      #[allow(clippy::redundant_closure)]
+      let validation = tokio::task::spawn_blocking(move || 
+    {{/allowBlockingValidator}} 
+    {{#allowBlockingValidator}}
+      let validation =
+    {{/allowBlockingValidator}}
     {{#vendorExtensions}}{{{x-operation-id}}}_validation{{/vendorExtensions}}(
-    {{#headerParams.size}}
-      header_params,
-    {{/headerParams.size}}
-    {{#pathParams.size}}
-      path_params,
-    {{/pathParams.size}}
-    {{#queryParams.size}}
-      query_params,
-    {{/queryParams.size}}
-    {{^x-consumes-multipart}}
-      {{#bodyParam}}
-        body,
-      {{/bodyParam}}
-    {{/x-consumes-multipart}}
+      {{#headerParams.size}}
+        header_params,
+      {{/headerParams.size}} 
+      {{#pathParams.size}}
+        path_params,
+      {{/pathParams.size}}
+      {{#queryParams.size}}
+        query_params,
+      {{/queryParams.size}}
+      {{^x-consumes-multipart}}
+        {{#bodyParam}}
+          body,
+        {{/bodyParam}}
+      {{/x-consumes-multipart}} 
     )
-  ).await.unwrap();
+  {{^allowBlockingValidator}}).await.unwrap(){{/allowBlockingValidator}};
 
   let Ok((
   {{#headerParams.size}}
     header_params,
-  {{/headerParams.size}}
+  {{/headerParams.size}} 
   {{#pathParams.size}}
     path_params,
   {{/pathParams.size}}
@@ -336,13 +342,14 @@ where
     {{#bodyParam}}
       body,
     {{/bodyParam}}
-  {{/x-consumes-multipart}}
+  {{/x-consumes-multipart}}  
   )) = validation else {
     return Response::builder()
             .status(StatusCode::BAD_REQUEST)
             .body(Body::from(validation.unwrap_err().to_string()))
-            .map_err(|_| StatusCode::BAD_REQUEST);
+            .map_err(|_| StatusCode::BAD_REQUEST); 
   };
+  {{/disableValidator}}
 
   let result = api_impl.as_ref().{{#vendorExtensions}}{{{x-operation-id}}}{{/vendorExtensions}}(
       method,
@@ -447,24 +454,28 @@ where
 {{#dataType}}
 {{#vendorExtensions}}
 {{#x-produces-json}}
-                                                  let body_content =  tokio::task::spawn_blocking(move || {
-                                                                        serde_json::to_vec(&body).map_err(|e| {
-                                                                          error!(error = ?e);
-                                                                          StatusCode::INTERNAL_SERVER_ERROR
-                                                                        })
-                                                                      })
-                                                                      .await
-                                                                      .unwrap()?;
+  {{^allowBlockingResponseSerialize}}
+                                                  let body_content =  tokio::task::spawn_blocking(move ||
+  {{/allowBlockingResponseSerialize}}
+  {{#allowBlockingResponseSerialize}}
+                                                  let body_content = 
+  {{/allowBlockingResponseSerialize}}
+                                                      serde_json::to_vec(&body).map_err(|e| {
+                                                        error!(error = ?e);
+                                                        StatusCode::INTERNAL_SERVER_ERROR
+                                                      }){{^allowBlockingResponseSerialize}}).await.unwrap(){{/allowBlockingResponseSerialize}}?;
 {{/x-produces-json}}
 {{#x-produces-form-urlencoded}}
-                                                  let body_content =  tokio::task::spawn_blocking(move || {
-                                                                        serde_urlencoded::to_string(body).map_err(|e| {
-                                                                          error!(error = ?e);
-                                                                          StatusCode::INTERNAL_SERVER_ERROR
-                                                                        })
-                                                                      })
-                                                                      .await
-                                                                      .unwrap()?;
+  {{^allowBlockingResponseSerialize}}
+                                                  let body_content =  tokio::task::spawn_blocking(move ||
+  {{/allowBlockingResponseSerialize}}
+  {{#allowBlockingResponseSerialize}}
+                                                  let body_content = 
+  {{/allowBlockingResponseSerialize}}
+                                                      serde_urlencoded::to_string(body).map_err(|e| {
+                                                        error!(error = ?e);
+                                                        StatusCode::INTERNAL_SERVER_ERROR
+                                                      }){{^allowBlockingResponseSerialize}}).await.unwrap(){{/allowBlockingResponseSerialize}}?;
 {{/x-produces-form-urlencoded}}
 {{#x-produces-bytes}}
                                                   let body_content = body.0;
