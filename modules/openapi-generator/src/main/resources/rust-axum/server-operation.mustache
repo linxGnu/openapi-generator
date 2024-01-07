@@ -1,0 +1,419 @@
+{{^x-consumes-multipart}}
+  {{#bodyParam}}
+  {{#vendorExtensions}}
+    #[derive(validator::Validate)]
+    #[allow(dead_code)]    
+    struct {{{operationIdCamelCase}}}BodyValidator<'a> {
+      {{#hasValidation}}
+          #[validate(
+              {{#maxLength}}
+                  {{#minLength}}
+                  length(min = {{minLength}}, max = {{maxLength}}),
+                  {{/minLength}}
+                  {{^minLength}}
+                  length(max = {{maxLength}}),
+                  {{/minLength}}
+              {{/maxLength}}
+              {{^maxLength}}
+                  {{#minLength}}
+                  length(min = {{minLength}}),
+                  {{/minLength}}
+              {{/maxLength}}
+              {{#pattern}}
+                {{#isString}}
+                regex = "RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}BodyValidator{{/lambda.uppercase}}",
+                {{/isString}}
+                {{^isString}}
+                custom ="validate_byte_{{#lambda.lowercase}}{{{operationIdCamelCase}}}BodyValidator{{/lambda.lowercase}}",
+                {{/isString}}
+              {{/pattern}}
+              {{#maximum}}
+                  {{#minimum}}
+                  range(min = {{minimum}}, max = {{maximum}}),
+                  {{/minimum}}
+                  {{^minimum}}
+                  range(max = {{maximum}}),
+                  {{/minimum}}
+              {{/maximum}}
+              {{#minimum}}
+                  {{^maximum}}
+                  range(min = {{minimum}}),
+                  {{/maximum}}
+              {{/minimum}}
+              {{#maxItems}}
+                  {{#minItems}}
+                  length(min = {{minItems}}, max = {{maxItems}}),
+                  {{/minItems}}
+                  {{^minItems}}
+                  length(max = {{maxItems}}),
+                  {{/minItems}}
+              {{/maxItems}}
+              {{^maxItems}}
+                  {{#minItems}}
+                  length(min = {{minItems}}),
+                  {{/minItems}}
+              {{/maxItems}}
+              )]
+      {{/hasValidation}}
+      {{^x-consumes-plain-text}}
+          {{^hasValidation}}
+            #[validate]
+          {{/hasValidation}}
+          body: &'a {{{dataType}}},
+      {{/x-consumes-plain-text}}
+      {{#x-consumes-plain-text}}
+        {{#isString}}
+          body: &'a String,
+        {{/isString}}
+        {{^isString}}
+          body: &'a [u8],
+        {{/isString}}
+      {{/x-consumes-plain-text}}
+    }
+
+    {{#hasValidation}}
+    {{#pattern}}
+    {{#isString}}
+    lazy_static::lazy_static! {
+        static ref RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}BodyValidator{{/lambda.uppercase}}: regex::Regex = regex::Regex::new(r"{{ pattern }}").unwrap();
+    }
+    {{/isString}}
+    {{^isString}}
+    lazy_static::lazy_static! {
+        static ref RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}BodyValidator{{/lambda.uppercase}}: regex::bytes::Regex = regex::bytes::Regex::new(r"{{ pattern }}").unwrap();
+    }
+    fn validate_byte_{{#lambda.lowercase}}{{{operationIdCamelCase}}}BodyValidator{{/lambda.lowercase}}(
+        b: &[u8]
+    ) -> Result<(), validator::ValidationError> {
+        if !RE_{{#lambda.uppercase}}{{{operationIdCamelCase}}}BodyValidator{{/lambda.uppercase}}.is_match(b) {
+            return Err(validator::ValidationError::new("Character not allowed"));
+        }
+        Ok(())
+    }
+    {{/isString}}
+    {{/pattern}}
+    {{/hasValidation}}
+  {{/vendorExtensions}}
+  {{/bodyParam}}
+{{/x-consumes-multipart}}
+
+/// {{{operationId}}} - {{{httpMethod}}} {{{basePathWithoutHost}}}{{{path}}}
+#[tracing::instrument(skip_all)]
+async fn {{#vendorExtensions}}{{{x-operation-id}}}{{/vendorExtensions}}<I, A>(
+  method: Method,
+  host: Host,
+  cookies: CookieJar,
+{{#headerParams.size}}
+  headers: HeaderMap,
+{{/headerParams.size}}
+{{#vendorExtensions}}
+  {{#x-has-path-params}}
+  Path(path_params): Path<models::{{{operationIdCamelCase}}}PathParams>,
+  {{/x-has-path-params}}
+{{/vendorExtensions}}
+{{#queryParams.size}}
+  Query(query_params): Query<models::{{{operationIdCamelCase}}}QueryParams>,
+{{/queryParams.size}}
+ State(api_impl): State<I>,
+{{#vendorExtensions}}
+{{^x-consumes-multipart}}
+  {{#bodyParam}}
+    {{#vendorExtensions}}
+      {{#x-consumes-json}}
+          Json(body): Json<{{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}}>,
+      {{/x-consumes-json}}
+      {{#x-consumes-form-urlencoded}}
+          Form(body): Form<{{^required}}Option<{{/required}}{{{dataType}}}{{^required}}>{{/required}}>,
+      {{/x-consumes-form-urlencoded}}
+      {{#x-consumes-plain-text}}
+        {{#isString}}
+          body: String,
+        {{/isString}}
+        {{^isString}}
+          body: Bytes,
+        {{/isString}}
+      {{/x-consumes-plain-text}}
+    {{/vendorExtensions}}
+  {{/bodyParam}}
+{{/x-consumes-multipart}}
+{{#x-consumes-multipart}}
+  body: Multipart,
+{{/x-consumes-multipart}}
+{{/vendorExtensions}}
+) -> Result<Response, StatusCode>
+where 
+    I: AsRef<A> + Send + Sync,
+    A: Api,
+{
+{{#headerParams}}
+  {{#-first}}
+    // Header parameters
+    let header_params = {
+  {{/-first}}
+                let header_{{{paramName}}} = headers.get(HeaderName::from_static("{{{nameInLowerCase}}}"));
+
+                let header_{{{paramName}}} = match header_{{{paramName}}} {
+                    Some(v) => match header::IntoHeaderValue::<{{{dataType}}}>::try_from((*v).clone()) {
+                        Ok(result) =>
+{{#required}}
+                            result.0,
+{{/required}}
+{{^required}}
+                            Some(result.0),
+{{/required}}
+                        Err(err) => {
+                            return Response::builder()
+                                        .status(StatusCode::BAD_REQUEST)
+                                        .body(Body::from(format!("Invalid header {{{baseName}}} - {}", err))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
+
+                        },
+                    },
+                    None => {
+{{#required}}
+                        return Response::builder()
+                                        .status(StatusCode::BAD_REQUEST)
+                                        .body(Body::from("Missing required header {{{baseName}}}")).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
+{{/required}}
+{{^required}}
+                        None
+{{/required}}
+                    }
+                };
+{{/headerParams}}
+{{#headerParams}}
+  {{#-first}}
+
+       models::{{{operationIdCamelCase}}}HeaderParams {
+  {{/-first}}
+          {{{paramName}}}: header_{{{paramName}}},
+  {{#-last}}
+       }
+  };
+
+  {{/-last}} 
+{{/headerParams}}
+{{#headerParams.size}}
+  // header params validation 
+  if let Err(e) = header_params.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+  } 
+
+{{/headerParams.size}}
+{{#vendorExtensions}}
+ {{#pathParams.size}}
+    // path params validation
+    if let Err(e) = path_params.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+    }
+
+ {{/pathParams.size}}
+ {{#queryParams.size}}
+    // query params validation
+    if let Err(e) = query_params.validate() {
+        return Response::builder()
+            .status(StatusCode::BAD_REQUEST)
+            .body(Body::from(e.to_string()))
+            .map_err(|_| {
+                StatusCode::BAD_REQUEST
+            });
+    }
+
+ {{/queryParams.size}}
+ {{^x-consumes-multipart}}
+  {{#bodyParam}}
+  {{#vendorExtensions}}
+      {{^x-consumes-plain-text}}
+          {{#required}}
+            {
+              let b = {{{operationIdCamelCase}}}BodyValidator { body: &body };
+          {{/required}}
+          {{^required}}
+            if let Some(body) = &body {
+              let b = {{{operationIdCamelCase}}}BodyValidator { body }; 
+          {{/required}}
+              if let Err(e) = b.validate() {
+                return Response::builder()
+                    .status(StatusCode::BAD_REQUEST)
+                    .body(Body::from(e.to_string()))
+                    .map_err(|_| {
+                        StatusCode::BAD_REQUEST
+                    });
+              }
+            }
+      {{/x-consumes-plain-text}}
+      {{#x-consumes-plain-text}}
+        {{#hasValidation}} 
+          {
+            let b = {{{operationIdCamelCase}}}BodyValidator { body: &body }; 
+            if let Err(e) = b.validate() {
+              return Response::builder()
+                  .status(StatusCode::BAD_REQUEST)
+                  .body(Body::from(e.to_string()))
+                  .map_err(|_| {
+                      StatusCode::BAD_REQUEST
+                  });
+            } 
+          }
+        {{/hasValidation}}
+      {{/x-consumes-plain-text}}
+ {{/vendorExtensions}}
+ {{/bodyParam}}
+{{/x-consumes-multipart}}
+{{/vendorExtensions}}
+
+  let result = api_impl.as_ref().{{#vendorExtensions}}{{{x-operation-id}}}{{/vendorExtensions}}(
+      method,
+      host,
+      cookies,
+      {{#headerParams.size}}
+        header_params,
+      {{/headerParams.size}}
+      {{#pathParams.size}}
+        path_params,
+      {{/pathParams.size}}
+      {{#queryParams.size}}
+        query_params,
+      {{/queryParams.size}}
+      {{#vendorExtensions}}
+        {{#bodyParams}}
+          {{#-first}}
+            body,
+          {{/-first}}
+        {{/bodyParams}}
+        {{#x-consumes-multipart}}
+          body,
+        {{/x-consumes-multipart}}
+      {{/vendorExtensions}}
+  ).await;
+
+  let mut response = Response::builder();
+
+  let resp = match result {
+                                            Ok(rsp) => match rsp {
+{{#responses}}
+                                                {{{operationId}}}Response::{{#vendorExtensions}}{{x-response-id}}{{/vendorExtensions}}
+{{#dataType}}
+{{^headers}}
+                                                    (body)
+{{/headers}}
+{{#headers}}
+{{#-first}}
+                                                    {
+                                                        body,
+{{/-first}}
+                                                        {{{name}}}{{^-last}},{{/-last}}
+{{#-last}}
+                                                    }
+{{/-last}}
+{{/headers}}
+{{/dataType}}
+{{^dataType}}
+{{#headers}}
+{{#-first}}
+                                                    {
+{{/-first}}
+                                                        {{{name}}}{{^-last}},{{/-last}}
+{{#-last}}
+                                                    }
+{{/-last}}
+{{/headers}}
+{{/dataType}}
+                                                => {
+{{#headers}}
+  {{^required}}
+                                                    if let Some({{{name}}}) = {{{name}}} {
+  {{/required}}
+                                                    let {{{name}}} = match header::IntoHeaderValue({{{name}}}).try_into() {
+                                                        Ok(val) => val,
+                                                        Err(e) => {
+                                                            return Response::builder()
+                                                                    .status(StatusCode::INTERNAL_SERVER_ERROR)
+                                                                    .body(Body::from(format!("An internal server error occurred handling {{name}} header - {}", e))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
+                                                        }
+                                                    };
+
+                                                    
+                                                    {
+                                                      let mut response_headers = response.headers_mut().unwrap();
+                                                      response_headers.insert(
+                                                          HeaderName::from_static("{{{nameInLowerCase}}}"),
+                                                          {{name}}
+                                                      );
+                                                    }
+  {{^required}}
+                                                    }
+  {{/required}}
+{{/headers}}
+
+                                                  let mut response = response.status({{{code}}});
+{{#produces}}
+{{#-first}}
+{{#dataType}}
+{{#vendorExtensions}}
+                                                  {
+                                                    let mut response_headers = response.headers_mut().unwrap();
+                                                    response_headers.insert(
+                                                        CONTENT_TYPE,
+                                                        HeaderValue::from_str("{{{x-mime-type}}}").map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })?);
+                                                  }
+
+{{/vendorExtensions}}
+{{/dataType}}
+{{/-first}}
+{{/produces}}
+{{#dataType}}
+{{#vendorExtensions}}
+{{#x-produces-json}}
+                                                  let body_content =  tokio::task::spawn_blocking(move || {
+                                                                        serde_json::to_string(&body).map_err(|e| {
+                                                                          error!(error = ?e);
+                                                                          StatusCode::INTERNAL_SERVER_ERROR
+                                                                        })
+                                                                      })
+                                                                      .await
+                                                                      .unwrap()?;
+{{/x-produces-json}}
+{{#x-produces-form-urlencoded}}
+                                                  let body_content =  tokio::task::spawn_blocking(move || {
+                                                                        serde_urlencoded::to_string(body).map_err(|e| {
+                                                                          error!(error = ?e);
+                                                                          StatusCode::INTERNAL_SERVER_ERROR
+                                                                        })
+                                                                      })
+                                                                      .await
+                                                                      .unwrap()?;
+{{/x-produces-form-urlencoded}}
+{{#x-produces-bytes}}
+                                                  let body_content = body.0;
+{{/x-produces-bytes}}
+{{#x-produces-plain-text}}
+                                                  let body_content = body;
+{{/x-produces-plain-text}}
+{{/vendorExtensions}}
+                                                  response.body(Body::from(body_content))
+{{/dataType}}
+{{^dataType}}
+                                                  response.body(Body::empty())
+{{/dataType}}
+                                                },
+{{/responses}}
+                                            },
+                                            Err(_) => {
+                                                // Application code returned an error. This should not happen, as the implementation should
+                                                // return a valid response.
+                                                response.status(500).body(Body::empty())
+                                            },
+                                        };
+
+                                        resp.map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR })
+}
