@@ -35,7 +35,7 @@ pub enum PostMakePaymentResponse {
     Status422_UnprocessableEntity(models::CheckoutError),
 }
 
-/// Payments Authorization.
+/// Payments APIs - Authorization.
 #[async_trait]
 #[allow(clippy::ptr_arg)]
 pub trait PaymentsAuthorization {

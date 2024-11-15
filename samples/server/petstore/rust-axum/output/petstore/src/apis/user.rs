@@ -86,7 +86,7 @@ pub enum UpdateUserResponse {
     Status404_UserNotFound,
 }
 
-/// User Authorization.
+/// User APIs - Authorization.
 #[async_trait]
 #[allow(clippy::ptr_arg)]
 pub trait UserAuthorization {

@@ -47,7 +47,7 @@ pub enum PlaceOrderResponse {
     Status400_InvalidOrder,
 }
 
-/// Store Authorization.
+/// Store APIs - Authorization.
 #[async_trait]
 #[allow(clippy::ptr_arg)]
 pub trait StoreAuthorization {

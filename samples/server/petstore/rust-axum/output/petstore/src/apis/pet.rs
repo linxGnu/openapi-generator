@@ -87,7 +87,7 @@ pub enum UploadFileResponse {
     Status200_SuccessfulOperation(models::ApiResponse),
 }
 
-/// Pet Authorization.
+/// Pet APIs - Authorization.
 #[async_trait]
 #[allow(clippy::ptr_arg)]
 pub trait PetAuthorization {
