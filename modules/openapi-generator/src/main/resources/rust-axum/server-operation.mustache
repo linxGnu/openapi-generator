@@ -54,7 +54,9 @@ async fn {{#vendorExtensions}}{{{x-operation-id}}}{{/vendorExtensions}}<I, A{{#h
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::{{classFilename}}::{{classnamePascalCase}}{{#havingAuthMethod}}<Claims = C>{{/havingAuthMethod}}{{#vendorExtensions}}{{#x-has-cookie-auth-methods}}+ apis::CookieAuthentication<Claims = C>{{/x-has-cookie-auth-methods}}{{#x-has-header-auth-methods}}+ apis::ApiKeyAuthHeader<Claims = C>{{/x-has-header-auth-methods}}{{/vendorExtensions}},
+    A: apis::{{classFilename}}::{{classnamePascalCase}}{{#havingAuthMethod}}<Claims = C>{{/havingAuthMethod}}
+    {{#havingAuthMethod}}+ apis::{{classFilename}}::{{classnamePascalCase}}Authorization<Claims = C>{{/havingAuthMethod}}
+    {{#vendorExtensions}}{{#x-has-cookie-auth-methods}}+ apis::CookieAuthentication<Claims = C>{{/x-has-cookie-auth-methods}}{{#x-has-header-auth-methods}}+ apis::ApiKeyAuthHeader<Claims = C>{{/x-has-header-auth-methods}}{{/vendorExtensions}},
 {
 {{#vendorExtensions}}
 {{#x-has-auth-methods}}
@@ -184,6 +186,50 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
   };
   {{/disableValidator}}
+
+  {{#vendorExtensions}}
+  {{#x-has-auth-methods}}
+    let authorization = api_impl.as_ref().{{#vendorExtensions}}{{{x-operation-id}}}_authorize{{/vendorExtensions}}(
+        &method,
+        &host,
+        &cookies,
+        &claims,
+        {{#headerParams.size}}
+          &header_params,
+        {{/headerParams.size}}
+        {{#pathParams.size}}
+          &path_params,
+        {{/pathParams.size}}
+        {{#queryParams.size}}
+          &query_params,
+        {{/queryParams.size}}
+        {{#vendorExtensions}}
+          {{^x-consumes-multipart-related}}
+          {{^x-consumes-multipart}}
+            {{#bodyParams}}
+              {{#-first}}
+                &body,
+              {{/-first}}
+            {{/bodyParams}}
+          {{/x-consumes-multipart}}
+          {{/x-consumes-multipart-related}}
+          {{#x-consumes-multipart}}
+            &body,
+          {{/x-consumes-multipart}}
+          {{#x-consumes-multipart-related}}
+            &body,
+          {{/x-consumes-multipart-related}}
+        {{/vendorExtensions}}
+    ).await;
+    match authorization {
+        Ok(authorization) => match authorization {
+            apis::Authorization::Authorized => {},
+            apis::Authorization::Forbidden => { return response_with_status_code_only(StatusCode::FORBIDDEN); },
+        },
+        Err(_) => { return response_with_status_code_only(StatusCode::INTERNAL_SERVER_ERROR); }
+    }
+  {{/x-has-auth-methods}}
+  {{/vendorExtensions}}
 
   let result = api_impl.as_ref().{{#vendorExtensions}}{{{x-operation-id}}}{{/vendorExtensions}}(
       method,
@@ -345,7 +391,7 @@ where
                                             Err(_) => {
                                                 // Application code returned an error. This should not happen, as the implementation should
                                                 // return a valid response.
-                                                response.status(500).body(Body::empty())
+                                                response.status(StatusCode::INTERNAL_SERVER_ERROR).body(Body::empty())
                                             },
                                         };
 

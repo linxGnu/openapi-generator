@@ -36,6 +36,7 @@ where
 fn multipart_related_request_post_validation() -> std::result::Result<(), ValidationErrors> {
     Ok(())
 }
+
 /// MultipartRelatedRequestPost - POST /multipart_related_request
 #[tracing::instrument(skip_all)]
 async fn multipart_related_request_post<I, A>(
@@ -79,7 +80,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -93,6 +96,7 @@ where
 fn multipart_request_post_validation() -> std::result::Result<(), ValidationErrors> {
     Ok(())
 }
+
 /// MultipartRequestPost - POST /multipart_request
 #[tracing::instrument(skip_all)]
 async fn multipart_request_post<I, A>(
@@ -135,7 +139,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -149,6 +155,7 @@ where
 fn multiple_identical_mime_types_post_validation() -> std::result::Result<(), ValidationErrors> {
     Ok(())
 }
+
 /// MultipleIdenticalMimeTypesPost - POST /multiple-identical-mime-types
 #[tracing::instrument(skip_all)]
 async fn multiple_identical_mime_types_post<I, A>(
@@ -192,7 +199,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -200,4 +209,13 @@ where
         error!(error = ?e);
         StatusCode::INTERNAL_SERVER_ERROR
     })
+}
+
+#[allow(dead_code)]
+#[inline]
+fn response_with_status_code_only(code: StatusCode) -> Result<Response, StatusCode> {
+    Response::builder()
+        .status(code)
+        .body(Body::empty())
+        .map_err(|_| code)
 }

@@ -17,8 +17,11 @@ pub fn new<I, A, C>(api_impl: I) -> Router
 where
     I: AsRef<A> + Clone + Send + Sync + 'static,
     A: apis::pet::Pet<Claims = C>
+        + apis::pet::PetAuthorization<Claims = C>
         + apis::store::Store<Claims = C>
+        + apis::store::StoreAuthorization<Claims = C>
         + apis::user::User<Claims = C>
+        + apis::user::UserAuthorization<Claims = C>
         + apis::ApiKeyAuthHeader<Claims = C>
         + 'static,
     C: Send + Sync + 'static,
@@ -78,6 +81,7 @@ fn add_pet_validation(body: models::Pet) -> std::result::Result<(models::Pet,), 
 
     Ok((body,))
 }
+
 /// AddPet - POST /v2/pet
 #[tracing::instrument(skip_all)]
 async fn add_pet<I, A, C>(
@@ -89,7 +93,7 @@ async fn add_pet<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::pet::Pet<Claims = C>,
+    A: apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || add_pet_validation(body))
@@ -133,7 +137,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -156,6 +162,7 @@ fn delete_pet_validation(
 
     Ok((header_params, path_params))
 }
+
 /// DeletePet - DELETE /v2/pet/{petId}
 #[tracing::instrument(skip_all)]
 async fn delete_pet<I, A, C>(
@@ -168,7 +175,7 @@ async fn delete_pet<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::pet::Pet<Claims = C>,
+    A: apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     // Header parameters
     let header_params = {
@@ -225,7 +232,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -243,6 +252,7 @@ fn find_pets_by_status_validation(
 
     Ok((query_params,))
 }
+
 /// FindPetsByStatus - GET /v2/pet/findByStatus
 #[tracing::instrument(skip_all)]
 async fn find_pets_by_status<I, A, C>(
@@ -254,7 +264,7 @@ async fn find_pets_by_status<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::pet::Pet<Claims = C>,
+    A: apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation =
@@ -302,7 +312,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -320,6 +332,7 @@ fn find_pets_by_tags_validation(
 
     Ok((query_params,))
 }
+
 /// FindPetsByTags - GET /v2/pet/findByTags
 #[tracing::instrument(skip_all)]
 async fn find_pets_by_tags<I, A, C>(
@@ -331,7 +344,7 @@ async fn find_pets_by_tags<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::pet::Pet<Claims = C>,
+    A: apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation =
@@ -379,7 +392,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -397,6 +412,7 @@ fn get_pet_by_id_validation(
 
     Ok((path_params,))
 }
+
 /// GetPetById - GET /v2/pet/{petId}
 #[tracing::instrument(skip_all)]
 async fn get_pet_by_id<I, A, C>(
@@ -409,7 +425,9 @@ async fn get_pet_by_id<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::pet::Pet<Claims = C> + apis::ApiKeyAuthHeader<Claims = C>,
+    A: apis::pet::Pet<Claims = C>
+        + apis::pet::PetAuthorization<Claims = C>
+        + apis::ApiKeyAuthHeader<Claims = C>,
 {
     // Authentication
     let claims_in_header = api_impl
@@ -435,6 +453,22 @@ where
             .body(Body::from(validation.unwrap_err().to_string()))
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
+
+    let authorization = api_impl
+        .as_ref()
+        .get_pet_by_id_authorize(&method, &host, &cookies, &claims, &path_params)
+        .await;
+    match authorization {
+        Ok(authorization) => match authorization {
+            apis::Authorization::Authorized => {}
+            apis::Authorization::Forbidden => {
+                return response_with_status_code_only(StatusCode::FORBIDDEN);
+            }
+        },
+        Err(_) => {
+            return response_with_status_code_only(StatusCode::INTERNAL_SERVER_ERROR);
+        }
+    }
 
     let result = api_impl
         .as_ref()
@@ -473,7 +507,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -499,6 +535,7 @@ fn update_pet_validation(
 
     Ok((body,))
 }
+
 /// UpdatePet - PUT /v2/pet
 #[tracing::instrument(skip_all)]
 async fn update_pet<I, A, C>(
@@ -510,7 +547,7 @@ async fn update_pet<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::pet::Pet<Claims = C>,
+    A: apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || update_pet_validation(body))
@@ -565,7 +602,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -601,6 +640,7 @@ fn update_pet_with_form_validation(
 
     Ok((path_params, body))
 }
+
 /// UpdatePetWithForm - POST /v2/pet/{petId}
 #[tracing::instrument(skip_all)]
 async fn update_pet_with_form<I, A, C>(
@@ -613,7 +653,7 @@ async fn update_pet_with_form<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::pet::Pet<Claims = C>,
+    A: apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation =
@@ -645,7 +685,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -663,6 +705,7 @@ fn upload_file_validation(
 
     Ok((path_params,))
 }
+
 /// UploadFile - POST /v2/pet/{petId}/uploadImage
 #[tracing::instrument(skip_all)]
 async fn upload_file<I, A, C>(
@@ -675,7 +718,7 @@ async fn upload_file<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::pet::Pet<Claims = C>,
+    A: apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || upload_file_validation(path_params))
@@ -725,7 +768,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -743,6 +788,7 @@ fn delete_order_validation(
 
     Ok((path_params,))
 }
+
 /// DeleteOrder - DELETE /v2/store/order/{orderId}
 #[tracing::instrument(skip_all)]
 async fn delete_order<I, A, C>(
@@ -754,7 +800,7 @@ async fn delete_order<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::store::Store<Claims = C>,
+    A: apis::store::Store<Claims = C> + apis::store::StoreAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || delete_order_validation(path_params))
@@ -789,7 +835,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -803,6 +851,7 @@ where
 fn get_inventory_validation() -> std::result::Result<(), ValidationErrors> {
     Ok(())
 }
+
 /// GetInventory - GET /v2/store/inventory
 #[tracing::instrument(skip_all)]
 async fn get_inventory<I, A, C>(
@@ -814,7 +863,9 @@ async fn get_inventory<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::store::Store<Claims = C> + apis::ApiKeyAuthHeader<Claims = C>,
+    A: apis::store::Store<Claims = C>
+        + apis::store::StoreAuthorization<Claims = C>
+        + apis::ApiKeyAuthHeader<Claims = C>,
 {
     // Authentication
     let claims_in_header = api_impl
@@ -840,6 +891,22 @@ where
             .body(Body::from(validation.unwrap_err().to_string()))
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
+
+    let authorization = api_impl
+        .as_ref()
+        .get_inventory_authorize(&method, &host, &cookies, &claims)
+        .await;
+    match authorization {
+        Ok(authorization) => match authorization {
+            apis::Authorization::Authorized => {}
+            apis::Authorization::Forbidden => {
+                return response_with_status_code_only(StatusCode::FORBIDDEN);
+            }
+        },
+        Err(_) => {
+            return response_with_status_code_only(StatusCode::INTERNAL_SERVER_ERROR);
+        }
+    }
 
     let result = api_impl
         .as_ref()
@@ -877,7 +944,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -895,6 +964,7 @@ fn get_order_by_id_validation(
 
     Ok((path_params,))
 }
+
 /// GetOrderById - GET /v2/store/order/{orderId}
 #[tracing::instrument(skip_all)]
 async fn get_order_by_id<I, A, C>(
@@ -906,7 +976,7 @@ async fn get_order_by_id<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::store::Store<Claims = C>,
+    A: apis::store::Store<Claims = C> + apis::store::StoreAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || get_order_by_id_validation(path_params))
@@ -957,7 +1027,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -983,6 +1055,7 @@ fn place_order_validation(
 
     Ok((body,))
 }
+
 /// PlaceOrder - POST /v2/store/order
 #[tracing::instrument(skip_all)]
 async fn place_order<I, A, C>(
@@ -994,7 +1067,7 @@ async fn place_order<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::store::Store<Claims = C>,
+    A: apis::store::Store<Claims = C> + apis::store::StoreAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || place_order_validation(body))
@@ -1041,7 +1114,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -1067,6 +1142,7 @@ fn create_user_validation(
 
     Ok((body,))
 }
+
 /// CreateUser - POST /v2/user
 #[tracing::instrument(skip_all)]
 async fn create_user<I, A, C>(
@@ -1079,7 +1155,9 @@ async fn create_user<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::user::User<Claims = C> + apis::ApiKeyAuthHeader<Claims = C>,
+    A: apis::user::User<Claims = C>
+        + apis::user::UserAuthorization<Claims = C>
+        + apis::ApiKeyAuthHeader<Claims = C>,
 {
     // Authentication
     let claims_in_header = api_impl
@@ -1106,6 +1184,22 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let authorization = api_impl
+        .as_ref()
+        .create_user_authorize(&method, &host, &cookies, &claims, &body)
+        .await;
+    match authorization {
+        Ok(authorization) => match authorization {
+            apis::Authorization::Authorized => {}
+            apis::Authorization::Forbidden => {
+                return response_with_status_code_only(StatusCode::FORBIDDEN);
+            }
+        },
+        Err(_) => {
+            return response_with_status_code_only(StatusCode::INTERNAL_SERVER_ERROR);
+        }
+    }
+
     let result = api_impl
         .as_ref()
         .create_user(method, host, cookies, claims, body)
@@ -1123,7 +1217,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -1149,6 +1245,7 @@ fn create_users_with_array_input_validation(
 
     Ok((body,))
 }
+
 /// CreateUsersWithArrayInput - POST /v2/user/createWithArray
 #[tracing::instrument(skip_all)]
 async fn create_users_with_array_input<I, A, C>(
@@ -1161,7 +1258,9 @@ async fn create_users_with_array_input<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::user::User<Claims = C> + apis::ApiKeyAuthHeader<Claims = C>,
+    A: apis::user::User<Claims = C>
+        + apis::user::UserAuthorization<Claims = C>
+        + apis::ApiKeyAuthHeader<Claims = C>,
 {
     // Authentication
     let claims_in_header = api_impl
@@ -1189,6 +1288,22 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let authorization = api_impl
+        .as_ref()
+        .create_users_with_array_input_authorize(&method, &host, &cookies, &claims, &body)
+        .await;
+    match authorization {
+        Ok(authorization) => match authorization {
+            apis::Authorization::Authorized => {}
+            apis::Authorization::Forbidden => {
+                return response_with_status_code_only(StatusCode::FORBIDDEN);
+            }
+        },
+        Err(_) => {
+            return response_with_status_code_only(StatusCode::INTERNAL_SERVER_ERROR);
+        }
+    }
+
     let result = api_impl
         .as_ref()
         .create_users_with_array_input(method, host, cookies, claims, body)
@@ -1206,7 +1321,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -1232,6 +1349,7 @@ fn create_users_with_list_input_validation(
 
     Ok((body,))
 }
+
 /// CreateUsersWithListInput - POST /v2/user/createWithList
 #[tracing::instrument(skip_all)]
 async fn create_users_with_list_input<I, A, C>(
@@ -1244,7 +1362,9 @@ async fn create_users_with_list_input<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::user::User<Claims = C> + apis::ApiKeyAuthHeader<Claims = C>,
+    A: apis::user::User<Claims = C>
+        + apis::user::UserAuthorization<Claims = C>
+        + apis::ApiKeyAuthHeader<Claims = C>,
 {
     // Authentication
     let claims_in_header = api_impl
@@ -1272,6 +1392,22 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let authorization = api_impl
+        .as_ref()
+        .create_users_with_list_input_authorize(&method, &host, &cookies, &claims, &body)
+        .await;
+    match authorization {
+        Ok(authorization) => match authorization {
+            apis::Authorization::Authorized => {}
+            apis::Authorization::Forbidden => {
+                return response_with_status_code_only(StatusCode::FORBIDDEN);
+            }
+        },
+        Err(_) => {
+            return response_with_status_code_only(StatusCode::INTERNAL_SERVER_ERROR);
+        }
+    }
+
     let result = api_impl
         .as_ref()
         .create_users_with_list_input(method, host, cookies, claims, body)
@@ -1289,7 +1425,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -1307,6 +1445,7 @@ fn delete_user_validation(
 
     Ok((path_params,))
 }
+
 /// DeleteUser - DELETE /v2/user/{username}
 #[tracing::instrument(skip_all)]
 async fn delete_user<I, A, C>(
@@ -1319,7 +1458,9 @@ async fn delete_user<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::user::User<Claims = C> + apis::ApiKeyAuthHeader<Claims = C>,
+    A: apis::user::User<Claims = C>
+        + apis::user::UserAuthorization<Claims = C>
+        + apis::ApiKeyAuthHeader<Claims = C>,
 {
     // Authentication
     let claims_in_header = api_impl
@@ -1346,6 +1487,22 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let authorization = api_impl
+        .as_ref()
+        .delete_user_authorize(&method, &host, &cookies, &claims, &path_params)
+        .await;
+    match authorization {
+        Ok(authorization) => match authorization {
+            apis::Authorization::Authorized => {}
+            apis::Authorization::Forbidden => {
+                return response_with_status_code_only(StatusCode::FORBIDDEN);
+            }
+        },
+        Err(_) => {
+            return response_with_status_code_only(StatusCode::INTERNAL_SERVER_ERROR);
+        }
+    }
+
     let result = api_impl
         .as_ref()
         .delete_user(method, host, cookies, claims, path_params)
@@ -1367,7 +1524,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -1385,6 +1544,7 @@ fn get_user_by_name_validation(
 
     Ok((path_params,))
 }
+
 /// GetUserByName - GET /v2/user/{username}
 #[tracing::instrument(skip_all)]
 async fn get_user_by_name<I, A, C>(
@@ -1396,7 +1556,7 @@ async fn get_user_by_name<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::user::User<Claims = C>,
+    A: apis::user::User<Claims = C> + apis::user::UserAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || get_user_by_name_validation(path_params))
@@ -1447,7 +1607,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -1465,6 +1627,7 @@ fn login_user_validation(
 
     Ok((query_params,))
 }
+
 /// LoginUser - GET /v2/user/login
 #[tracing::instrument(skip_all)]
 async fn login_user<I, A, C>(
@@ -1476,7 +1639,7 @@ async fn login_user<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::user::User<Claims = C>,
+    A: apis::user::User<Claims = C> + apis::user::UserAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || login_user_validation(query_params))
@@ -1576,7 +1739,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -1590,6 +1755,7 @@ where
 fn logout_user_validation() -> std::result::Result<(), ValidationErrors> {
     Ok(())
 }
+
 /// LogoutUser - GET /v2/user/logout
 #[tracing::instrument(skip_all)]
 async fn logout_user<I, A, C>(
@@ -1601,7 +1767,9 @@ async fn logout_user<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::user::User<Claims = C> + apis::ApiKeyAuthHeader<Claims = C>,
+    A: apis::user::User<Claims = C>
+        + apis::user::UserAuthorization<Claims = C>
+        + apis::ApiKeyAuthHeader<Claims = C>,
 {
     // Authentication
     let claims_in_header = api_impl
@@ -1628,6 +1796,22 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let authorization = api_impl
+        .as_ref()
+        .logout_user_authorize(&method, &host, &cookies, &claims)
+        .await;
+    match authorization {
+        Ok(authorization) => match authorization {
+            apis::Authorization::Authorized => {}
+            apis::Authorization::Forbidden => {
+                return response_with_status_code_only(StatusCode::FORBIDDEN);
+            }
+        },
+        Err(_) => {
+            return response_with_status_code_only(StatusCode::INTERNAL_SERVER_ERROR);
+        }
+    }
+
     let result = api_impl
         .as_ref()
         .logout_user(method, host, cookies, claims)
@@ -1645,7 +1829,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -1673,6 +1859,7 @@ fn update_user_validation(
 
     Ok((path_params, body))
 }
+
 /// UpdateUser - PUT /v2/user/{username}
 #[tracing::instrument(skip_all)]
 async fn update_user<I, A, C>(
@@ -1686,7 +1873,9 @@ async fn update_user<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::user::User<Claims = C> + apis::ApiKeyAuthHeader<Claims = C>,
+    A: apis::user::User<Claims = C>
+        + apis::user::UserAuthorization<Claims = C>
+        + apis::ApiKeyAuthHeader<Claims = C>,
 {
     // Authentication
     let claims_in_header = api_impl
@@ -1713,6 +1902,22 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let authorization = api_impl
+        .as_ref()
+        .update_user_authorize(&method, &host, &cookies, &claims, &path_params, &body)
+        .await;
+    match authorization {
+        Ok(authorization) => match authorization {
+            apis::Authorization::Authorized => {}
+            apis::Authorization::Forbidden => {
+                return response_with_status_code_only(StatusCode::FORBIDDEN);
+            }
+        },
+        Err(_) => {
+            return response_with_status_code_only(StatusCode::INTERNAL_SERVER_ERROR);
+        }
+    }
+
     let result = api_impl
         .as_ref()
         .update_user(method, host, cookies, claims, path_params, body)
@@ -1734,7 +1939,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -1742,4 +1949,13 @@ where
         error!(error = ?e);
         StatusCode::INTERNAL_SERVER_ERROR
     })
+}
+
+#[allow(dead_code)]
+#[inline]
+fn response_with_status_code_only(code: StatusCode) -> Result<Response, StatusCode> {
+    Response::builder()
+        .status(code)
+        .body(Body::empty())
+        .map_err(|_| code)
 }

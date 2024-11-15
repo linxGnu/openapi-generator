@@ -5,6 +5,13 @@ pub mod pet;
 pub mod store;
 pub mod user;
 
+#[allow(dead_code)]
+#[derive(Debug)]
+pub enum Authorization {
+    Authorized,
+    Forbidden,
+}
+
 /// API Key Authentication - Header.
 #[async_trait::async_trait]
 pub trait ApiKeyAuthHeader {

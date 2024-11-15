@@ -86,6 +86,85 @@ pub enum UpdateUserResponse {
     Status404_UserNotFound,
 }
 
+/// User Authorization.
+#[async_trait]
+#[allow(clippy::ptr_arg)]
+pub trait UserAuthorization {
+    type Claims;
+
+    /// Create user.
+    ///
+    /// CreateUser - POST /v2/user
+    async fn create_user_authorize(
+        &self,
+        method: &Method,
+        host: &Host,
+        cookies: &CookieJar,
+        claims: &Self::Claims,
+        body: &models::User,
+    ) -> Result<super::Authorization, ()>;
+
+    /// Creates list of users with given input array.
+    ///
+    /// CreateUsersWithArrayInput - POST /v2/user/createWithArray
+    async fn create_users_with_array_input_authorize(
+        &self,
+        method: &Method,
+        host: &Host,
+        cookies: &CookieJar,
+        claims: &Self::Claims,
+        body: &Vec<models::User>,
+    ) -> Result<super::Authorization, ()>;
+
+    /// Creates list of users with given input array.
+    ///
+    /// CreateUsersWithListInput - POST /v2/user/createWithList
+    async fn create_users_with_list_input_authorize(
+        &self,
+        method: &Method,
+        host: &Host,
+        cookies: &CookieJar,
+        claims: &Self::Claims,
+        body: &Vec<models::User>,
+    ) -> Result<super::Authorization, ()>;
+
+    /// Delete user.
+    ///
+    /// DeleteUser - DELETE /v2/user/{username}
+    async fn delete_user_authorize(
+        &self,
+        method: &Method,
+        host: &Host,
+        cookies: &CookieJar,
+        claims: &Self::Claims,
+        path_params: &models::DeleteUserPathParams,
+    ) -> Result<super::Authorization, ()>;
+
+    /// Logs out current logged in user session.
+    ///
+    /// LogoutUser - GET /v2/user/logout
+    async fn logout_user_authorize(
+        &self,
+        method: &Method,
+        host: &Host,
+        cookies: &CookieJar,
+        claims: &Self::Claims,
+    ) -> Result<super::Authorization, ()>;
+
+    /// Updated user.
+    ///
+    /// UpdateUser - PUT /v2/user/{username}
+    async fn update_user_authorize(
+        &self,
+        method: &Method,
+        host: &Host,
+        cookies: &CookieJar,
+        claims: &Self::Claims,
+        path_params: &models::UpdateUserPathParams,
+        body: &models::User,
+    ) -> Result<super::Authorization, ()>;
+}
+
 /// User
 #[async_trait]
 #[allow(clippy::ptr_arg)]

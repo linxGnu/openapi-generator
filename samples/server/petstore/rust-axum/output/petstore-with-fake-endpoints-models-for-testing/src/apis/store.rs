@@ -47,6 +47,24 @@ pub enum PlaceOrderResponse {
     Status400_InvalidOrder,
 }
 
+/// Store Authorization.
+#[async_trait]
+#[allow(clippy::ptr_arg)]
+pub trait StoreAuthorization {
+    type Claims;
+
+    /// Returns pet inventories by status.
+    ///
+    /// GetInventory - GET /v2/store/inventory
+    async fn get_inventory_authorize(
+        &self,
+        method: &Method,
+        host: &Host,
+        cookies: &CookieJar,
+        claims: &Self::Claims,
+    ) -> Result<super::Authorization, ()>;
+}
+
 /// Store
 #[async_trait]
 #[allow(clippy::ptr_arg)]

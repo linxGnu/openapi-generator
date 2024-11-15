@@ -28,6 +28,7 @@ where
 fn ping_get_validation() -> std::result::Result<(), ValidationErrors> {
     Ok(())
 }
+
 /// PingGet - GET /ping
 #[tracing::instrument(skip_all)]
 async fn ping_get<I, A>(
@@ -66,7 +67,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -74,4 +77,13 @@ where
         error!(error = ?e);
         StatusCode::INTERNAL_SERVER_ERROR
     })
+}
+
+#[allow(dead_code)]
+#[inline]
+fn response_with_status_code_only(code: StatusCode) -> Result<Response, StatusCode> {
+    Response::builder()
+        .status(code)
+        .body(Body::empty())
+        .map_err(|_| code)
 }

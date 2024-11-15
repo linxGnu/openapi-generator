@@ -17,6 +17,7 @@ pub fn new<I, A, C>(api_impl: I) -> Router
 where
     I: AsRef<A> + Clone + Send + Sync + 'static,
     A: apis::payments::Payments<Claims = C>
+        + apis::payments::PaymentsAuthorization<Claims = C>
         + apis::ApiKeyAuthHeader<Claims = C>
         + apis::CookieAuthentication<Claims = C>
         + 'static,
@@ -41,6 +42,7 @@ fn get_payment_method_by_id_validation(
 
     Ok((path_params,))
 }
+
 /// GetPaymentMethodById - GET /v71/paymentMethods/{id}
 #[tracing::instrument(skip_all)]
 async fn get_payment_method_by_id<I, A, C>(
@@ -52,7 +54,7 @@ async fn get_payment_method_by_id<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::payments::Payments<Claims = C>,
+    A: apis::payments::Payments<Claims = C> + apis::payments::PaymentsAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation =
@@ -126,7 +128,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -140,6 +144,7 @@ where
 fn get_payment_methods_validation() -> std::result::Result<(), ValidationErrors> {
     Ok(())
 }
+
 /// GetPaymentMethods - GET /v71/paymentMethods
 #[tracing::instrument(skip_all)]
 async fn get_payment_methods<I, A, C>(
@@ -150,7 +155,7 @@ async fn get_payment_methods<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::payments::Payments<Claims = C>,
+    A: apis::payments::Payments<Claims = C> + apis::payments::PaymentsAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || get_payment_methods_validation())
@@ -200,7 +205,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -228,6 +235,7 @@ fn post_make_payment_validation(
 
     Ok((body,))
 }
+
 /// PostMakePayment - POST /v71/payments
 #[tracing::instrument(skip_all)]
 async fn post_make_payment<I, A, C>(
@@ -239,7 +247,9 @@ async fn post_make_payment<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::payments::Payments<Claims = C> + apis::CookieAuthentication<Claims = C>,
+    A: apis::payments::Payments<Claims = C>
+        + apis::payments::PaymentsAuthorization<Claims = C>
+        + apis::CookieAuthentication<Claims = C>,
 {
     // Authentication
     let claims_in_cookie = api_impl
@@ -265,6 +275,22 @@ where
             .body(Body::from(validation.unwrap_err().to_string()))
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
+
+    let authorization = api_impl
+        .as_ref()
+        .post_make_payment_authorize(&method, &host, &cookies, &claims, &body)
+        .await;
+    match authorization {
+        Ok(authorization) => match authorization {
+            apis::Authorization::Authorized => {}
+            apis::Authorization::Forbidden => {
+                return response_with_status_code_only(StatusCode::FORBIDDEN);
+            }
+        },
+        Err(_) => {
+            return response_with_status_code_only(StatusCode::INTERNAL_SERVER_ERROR);
+        }
+    }
 
     let result = api_impl
         .as_ref()
@@ -325,7 +351,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -333,4 +361,13 @@ where
         error!(error = ?e);
         StatusCode::INTERNAL_SERVER_ERROR
     })
+}
+
+#[allow(dead_code)]
+#[inline]
+fn response_with_status_code_only(code: StatusCode) -> Result<Response, StatusCode> {
+    Response::builder()
+        .status(code)
+        .body(Body::empty())
+        .map_err(|_| code)
 }

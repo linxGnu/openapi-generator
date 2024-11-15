@@ -83,6 +83,25 @@ pub enum UploadFileResponse {
     Status200_SuccessfulOperation(models::ApiResponse),
 }
 
+/// Pet Authorization.
+#[async_trait]
+#[allow(clippy::ptr_arg)]
+pub trait PetAuthorization {
+    type Claims;
+
+    /// Find pet by ID.
+    ///
+    /// GetPetById - GET /v2/pet/{petId}
+    async fn get_pet_by_id_authorize(
+        &self,
+        method: &Method,
+        host: &Host,
+        cookies: &CookieJar,
+        claims: &Self::Claims,
+        path_params: &models::GetPetByIdPathParams,
+    ) -> Result<super::Authorization, ()>;
+}
+
 /// Pet
 #[async_trait]
 #[allow(clippy::ptr_arg)]
