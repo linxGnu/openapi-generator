@@ -3,7 +3,7 @@ pub mod store;
 pub mod user;
 
 #[allow(dead_code)]
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum Authorization {
     Authorized,
     Forbidden,
