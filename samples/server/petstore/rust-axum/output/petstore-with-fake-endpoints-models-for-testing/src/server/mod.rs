@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use axum::{body::Body, extract::*, response::Response, routing::*};
-use axum_extra::extract::CookieJar;
+use axum_extra::extract::{CookieJar, Host};
 use bytes::Bytes;
 use http::{header::CONTENT_TYPE, HeaderMap, HeaderName, HeaderValue, Method, StatusCode};
 use tracing::error;
@@ -42,7 +42,7 @@ where
             put(test_body_with_query_params::<I, A>),
         )
         .route(
-            "/v2/fake/hyphenParam/:hyphen_param",
+            "/v2/fake/hyphenParam/{hyphen_param}",
             get(hyphen_param::<I, A>),
         )
         .route(
@@ -79,28 +79,22 @@ where
             "/v2/pet",
             post(add_pet::<I, A, C>).put(update_pet::<I, A, C>),
         )
+        .route("/v2/pet/findByStatus", get(find_pets_by_status::<I, A, C>))
+        .route("/v2/pet/findByTags", get(find_pets_by_tags::<I, A, C>))
         .route(
-            "/v2/pet/:pet_id",
+            "/v2/pet/{pet_id}",
             delete(delete_pet::<I, A, C>)
                 .get(get_pet_by_id::<I, A, C>)
                 .post(update_pet_with_form::<I, A, C>),
         )
-        .route("/v2/pet/:pet_id/uploadImage", post(upload_file::<I, A, C>))
-        .route("/v2/pet/findByStatus", get(find_pets_by_status::<I, A, C>))
-        .route("/v2/pet/findByTags", get(find_pets_by_tags::<I, A, C>))
+        .route("/v2/pet/{pet_id}/uploadImage", post(upload_file::<I, A, C>))
         .route("/v2/store/inventory", get(get_inventory::<I, A, C>))
         .route("/v2/store/order", post(place_order::<I, A, C>))
         .route(
-            "/v2/store/order/:order_id",
+            "/v2/store/order/{order_id}",
             delete(delete_order::<I, A, C>).get(get_order_by_id::<I, A, C>),
         )
         .route("/v2/user", post(create_user::<I, A>))
-        .route(
-            "/v2/user/:username",
-            delete(delete_user::<I, A>)
-                .get(get_user_by_name::<I, A>)
-                .put(update_user::<I, A>),
-        )
         .route(
             "/v2/user/createWithArray",
             post(create_users_with_array_input::<I, A>),
@@ -111,6 +105,12 @@ where
         )
         .route("/v2/user/login", get(login_user::<I, A>))
         .route("/v2/user/logout", get(logout_user::<I, A>))
+        .route(
+            "/v2/user/{username}",
+            delete(delete_user::<I, A>)
+                .get(get_user_by_name::<I, A>)
+                .put(update_user::<I, A>),
+        )
         .with_state(api_impl)
 }
 

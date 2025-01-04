@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use axum::{body::Body, extract::*, response::Response, routing::*};
-use axum_extra::extract::CookieJar;
+use axum_extra::extract::{CookieJar, Host};
 use bytes::Bytes;
 use http::{header::CONTENT_TYPE, HeaderMap, HeaderName, HeaderValue, Method, StatusCode};
 use tracing::error;
@@ -27,7 +27,7 @@ where
     Router::new()
         .route("/v71/paymentMethods", get(get_payment_methods::<I, A, C>))
         .route(
-            "/v71/paymentMethods/:id",
+            "/v71/paymentMethods/{id}",
             get(get_payment_method_by_id::<I, A, C>),
         )
         .route("/v71/payments", post(post_make_payment::<I, A, C>))
