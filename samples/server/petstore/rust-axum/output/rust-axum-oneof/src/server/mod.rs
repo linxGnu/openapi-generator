@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use axum::{body::Body, extract::*, response::Response, routing::*};
-use axum_extra::extract::{CookieJar, Multipart};
+use axum_extra::extract::{CookieJar, Host};
 use bytes::Bytes;
 use http::{header::CONTENT_TYPE, HeaderMap, HeaderName, HeaderValue, Method, StatusCode};
 use tracing::error;
@@ -40,6 +40,7 @@ fn foo_validation(
 
     Ok((body,))
 }
+
 /// Foo - POST /
 #[tracing::instrument(skip_all)]
 async fn foo<I, A>(
@@ -98,7 +99,9 @@ where
         Err(_) => {
             // Application code returned an error. This should not happen, as the implementation should
             // return a valid response.
-            response.status(500).body(Body::empty())
+            response
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
+                .body(Body::empty())
         }
     };
 
@@ -106,4 +109,13 @@ where
         error!(error = ?e);
         StatusCode::INTERNAL_SERVER_ERROR
     })
+}
+
+#[allow(dead_code)]
+#[inline]
+fn response_with_status_code_only(code: StatusCode) -> Result<Response, StatusCode> {
+    Response::builder()
+        .status(code)
+        .body(Body::empty())
+        .map_err(|_| code)
 }
