@@ -31,7 +31,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.openapitools.codegen.*;
 import org.openapitools.codegen.meta.GeneratorMetadata;
 import org.openapitools.codegen.meta.Stability;
-import org.openapitools.codegen.meta.features.*;
+import org.openapitools.codegen.meta.features.GlobalFeature;
+import org.openapitools.codegen.meta.features.SchemaSupportFeature;
+import org.openapitools.codegen.meta.features.SecurityFeature;
+import org.openapitools.codegen.meta.features.WireFormatFeature;
 import org.openapitools.codegen.model.ModelMap;
 import org.openapitools.codegen.model.ModelsMap;
 import org.openapitools.codegen.model.OperationMap;
@@ -951,6 +954,22 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
             property.dataType = objectType;
             property.isNullable = false;
         }
+
+        if (property.dataType.startsWith(vecType + "<String")) {
+            property.vendorExtensions.put("is-vec-string", true);
+        } else if (property.dataType.startsWith(vecType + "<models::")) {
+            property.vendorExtensions.put("is-vec-nested", true);
+        } else if (property.dataType.startsWith(mapType + "<String, String")) {
+            property.vendorExtensions.put("is-map-string", true);
+        } else if (property.dataType.startsWith(mapType + "<String, models::")) {
+            property.vendorExtensions.put("is-map-nested", true);
+        } else if (property.dataType.startsWith(mapType + "<String")) {
+            property.vendorExtensions.put("is-map", true);
+        } else if (property.dataType.startsWith("models::")) {
+            property.vendorExtensions.put("is-nested", true);
+        } else if (stringType.equals(property.dataType)) {
+            property.vendorExtensions.put("is-string", true);
+        }
     }
 
     @Override
@@ -981,6 +1000,7 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
 
             cm.vendorExtensions.put("x-is-string", stringType.equals(cm.dataType));
         }
+
         return super.postProcessModelsEnum(modelsMap);
     }
 
