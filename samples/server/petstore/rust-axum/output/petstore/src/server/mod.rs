@@ -153,6 +153,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "add_pet".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -265,6 +269,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "delete_pet".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -355,6 +363,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "find_pets_by_status".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -444,6 +456,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "find_pets_by_tags".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -571,6 +587,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "get_pet_by_id".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -676,6 +696,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "update_pet".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -768,6 +792,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "update_pet_with_form".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -862,6 +890,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "upload_file".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -940,6 +972,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "delete_order".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1061,6 +1097,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "get_inventory".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -1155,6 +1195,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "get_order_by_id".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1254,6 +1298,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "place_order".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1368,6 +1416,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "create_user".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1484,6 +1536,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "create_users_with_array_input".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -1599,6 +1655,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "create_users_with_list_input".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -1709,6 +1769,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "delete_user".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -1803,6 +1867,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "get_user_by_name".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1948,6 +2016,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "login_user".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -2048,6 +2120,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "logout_user".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2169,6 +2245,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "update_user".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }

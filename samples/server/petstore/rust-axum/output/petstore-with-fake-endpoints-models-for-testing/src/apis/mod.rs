@@ -18,6 +18,7 @@ pub mod event {
 
     pub mod convention {
         pub const EVENT_ACTOR: &str = "__actor__";
+        pub const EVENT_ACTION: &str = "__action__";
         pub const EVENT_RESOURCE_TYPE: &str = "__resource_type__";
         pub const EVENT_RESOURCE: &str = "__resource__";
         pub const EVENT_STATUS_CODE: &str = "__status_code__";

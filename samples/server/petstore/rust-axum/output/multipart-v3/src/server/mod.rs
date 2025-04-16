@@ -92,6 +92,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "multipart_related_request_post".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -160,6 +164,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "multipart_request_post".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -230,6 +238,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "multiple_identical_mime_types_post".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }

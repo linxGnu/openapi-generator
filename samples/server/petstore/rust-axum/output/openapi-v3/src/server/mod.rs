@@ -236,6 +236,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "any_of_get".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -305,6 +309,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "callback_with_header_post".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -376,6 +384,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "complex_query_param_get".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -445,6 +457,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "enum_in_path_path_param_get".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -524,6 +540,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "form_test".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -594,6 +614,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "get_with_boolean_parameter".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -663,6 +687,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "json_complex_query_param_get".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -767,6 +795,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "mandatory_request_header_get".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -850,6 +882,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "merge_patch_json_get".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1052,6 +1088,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "multiget_get".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -1115,6 +1155,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "multiple_auth_scheme_get".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1203,6 +1247,7 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(event::convention::EVENT_ACTION.to_string(), "multiple_path_params_with_very_long_path_to_test_formatting_path_param_a_path_param_b_get".to_string());
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -1287,6 +1332,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "one_of_get".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -1351,6 +1400,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "override_server_get".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1441,6 +1494,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "paramget_get".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -1504,6 +1561,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "readonly_auth_scheme_get".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1574,6 +1635,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "register_callback_post".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1648,6 +1713,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "required_octet_stream_put".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1822,6 +1891,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "responses_with_headers_get".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -1945,6 +2018,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "rfc7807_get".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -2058,6 +2135,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "two_first_letter_headers".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -2136,6 +2217,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "untyped_property_get".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2221,6 +2306,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "uuid_get".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -2296,6 +2385,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "xml_extra_post".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2385,6 +2478,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "xml_other_post".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -2460,6 +2557,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "xml_other_put".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2537,6 +2638,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "xml_post".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -2612,6 +2717,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "xml_put".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2702,6 +2811,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "get_repo_info".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -2779,6 +2892,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "create_repo".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }

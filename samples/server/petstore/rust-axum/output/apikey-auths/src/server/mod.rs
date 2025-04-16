@@ -143,6 +143,10 @@ where
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "get_payment_method_by_id".to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -231,6 +235,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "get_payment_methods".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -388,6 +396,10 @@ where
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "post_make_payment".to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
