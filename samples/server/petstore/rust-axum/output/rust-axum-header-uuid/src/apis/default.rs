@@ -22,6 +22,7 @@ pub trait Default {
     /// UsersPost - POST /users
     async fn users_post(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,

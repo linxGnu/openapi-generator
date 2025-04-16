@@ -22,6 +22,7 @@ pub trait Default {
     /// PingGet - GET /ping
     async fn ping_get(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,

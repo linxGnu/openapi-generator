@@ -10,13 +10,13 @@ use validator::{Validate, ValidationErrors};
 use crate::{header, types::*};
 
 #[allow(unused_imports)]
-use crate::{apis, models};
+use crate::{apis, apis::event, models};
 
 /// Setup API Server.
 pub fn new<I, A>(api_impl: I) -> Router
 where
     I: AsRef<A> + Clone + Send + Sync + 'static,
-    A: apis::default::Default + 'static,
+    A: apis::EventDispatcher + apis::default::Default + 'static,
 {
     // build our application with a route
     Router::new()
@@ -46,7 +46,7 @@ async fn all_of_get<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || all_of_get_validation())
@@ -60,7 +60,11 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let result = api_impl.as_ref().all_of_get(method, host, cookies).await;
+    let mut event = event::Event::default();
+    let result = api_impl
+        .as_ref()
+        .all_of_get(&mut event, method, host, cookies)
+        .await;
 
     let mut response = Response::builder();
 
@@ -98,6 +102,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -120,7 +133,7 @@ async fn dummy_get<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || dummy_get_validation())
@@ -134,7 +147,11 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let result = api_impl.as_ref().dummy_get(method, host, cookies).await;
+    let mut event = event::Event::default();
+    let result = api_impl
+        .as_ref()
+        .dummy_get(&mut event, method, host, cookies)
+        .await;
 
     let mut response = Response::builder();
 
@@ -153,6 +170,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -188,7 +214,7 @@ async fn dummy_put<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || dummy_put_validation(body))
@@ -202,9 +228,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .dummy_put(method, host, cookies, body)
+        .dummy_put(&mut event, method, host, cookies, body)
         .await;
 
     let mut response = Response::builder();
@@ -224,6 +251,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -246,7 +282,7 @@ async fn file_response_get<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || file_response_get_validation())
@@ -260,9 +296,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .file_response_get(method, host, cookies)
+        .file_response_get(&mut event, method, host, cookies)
         .await;
 
     let mut response = Response::builder();
@@ -301,6 +338,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -323,7 +369,7 @@ async fn get_structured_yaml<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || get_structured_yaml_validation())
@@ -337,9 +383,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .get_structured_yaml(method, host, cookies)
+        .get_structured_yaml(&mut event, method, host, cookies)
         .await;
 
     let mut response = Response::builder();
@@ -371,6 +418,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -400,7 +456,7 @@ async fn html_post<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || html_post_validation(body))
@@ -414,9 +470,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .html_post(method, host, cookies, body)
+        .html_post(&mut event, method, host, cookies, body)
         .await;
 
     let mut response = Response::builder();
@@ -448,6 +505,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -477,7 +543,7 @@ async fn post_yaml<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || post_yaml_validation(body))
@@ -491,9 +557,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .post_yaml(method, host, cookies, body)
+        .post_yaml(&mut event, method, host, cookies, body)
         .await;
 
     let mut response = Response::builder();
@@ -513,6 +580,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -535,7 +611,7 @@ async fn raw_json_get<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || raw_json_get_validation())
@@ -549,7 +625,11 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let result = api_impl.as_ref().raw_json_get(method, host, cookies).await;
+    let mut event = event::Event::default();
+    let result = api_impl
+        .as_ref()
+        .raw_json_get(&mut event, method, host, cookies)
+        .await;
 
     let mut response = Response::builder();
 
@@ -587,6 +667,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -621,7 +710,7 @@ async fn solo_object_post<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || solo_object_post_validation(body))
@@ -635,9 +724,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .solo_object_post(method, host, cookies, body)
+        .solo_object_post(&mut event, method, host, cookies, body)
         .await;
 
     let mut response = Response::builder();
@@ -657,6 +747,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);

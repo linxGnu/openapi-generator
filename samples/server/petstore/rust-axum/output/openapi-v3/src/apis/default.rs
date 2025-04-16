@@ -278,6 +278,7 @@ pub trait Default {
     /// AnyOfGet - GET /any-of
     async fn any_of_get(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -287,6 +288,7 @@ pub trait Default {
     /// CallbackWithHeaderPost - POST /callback-with-header
     async fn callback_with_header_post(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -296,6 +298,7 @@ pub trait Default {
     /// ComplexQueryParamGet - GET /complex-query-param
     async fn complex_query_param_get(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -305,6 +308,7 @@ pub trait Default {
     /// EnumInPathPathParamGet - GET /enum_in_path/{path_param}
     async fn enum_in_path_path_param_get(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -316,6 +320,7 @@ pub trait Default {
     /// FormTest - POST /form-test
     async fn form_test(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -325,6 +330,7 @@ pub trait Default {
     /// GetWithBooleanParameter - GET /get-with-bool
     async fn get_with_boolean_parameter(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -334,6 +340,7 @@ pub trait Default {
     /// JsonComplexQueryParamGet - GET /json-complex-query-param
     async fn json_complex_query_param_get(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -343,6 +350,7 @@ pub trait Default {
     /// MandatoryRequestHeaderGet - GET /mandatory-request-header
     async fn mandatory_request_header_get(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -352,6 +360,7 @@ pub trait Default {
     /// MergePatchJsonGet - GET /merge-patch-json
     async fn merge_patch_json_get(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -362,6 +371,7 @@ pub trait Default {
     /// MultigetGet - GET /multiget
     async fn multiget_get(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -370,6 +380,7 @@ pub trait Default {
     /// MultipleAuthSchemeGet - GET /multiple_auth_scheme
     async fn multiple_auth_scheme_get(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -378,6 +389,7 @@ pub trait Default {
     /// MultiplePathParamsWithVeryLongPathToTestFormattingPathParamAPathParamBGet - GET /multiple-path-params-with-very-long-path-to-test-formatting/{path_param_a}/{path_param_b}
     async fn multiple_path_params_with_very_long_path_to_test_formatting_path_param_a_path_param_b_get(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -387,6 +399,7 @@ pub trait Default {
     /// OneOfGet - GET /one-of
     async fn one_of_get(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -395,6 +408,7 @@ pub trait Default {
     /// OverrideServerGet - GET /override-server
     async fn override_server_get(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -405,6 +419,7 @@ pub trait Default {
     /// ParamgetGet - GET /paramget
     async fn paramget_get(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -414,6 +429,7 @@ pub trait Default {
     /// ReadonlyAuthSchemeGet - GET /readonly_auth_scheme
     async fn readonly_auth_scheme_get(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -422,6 +438,7 @@ pub trait Default {
     /// RegisterCallbackPost - POST /register-callback
     async fn register_callback_post(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -431,6 +448,7 @@ pub trait Default {
     /// RequiredOctetStreamPut - PUT /required_octet_stream
     async fn required_octet_stream_put(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -440,6 +458,7 @@ pub trait Default {
     /// ResponsesWithHeadersGet - GET /responses_with_headers
     async fn responses_with_headers_get(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -448,6 +467,7 @@ pub trait Default {
     /// Rfc7807Get - GET /rfc7807
     async fn rfc7807_get(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -456,6 +476,7 @@ pub trait Default {
     /// TwoFirstLetterHeaders - POST /operation-two-first-letter-headers
     async fn two_first_letter_headers(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -465,6 +486,7 @@ pub trait Default {
     /// UntypedPropertyGet - GET /untyped_property
     async fn untyped_property_get(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -474,6 +496,7 @@ pub trait Default {
     /// UuidGet - GET /uuid
     async fn uuid_get(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -482,6 +505,7 @@ pub trait Default {
     /// XmlExtraPost - POST /xml_extra
     async fn xml_extra_post(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -491,6 +515,7 @@ pub trait Default {
     /// XmlOtherPost - POST /xml_other
     async fn xml_other_post(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -500,6 +525,7 @@ pub trait Default {
     /// XmlOtherPut - PUT /xml_other
     async fn xml_other_put(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -511,6 +537,7 @@ pub trait Default {
     /// XmlPost - POST /xml
     async fn xml_post(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -520,6 +547,7 @@ pub trait Default {
     /// XmlPut - PUT /xml
     async fn xml_put(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,

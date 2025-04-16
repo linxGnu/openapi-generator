@@ -117,6 +117,7 @@ pub trait Pet {
     /// AddPet - POST /v2/pet
     async fn add_pet(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -128,6 +129,7 @@ pub trait Pet {
     /// DeletePet - DELETE /v2/pet/{petId}
     async fn delete_pet(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -140,6 +142,7 @@ pub trait Pet {
     /// FindPetsByStatus - GET /v2/pet/findByStatus
     async fn find_pets_by_status(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -151,6 +154,7 @@ pub trait Pet {
     /// FindPetsByTags - GET /v2/pet/findByTags
     async fn find_pets_by_tags(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -162,6 +166,7 @@ pub trait Pet {
     /// GetPetById - GET /v2/pet/{petId}
     async fn get_pet_by_id(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -174,6 +179,7 @@ pub trait Pet {
     /// UpdatePet - PUT /v2/pet
     async fn update_pet(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -185,6 +191,7 @@ pub trait Pet {
     /// UpdatePetWithForm - POST /v2/pet/{petId}
     async fn update_pet_with_form(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -197,6 +204,7 @@ pub trait Pet {
     /// UploadFile - POST /v2/pet/{petId}/uploadImage
     async fn upload_file(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,

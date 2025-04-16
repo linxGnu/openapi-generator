@@ -22,6 +22,7 @@ pub trait Default {
     /// Foo - POST /
     async fn foo(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,

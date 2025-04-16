@@ -22,6 +22,7 @@ pub trait Default {
     /// MailPut - PUT /mail
     async fn mail_put(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,

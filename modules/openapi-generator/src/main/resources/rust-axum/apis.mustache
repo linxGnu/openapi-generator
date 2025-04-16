@@ -101,6 +101,7 @@ pub trait {{classnamePascalCase}} {
     /// {{{operationId}}} - {{{httpMethod}}} {{{basePathWithoutHost}}}{{{path}}}
     async fn {{{x-operation-id}}}(
     &self,
+    event: &mut super::event::Event,
     method: Method,
     host: Host,
     cookies: CookieJar,

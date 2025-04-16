@@ -122,6 +122,7 @@ pub trait Fake {
     /// Call123example - GET /v2/fake/operation-with-numeric-id
     async fn call123example(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -130,6 +131,7 @@ pub trait Fake {
     /// FakeOuterBooleanSerialize - POST /v2/fake/outer/boolean
     async fn fake_outer_boolean_serialize(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -139,6 +141,7 @@ pub trait Fake {
     /// FakeOuterCompositeSerialize - POST /v2/fake/outer/composite
     async fn fake_outer_composite_serialize(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -148,6 +151,7 @@ pub trait Fake {
     /// FakeOuterNumberSerialize - POST /v2/fake/outer/number
     async fn fake_outer_number_serialize(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -157,6 +161,7 @@ pub trait Fake {
     /// FakeOuterStringSerialize - POST /v2/fake/outer/string
     async fn fake_outer_string_serialize(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -166,6 +171,7 @@ pub trait Fake {
     /// FakeResponseWithNumericalDescription - GET /v2/fake/response-with-numerical-description
     async fn fake_response_with_numerical_description(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -174,6 +180,7 @@ pub trait Fake {
     /// HyphenParam - GET /v2/fake/hyphenParam/{hyphen-param}
     async fn hyphen_param(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -183,6 +190,7 @@ pub trait Fake {
     /// TestBodyWithQueryParams - PUT /v2/fake/body-with-query-params
     async fn test_body_with_query_params(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -195,6 +203,7 @@ pub trait Fake {
     /// TestClientModel - PATCH /v2/fake
     async fn test_client_model(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -206,6 +215,7 @@ pub trait Fake {
     /// TestEndpointParameters - POST /v2/fake
     async fn test_endpoint_parameters(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -217,6 +227,7 @@ pub trait Fake {
     /// TestEnumParameters - GET /v2/fake
     async fn test_enum_parameters(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -230,6 +241,7 @@ pub trait Fake {
     /// TestInlineAdditionalProperties - POST /v2/fake/inline-additionalProperties
     async fn test_inline_additional_properties(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -241,6 +253,7 @@ pub trait Fake {
     /// TestJsonFormData - GET /v2/fake/jsonFormData
     async fn test_json_form_data(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,

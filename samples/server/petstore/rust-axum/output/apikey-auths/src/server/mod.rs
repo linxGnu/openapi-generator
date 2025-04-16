@@ -10,13 +10,14 @@ use validator::{Validate, ValidationErrors};
 use crate::{header, types::*};
 
 #[allow(unused_imports)]
-use crate::{apis, models};
+use crate::{apis, apis::event, models};
 
 /// Setup API Server.
 pub fn new<I, A, C>(api_impl: I) -> Router
 where
     I: AsRef<A> + Clone + Send + Sync + 'static,
-    A: apis::payments::Payments<Claims = C>
+    A: apis::EventDispatcher
+        + apis::payments::Payments<Claims = C>
         + apis::payments::PaymentsAuthorization<Claims = C>
         + apis::ApiKeyAuthHeader<Claims = C>
         + apis::CookieAuthentication<Claims = C>
@@ -54,7 +55,9 @@ async fn get_payment_method_by_id<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::payments::Payments<Claims = C> + apis::payments::PaymentsAuthorization<Claims = C>,
+    A: apis::EventDispatcher
+        + apis::payments::Payments<Claims = C>
+        + apis::payments::PaymentsAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation =
@@ -69,9 +72,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .get_payment_method_by_id(method, host, cookies, path_params)
+        .get_payment_method_by_id(&mut event, method, host, cookies, path_params)
         .await;
 
     let mut response = Response::builder();
@@ -133,6 +137,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -155,7 +168,9 @@ async fn get_payment_methods<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::payments::Payments<Claims = C> + apis::payments::PaymentsAuthorization<Claims = C>,
+    A: apis::EventDispatcher
+        + apis::payments::Payments<Claims = C>
+        + apis::payments::PaymentsAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || get_payment_methods_validation())
@@ -169,9 +184,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .get_payment_methods(method, host, cookies)
+        .get_payment_methods(&mut event, method, host, cookies)
         .await;
 
     let mut response = Response::builder();
@@ -210,6 +226,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -247,7 +272,8 @@ async fn post_make_payment<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::payments::Payments<Claims = C>
+    A: apis::EventDispatcher
+        + apis::payments::Payments<Claims = C>
         + apis::payments::PaymentsAuthorization<Claims = C>
         + apis::CookieAuthentication<Claims = C>,
 {
@@ -292,9 +318,10 @@ where
         }
     }
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .post_make_payment(method, host, cookies, claims, body)
+        .post_make_payment(&mut event, method, host, cookies, claims, body)
         .await;
 
     let mut response = Response::builder();
@@ -356,6 +383,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);

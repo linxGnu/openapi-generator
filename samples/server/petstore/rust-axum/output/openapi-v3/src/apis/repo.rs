@@ -22,6 +22,7 @@ pub trait Repo {
     /// CreateRepo - POST /repos
     async fn create_repo(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,

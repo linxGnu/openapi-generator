@@ -24,6 +24,7 @@ pub trait AnotherFake {
     /// TestSpecialTags - PATCH /v2/another-fake/dummy
     async fn test_special_tags(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,

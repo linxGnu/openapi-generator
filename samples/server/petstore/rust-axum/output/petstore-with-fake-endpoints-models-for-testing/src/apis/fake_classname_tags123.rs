@@ -24,6 +24,7 @@ pub trait FakeClassnameTags123 {
     /// TestClassname - PATCH /v2/fake_classname_test
     async fn test_classname(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,

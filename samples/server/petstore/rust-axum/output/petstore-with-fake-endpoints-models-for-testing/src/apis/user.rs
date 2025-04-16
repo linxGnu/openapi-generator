@@ -94,6 +94,7 @@ pub trait User {
     /// CreateUser - POST /v2/user
     async fn create_user(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -105,6 +106,7 @@ pub trait User {
     /// CreateUsersWithArrayInput - POST /v2/user/createWithArray
     async fn create_users_with_array_input(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -116,6 +118,7 @@ pub trait User {
     /// CreateUsersWithListInput - POST /v2/user/createWithList
     async fn create_users_with_list_input(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -127,6 +130,7 @@ pub trait User {
     /// DeleteUser - DELETE /v2/user/{username}
     async fn delete_user(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -138,6 +142,7 @@ pub trait User {
     /// GetUserByName - GET /v2/user/{username}
     async fn get_user_by_name(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -149,6 +154,7 @@ pub trait User {
     /// LoginUser - GET /v2/user/login
     async fn login_user(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -160,6 +166,7 @@ pub trait User {
     /// LogoutUser - GET /v2/user/logout
     async fn logout_user(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -170,6 +177,7 @@ pub trait User {
     /// UpdateUser - PUT /v2/user/{username}
     async fn update_user(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,

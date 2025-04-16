@@ -22,6 +22,7 @@ pub trait InfoRepo {
     /// GetRepoInfo - GET /repos/{repoId}
     async fn get_repo_info(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,

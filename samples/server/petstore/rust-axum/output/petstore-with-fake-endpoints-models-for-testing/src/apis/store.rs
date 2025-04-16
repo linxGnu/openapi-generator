@@ -76,6 +76,7 @@ pub trait Store {
     /// DeleteOrder - DELETE /v2/store/order/{order_id}
     async fn delete_order(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -87,6 +88,7 @@ pub trait Store {
     /// GetInventory - GET /v2/store/inventory
     async fn get_inventory(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -98,6 +100,7 @@ pub trait Store {
     /// GetOrderById - GET /v2/store/order/{order_id}
     async fn get_order_by_id(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -109,6 +112,7 @@ pub trait Store {
     /// PlaceOrder - POST /v2/store/order
     async fn place_order(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,

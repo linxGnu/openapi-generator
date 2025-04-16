@@ -38,6 +38,7 @@ pub trait Default {
     /// MultipartRelatedRequestPost - POST /multipart_related_request
     async fn multipart_related_request_post(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -47,6 +48,7 @@ pub trait Default {
     /// MultipartRequestPost - POST /multipart_request
     async fn multipart_request_post(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,
@@ -56,6 +58,7 @@ pub trait Default {
     /// MultipleIdenticalMimeTypesPost - POST /multiple-identical-mime-types
     async fn multiple_identical_mime_types_post(
         &self,
+        event: &mut super::event::Event,
         method: Method,
         host: Host,
         cookies: CookieJar,

@@ -10,13 +10,13 @@ use validator::{Validate, ValidationErrors};
 use crate::{header, types::*};
 
 #[allow(unused_imports)]
-use crate::{apis, models};
+use crate::{apis, apis::event, models};
 
 /// Setup API Server.
 pub fn new<I, A>(api_impl: I) -> Router
 where
     I: AsRef<A> + Clone + Send + Sync + 'static,
-    A: apis::default::Default + 'static,
+    A: apis::EventDispatcher + apis::default::Default + 'static,
 {
     // build our application with a route
     Router::new()
@@ -52,7 +52,7 @@ async fn foo<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || foo_validation(body))
@@ -66,7 +66,11 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let result = api_impl.as_ref().foo(method, host, cookies, body).await;
+    let mut event = event::Event::default();
+    let result = api_impl
+        .as_ref()
+        .foo(&mut event, method, host, cookies, body)
+        .await;
 
     let mut response = Response::builder();
 
@@ -104,6 +108,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);

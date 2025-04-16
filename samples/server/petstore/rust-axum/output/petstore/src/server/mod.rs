@@ -10,13 +10,14 @@ use validator::{Validate, ValidationErrors};
 use crate::{header, types::*};
 
 #[allow(unused_imports)]
-use crate::{apis, models};
+use crate::{apis, apis::event, models};
 
 /// Setup API Server.
 pub fn new<I, A, C>(api_impl: I) -> Router
 where
     I: AsRef<A> + Clone + Send + Sync + 'static,
-    A: apis::pet::Pet<Claims = C>
+    A: apis::EventDispatcher
+        + apis::pet::Pet<Claims = C>
         + apis::pet::PetAuthorization<Claims = C>
         + apis::store::Store<Claims = C>
         + apis::store::StoreAuthorization<Claims = C>
@@ -93,7 +94,7 @@ async fn add_pet<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
+    A: apis::EventDispatcher + apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || add_pet_validation(body))
@@ -107,7 +108,11 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let result = api_impl.as_ref().add_pet(method, host, cookies, body).await;
+    let mut event = event::Event::default();
+    let result = api_impl
+        .as_ref()
+        .add_pet(&mut event, method, host, cookies, body)
+        .await;
 
     let mut response = Response::builder();
 
@@ -142,6 +147,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -175,7 +189,7 @@ async fn delete_pet<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
+    A: apis::EventDispatcher + apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     // Header parameters
     let header_params = {
@@ -215,9 +229,17 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .delete_pet(method, host, cookies, header_params, path_params)
+        .delete_pet(
+            &mut event,
+            method,
+            host,
+            cookies,
+            header_params,
+            path_params,
+        )
         .await;
 
     let mut response = Response::builder();
@@ -237,6 +259,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -264,7 +295,7 @@ async fn find_pets_by_status<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
+    A: apis::EventDispatcher + apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation =
@@ -279,9 +310,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .find_pets_by_status(method, host, cookies, query_params)
+        .find_pets_by_status(&mut event, method, host, cookies, query_params)
         .await;
 
     let mut response = Response::builder();
@@ -317,6 +349,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -344,7 +385,7 @@ async fn find_pets_by_tags<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
+    A: apis::EventDispatcher + apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation =
@@ -359,9 +400,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .find_pets_by_tags(method, host, cookies, query_params)
+        .find_pets_by_tags(&mut event, method, host, cookies, query_params)
         .await;
 
     let mut response = Response::builder();
@@ -397,6 +439,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -425,7 +476,8 @@ async fn get_pet_by_id<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::pet::Pet<Claims = C>
+    A: apis::EventDispatcher
+        + apis::pet::Pet<Claims = C>
         + apis::pet::PetAuthorization<Claims = C>
         + apis::ApiKeyAuthHeader<Claims = C>,
 {
@@ -470,9 +522,10 @@ where
         }
     }
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .get_pet_by_id(method, host, cookies, claims, path_params)
+        .get_pet_by_id(&mut event, method, host, cookies, claims, path_params)
         .await;
 
     let mut response = Response::builder();
@@ -512,6 +565,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -547,7 +609,7 @@ async fn update_pet<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
+    A: apis::EventDispatcher + apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || update_pet_validation(body))
@@ -561,9 +623,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .update_pet(method, host, cookies, body)
+        .update_pet(&mut event, method, host, cookies, body)
         .await;
 
     let mut response = Response::builder();
@@ -607,6 +670,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -653,7 +725,7 @@ async fn update_pet_with_form<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
+    A: apis::EventDispatcher + apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation =
@@ -668,9 +740,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .update_pet_with_form(method, host, cookies, path_params, body)
+        .update_pet_with_form(&mut event, method, host, cookies, path_params, body)
         .await;
 
     let mut response = Response::builder();
@@ -690,6 +763,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -718,7 +800,7 @@ async fn upload_file<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
+    A: apis::EventDispatcher + apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || upload_file_validation(path_params))
@@ -732,9 +814,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .upload_file(method, host, cookies, path_params, body)
+        .upload_file(&mut event, method, host, cookies, path_params, body)
         .await;
 
     let mut response = Response::builder();
@@ -773,6 +856,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -800,7 +892,9 @@ async fn delete_order<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::store::Store<Claims = C> + apis::store::StoreAuthorization<Claims = C>,
+    A: apis::EventDispatcher
+        + apis::store::Store<Claims = C>
+        + apis::store::StoreAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || delete_order_validation(path_params))
@@ -814,9 +908,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .delete_order(method, host, cookies, path_params)
+        .delete_order(&mut event, method, host, cookies, path_params)
         .await;
 
     let mut response = Response::builder();
@@ -840,6 +935,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -863,7 +967,8 @@ async fn get_inventory<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::store::Store<Claims = C>
+    A: apis::EventDispatcher
+        + apis::store::Store<Claims = C>
         + apis::store::StoreAuthorization<Claims = C>
         + apis::ApiKeyAuthHeader<Claims = C>,
 {
@@ -908,9 +1013,10 @@ where
         }
     }
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .get_inventory(method, host, cookies, claims)
+        .get_inventory(&mut event, method, host, cookies, claims)
         .await;
 
     let mut response = Response::builder();
@@ -949,6 +1055,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -976,7 +1091,9 @@ async fn get_order_by_id<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::store::Store<Claims = C> + apis::store::StoreAuthorization<Claims = C>,
+    A: apis::EventDispatcher
+        + apis::store::Store<Claims = C>
+        + apis::store::StoreAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || get_order_by_id_validation(path_params))
@@ -990,9 +1107,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .get_order_by_id(method, host, cookies, path_params)
+        .get_order_by_id(&mut event, method, host, cookies, path_params)
         .await;
 
     let mut response = Response::builder();
@@ -1032,6 +1150,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1067,7 +1194,9 @@ async fn place_order<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::store::Store<Claims = C> + apis::store::StoreAuthorization<Claims = C>,
+    A: apis::EventDispatcher
+        + apis::store::Store<Claims = C>
+        + apis::store::StoreAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || place_order_validation(body))
@@ -1081,9 +1210,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .place_order(method, host, cookies, body)
+        .place_order(&mut event, method, host, cookies, body)
         .await;
 
     let mut response = Response::builder();
@@ -1119,6 +1249,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1155,7 +1294,8 @@ async fn create_user<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::user::User<Claims = C>
+    A: apis::EventDispatcher
+        + apis::user::User<Claims = C>
         + apis::user::UserAuthorization<Claims = C>
         + apis::ApiKeyAuthHeader<Claims = C>,
 {
@@ -1200,9 +1340,10 @@ where
         }
     }
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .create_user(method, host, cookies, claims, body)
+        .create_user(&mut event, method, host, cookies, claims, body)
         .await;
 
     let mut response = Response::builder();
@@ -1222,6 +1363,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1258,7 +1408,8 @@ async fn create_users_with_array_input<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::user::User<Claims = C>
+    A: apis::EventDispatcher
+        + apis::user::User<Claims = C>
         + apis::user::UserAuthorization<Claims = C>
         + apis::ApiKeyAuthHeader<Claims = C>,
 {
@@ -1304,9 +1455,10 @@ where
         }
     }
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .create_users_with_array_input(method, host, cookies, claims, body)
+        .create_users_with_array_input(&mut event, method, host, cookies, claims, body)
         .await;
 
     let mut response = Response::builder();
@@ -1326,6 +1478,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1362,7 +1523,8 @@ async fn create_users_with_list_input<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::user::User<Claims = C>
+    A: apis::EventDispatcher
+        + apis::user::User<Claims = C>
         + apis::user::UserAuthorization<Claims = C>
         + apis::ApiKeyAuthHeader<Claims = C>,
 {
@@ -1408,9 +1570,10 @@ where
         }
     }
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .create_users_with_list_input(method, host, cookies, claims, body)
+        .create_users_with_list_input(&mut event, method, host, cookies, claims, body)
         .await;
 
     let mut response = Response::builder();
@@ -1430,6 +1593,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1458,7 +1630,8 @@ async fn delete_user<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::user::User<Claims = C>
+    A: apis::EventDispatcher
+        + apis::user::User<Claims = C>
         + apis::user::UserAuthorization<Claims = C>
         + apis::ApiKeyAuthHeader<Claims = C>,
 {
@@ -1503,9 +1676,10 @@ where
         }
     }
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .delete_user(method, host, cookies, claims, path_params)
+        .delete_user(&mut event, method, host, cookies, claims, path_params)
         .await;
 
     let mut response = Response::builder();
@@ -1529,6 +1703,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1556,7 +1739,9 @@ async fn get_user_by_name<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::user::User<Claims = C> + apis::user::UserAuthorization<Claims = C>,
+    A: apis::EventDispatcher
+        + apis::user::User<Claims = C>
+        + apis::user::UserAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || get_user_by_name_validation(path_params))
@@ -1570,9 +1755,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .get_user_by_name(method, host, cookies, path_params)
+        .get_user_by_name(&mut event, method, host, cookies, path_params)
         .await;
 
     let mut response = Response::builder();
@@ -1612,6 +1798,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1639,7 +1834,9 @@ async fn login_user<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::user::User<Claims = C> + apis::user::UserAuthorization<Claims = C>,
+    A: apis::EventDispatcher
+        + apis::user::User<Claims = C>
+        + apis::user::UserAuthorization<Claims = C>,
 {
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || login_user_validation(query_params))
@@ -1653,9 +1850,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .login_user(method, host, cookies, query_params)
+        .login_user(&mut event, method, host, cookies, query_params)
         .await;
 
     let mut response = Response::builder();
@@ -1744,6 +1942,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1767,7 +1974,8 @@ async fn logout_user<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::user::User<Claims = C>
+    A: apis::EventDispatcher
+        + apis::user::User<Claims = C>
         + apis::user::UserAuthorization<Claims = C>
         + apis::ApiKeyAuthHeader<Claims = C>,
 {
@@ -1812,9 +2020,10 @@ where
         }
     }
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .logout_user(method, host, cookies, claims)
+        .logout_user(&mut event, method, host, cookies, claims)
         .await;
 
     let mut response = Response::builder();
@@ -1834,6 +2043,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1873,7 +2091,8 @@ async fn update_user<I, A, C>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::user::User<Claims = C>
+    A: apis::EventDispatcher
+        + apis::user::User<Claims = C>
         + apis::user::UserAuthorization<Claims = C>
         + apis::ApiKeyAuthHeader<Claims = C>,
 {
@@ -1918,9 +2137,10 @@ where
         }
     }
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .update_user(method, host, cookies, claims, path_params, body)
+        .update_user(&mut event, method, host, cookies, claims, path_params, body)
         .await;
 
     let mut response = Response::builder();
@@ -1944,6 +2164,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);

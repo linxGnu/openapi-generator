@@ -10,13 +10,17 @@ use validator::{Validate, ValidationErrors};
 use crate::{header, types::*};
 
 #[allow(unused_imports)]
-use crate::{apis, models};
+use crate::{apis, apis::event, models};
 
 /// Setup API Server.
 pub fn new<I, A>(api_impl: I) -> Router
 where
     I: AsRef<A> + Clone + Send + Sync + 'static,
-    A: apis::default::Default + apis::info_repo::InfoRepo + apis::repo::Repo + 'static,
+    A: apis::EventDispatcher
+        + apis::default::Default
+        + apis::info_repo::InfoRepo
+        + apis::repo::Repo
+        + 'static,
 {
     // build our application with a route
     Router::new()
@@ -127,7 +131,7 @@ async fn any_of_get<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = any_of_get_validation(query_params);
 
@@ -138,9 +142,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .any_of_get(method, host, cookies, query_params)
+        .any_of_get(&mut event, method, host, cookies, query_params)
         .await;
 
     let mut response = Response::builder();
@@ -225,6 +230,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -252,7 +266,7 @@ async fn callback_with_header_post<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = callback_with_header_post_validation(query_params);
 
@@ -263,9 +277,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .callback_with_header_post(method, host, cookies, query_params)
+        .callback_with_header_post(&mut event, method, host, cookies, query_params)
         .await;
 
     let mut response = Response::builder();
@@ -285,6 +300,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -312,7 +336,7 @@ async fn complex_query_param_get<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = complex_query_param_get_validation(query_params);
 
@@ -323,9 +347,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .complex_query_param_get(method, host, cookies, query_params)
+        .complex_query_param_get(&mut event, method, host, cookies, query_params)
         .await;
 
     let mut response = Response::builder();
@@ -345,6 +370,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -372,7 +406,7 @@ async fn enum_in_path_path_param_get<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = enum_in_path_path_param_get_validation(path_params);
 
@@ -383,9 +417,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .enum_in_path_path_param_get(method, host, cookies, path_params)
+        .enum_in_path_path_param_get(&mut event, method, host, cookies, path_params)
         .await;
 
     let mut response = Response::builder();
@@ -405,6 +440,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -440,7 +484,7 @@ async fn form_test<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = form_test_validation(body);
 
@@ -451,9 +495,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .form_test(method, host, cookies, body)
+        .form_test(&mut event, method, host, cookies, body)
         .await;
 
     let mut response = Response::builder();
@@ -473,6 +518,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -500,7 +554,7 @@ async fn get_with_boolean_parameter<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = get_with_boolean_parameter_validation(query_params);
 
@@ -511,9 +565,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .get_with_boolean_parameter(method, host, cookies, query_params)
+        .get_with_boolean_parameter(&mut event, method, host, cookies, query_params)
         .await;
 
     let mut response = Response::builder();
@@ -533,6 +588,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -560,7 +624,7 @@ async fn json_complex_query_param_get<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = json_complex_query_param_get_validation(query_params);
 
@@ -571,9 +635,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .json_complex_query_param_get(method, host, cookies, query_params)
+        .json_complex_query_param_get(&mut event, method, host, cookies, query_params)
         .await;
 
     let mut response = Response::builder();
@@ -593,6 +658,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -620,7 +694,7 @@ async fn mandatory_request_header_get<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     // Header parameters
     let header_params = {
@@ -664,9 +738,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .mandatory_request_header_get(method, host, cookies, header_params)
+        .mandatory_request_header_get(&mut event, method, host, cookies, header_params)
         .await;
 
     let mut response = Response::builder();
@@ -686,6 +761,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -708,7 +792,7 @@ async fn merge_patch_json_get<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = merge_patch_json_get_validation();
 
@@ -719,9 +803,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .merge_patch_json_get(method, host, cookies)
+        .merge_patch_json_get(&mut event, method, host, cookies)
         .await;
 
     let mut response = Response::builder();
@@ -760,6 +845,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -782,7 +876,7 @@ async fn multiget_get<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = multiget_get_validation();
 
@@ -793,7 +887,11 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let result = api_impl.as_ref().multiget_get(method, host, cookies).await;
+    let mut event = event::Event::default();
+    let result = api_impl
+        .as_ref()
+        .multiget_get(&mut event, method, host, cookies)
+        .await;
 
     let mut response = Response::builder();
 
@@ -948,6 +1046,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -970,7 +1077,7 @@ async fn multiple_auth_scheme_get<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = multiple_auth_scheme_get_validation();
 
@@ -981,9 +1088,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .multiple_auth_scheme_get(method, host, cookies)
+        .multiple_auth_scheme_get(&mut event, method, host, cookies)
         .await;
 
     let mut response = Response::builder();
@@ -1002,6 +1110,15 @@ where
                                                 response.status(StatusCode::INTERNAL_SERVER_ERROR).body(Body::empty())
                                             },
                                         };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1037,7 +1154,7 @@ async fn multiple_path_params_with_very_long_path_to_test_formatting_path_param_
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation =
     multiple_path_params_with_very_long_path_to_test_formatting_path_param_a_path_param_b_get_validation(
@@ -1052,9 +1169,11 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .multiple_path_params_with_very_long_path_to_test_formatting_path_param_a_path_param_b_get(
+            &mut event,
             method,
             host,
             cookies,
@@ -1078,6 +1197,15 @@ where
                                                 response.status(StatusCode::INTERNAL_SERVER_ERROR).body(Body::empty())
                                             },
                                         };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1100,7 +1228,7 @@ async fn one_of_get<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = one_of_get_validation();
 
@@ -1111,7 +1239,11 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let result = api_impl.as_ref().one_of_get(method, host, cookies).await;
+    let mut event = event::Event::default();
+    let result = api_impl
+        .as_ref()
+        .one_of_get(&mut event, method, host, cookies)
+        .await;
 
     let mut response = Response::builder();
 
@@ -1149,6 +1281,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1171,7 +1312,7 @@ async fn override_server_get<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = override_server_get_validation();
 
@@ -1182,9 +1323,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .override_server_get(method, host, cookies)
+        .override_server_get(&mut event, method, host, cookies)
         .await;
 
     let mut response = Response::builder();
@@ -1204,6 +1346,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1231,7 +1382,7 @@ async fn paramget_get<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = paramget_get_validation(query_params);
 
@@ -1242,9 +1393,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .paramget_get(method, host, cookies, query_params)
+        .paramget_get(&mut event, method, host, cookies, query_params)
         .await;
 
     let mut response = Response::builder();
@@ -1283,6 +1435,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1305,7 +1466,7 @@ async fn readonly_auth_scheme_get<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = readonly_auth_scheme_get_validation();
 
@@ -1316,9 +1477,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .readonly_auth_scheme_get(method, host, cookies)
+        .readonly_auth_scheme_get(&mut event, method, host, cookies)
         .await;
 
     let mut response = Response::builder();
@@ -1337,6 +1499,15 @@ where
                                                 response.status(StatusCode::INTERNAL_SERVER_ERROR).body(Body::empty())
                                             },
                                         };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1364,7 +1535,7 @@ async fn register_callback_post<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = register_callback_post_validation(query_params);
 
@@ -1375,9 +1546,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .register_callback_post(method, host, cookies, query_params)
+        .register_callback_post(&mut event, method, host, cookies, query_params)
         .await;
 
     let mut response = Response::builder();
@@ -1397,6 +1569,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1428,7 +1609,7 @@ async fn required_octet_stream_put<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = required_octet_stream_put_validation(body);
 
@@ -1439,9 +1620,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .required_octet_stream_put(method, host, cookies, body)
+        .required_octet_stream_put(&mut event, method, host, cookies, body)
         .await;
 
     let mut response = Response::builder();
@@ -1461,6 +1643,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1483,7 +1674,7 @@ async fn responses_with_headers_get<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = responses_with_headers_get_validation();
 
@@ -1494,9 +1685,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .responses_with_headers_get(method, host, cookies)
+        .responses_with_headers_get(&mut event, method, host, cookies)
         .await;
 
     let mut response = Response::builder();
@@ -1624,6 +1816,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1646,7 +1847,7 @@ async fn rfc7807_get<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = rfc7807_get_validation();
 
@@ -1657,7 +1858,11 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let result = api_impl.as_ref().rfc7807_get(method, host, cookies).await;
+    let mut event = event::Event::default();
+    let result = api_impl
+        .as_ref()
+        .rfc7807_get(&mut event, method, host, cookies)
+        .await;
 
     let mut response = Response::builder();
 
@@ -1734,6 +1939,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1761,7 +1975,7 @@ async fn two_first_letter_headers<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     // Header parameters
     let header_params = {
@@ -1815,9 +2029,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .two_first_letter_headers(method, host, cookies, header_params)
+        .two_first_letter_headers(&mut event, method, host, cookies, header_params)
         .await;
 
     let mut response = Response::builder();
@@ -1837,6 +2052,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1874,7 +2098,7 @@ async fn untyped_property_get<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = untyped_property_get_validation(body);
 
@@ -1885,9 +2109,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .untyped_property_get(method, host, cookies, body)
+        .untyped_property_get(&mut event, method, host, cookies, body)
         .await;
 
     let mut response = Response::builder();
@@ -1906,6 +2131,15 @@ where
                                                 response.status(StatusCode::INTERNAL_SERVER_ERROR).body(Body::empty())
                                             },
                                         };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -1928,7 +2162,7 @@ async fn uuid_get<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = uuid_get_validation();
 
@@ -1939,7 +2173,11 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let result = api_impl.as_ref().uuid_get(method, host, cookies).await;
+    let mut event = event::Event::default();
+    let result = api_impl
+        .as_ref()
+        .uuid_get(&mut event, method, host, cookies)
+        .await;
 
     let mut response = Response::builder();
 
@@ -1977,6 +2215,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -2006,7 +2253,7 @@ async fn xml_extra_post<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = xml_extra_post_validation(body);
 
@@ -2017,9 +2264,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .xml_extra_post(method, host, cookies, body)
+        .xml_extra_post(&mut event, method, host, cookies, body)
         .await;
 
     let mut response = Response::builder();
@@ -2043,6 +2291,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -2072,7 +2329,7 @@ async fn xml_other_post<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = xml_other_post_validation(body);
 
@@ -2083,9 +2340,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .xml_other_post(method, host, cookies, body)
+        .xml_other_post(&mut event, method, host, cookies, body)
         .await;
 
     let mut response = Response::builder();
@@ -2121,6 +2379,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -2150,7 +2417,7 @@ async fn xml_other_put<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = xml_other_put_validation(body);
 
@@ -2161,9 +2428,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .xml_other_put(method, host, cookies, body)
+        .xml_other_put(&mut event, method, host, cookies, body)
         .await;
 
     let mut response = Response::builder();
@@ -2187,6 +2455,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -2216,7 +2493,7 @@ async fn xml_post<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = xml_post_validation(body);
 
@@ -2227,9 +2504,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .xml_post(method, host, cookies, body)
+        .xml_post(&mut event, method, host, cookies, body)
         .await;
 
     let mut response = Response::builder();
@@ -2253,6 +2531,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -2282,7 +2569,7 @@ async fn xml_put<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::default::Default,
+    A: apis::EventDispatcher + apis::default::Default,
 {
     let validation = xml_put_validation(body);
 
@@ -2293,7 +2580,11 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let result = api_impl.as_ref().xml_put(method, host, cookies, body).await;
+    let mut event = event::Event::default();
+    let result = api_impl
+        .as_ref()
+        .xml_put(&mut event, method, host, cookies, body)
+        .await;
 
     let mut response = Response::builder();
 
@@ -2316,6 +2607,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -2343,7 +2643,7 @@ async fn get_repo_info<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::info_repo::InfoRepo,
+    A: apis::EventDispatcher + apis::info_repo::InfoRepo,
 {
     let validation = get_repo_info_validation(path_params);
 
@@ -2354,9 +2654,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .get_repo_info(method, host, cookies, path_params)
+        .get_repo_info(&mut event, method, host, cookies, path_params)
         .await;
 
     let mut response = Response::builder();
@@ -2395,6 +2696,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
@@ -2430,7 +2740,7 @@ async fn create_repo<I, A>(
 ) -> Result<Response, StatusCode>
 where
     I: AsRef<A> + Send + Sync,
-    A: apis::repo::Repo,
+    A: apis::EventDispatcher + apis::repo::Repo,
 {
     let validation = create_repo_validation(body);
 
@@ -2441,9 +2751,10 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
-        .create_repo(method, host, cookies, body)
+        .create_repo(&mut event, method, host, cookies, body)
         .await;
 
     let mut response = Response::builder();
@@ -2463,6 +2774,15 @@ where
                 .body(Body::empty())
         }
     };
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
+    }
 
     resp.map_err(|e| {
         error!(error = ?e);
