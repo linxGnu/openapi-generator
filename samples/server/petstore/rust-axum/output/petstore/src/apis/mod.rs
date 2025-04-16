@@ -14,6 +14,7 @@ pub mod event {
     pub type Event = std::collections::HashMap<String, String>;
 
     pub mod convention {
+        pub const EVENT_SERVICE: &str = "__service__";
         pub const EVENT_ACTOR: &str = "__actor__";
         pub const EVENT_ACTION: &str = "__action__";
         pub const EVENT_RESOURCE_TYPE: &str = "__resource_type__";
@@ -24,6 +25,7 @@ pub mod event {
 
 #[async_trait::async_trait]
 pub trait EventDispatcher {
+    fn service_name(&self) -> String;
     async fn dispatch(&self, event: event::Event);
 }
 

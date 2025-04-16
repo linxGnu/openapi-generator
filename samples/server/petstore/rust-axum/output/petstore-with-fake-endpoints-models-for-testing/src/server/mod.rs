@@ -202,6 +202,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
@@ -273,6 +277,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
@@ -381,6 +389,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
@@ -487,6 +499,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
@@ -595,6 +611,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
@@ -702,6 +722,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
@@ -775,6 +799,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
@@ -852,6 +880,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
@@ -943,6 +975,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
@@ -1048,6 +1084,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
@@ -1136,6 +1176,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
@@ -1301,6 +1345,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
@@ -1386,6 +1434,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
@@ -1470,6 +1522,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
@@ -1577,6 +1633,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
@@ -1659,6 +1719,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
@@ -1776,6 +1840,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
@@ -1870,6 +1938,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
@@ -1963,6 +2035,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
@@ -2094,6 +2170,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
@@ -2186,6 +2266,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
@@ -2284,6 +2368,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
@@ -2381,6 +2469,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
@@ -2463,6 +2555,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
@@ -2588,6 +2684,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
@@ -2686,6 +2786,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
@@ -2790,6 +2894,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
@@ -2874,6 +2982,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
@@ -2961,6 +3073,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
@@ -3047,6 +3163,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
@@ -3127,6 +3247,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
@@ -3224,6 +3348,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
@@ -3355,6 +3483,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
             );
@@ -3426,6 +3558,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
@@ -3518,6 +3654,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
             event.insert(
                 event::convention::EVENT_STATUS_CODE.to_string(),
                 resp.status().as_u16().to_string(),
