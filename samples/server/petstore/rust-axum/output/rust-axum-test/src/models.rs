@@ -130,8 +130,7 @@ impl std::convert::TryFrom<header::IntoHeaderValue<FooANullableContainer>> for H
         match HeaderValue::from_str(&hdr_value) {
             std::result::Result::Ok(value) => std::result::Result::Ok(value),
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Invalid header value for FooANullableContainer - value: {} is invalid {}",
-                hdr_value, e
+                r#"Invalid header value for FooANullableContainer - value: {hdr_value} is invalid {e}"#
             )),
         }
     }
@@ -149,14 +148,12 @@ impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<FooANullable
                         std::result::Result::Ok(header::IntoHeaderValue(value))
                     }
                     std::result::Result::Err(err) => std::result::Result::Err(format!(
-                        "Unable to convert header value '{}' into FooANullableContainer - {}",
-                        value, err
+                        r#"Unable to convert header value '{value}' into FooANullableContainer - {err}"#
                     )),
                 }
             }
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Unable to convert header: {:?} to string: {}",
-                hdr_value, e
+                r#"Unable to convert header: {hdr_value:?} to string: {e}"#
             )),
         }
     }
@@ -350,8 +347,7 @@ impl std::convert::TryFrom<header::IntoHeaderValue<FooAllOfObject>> for HeaderVa
         match HeaderValue::from_str(&hdr_value) {
             std::result::Result::Ok(value) => std::result::Result::Ok(value),
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Invalid header value for FooAllOfObject - value: {} is invalid {}",
-                hdr_value, e
+                r#"Invalid header value for FooAllOfObject - value: {hdr_value} is invalid {e}"#
             )),
         }
     }
@@ -369,14 +365,12 @@ impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<FooAllOfObje
                         std::result::Result::Ok(header::IntoHeaderValue(value))
                     }
                     std::result::Result::Err(err) => std::result::Result::Err(format!(
-                        "Unable to convert header value '{}' into FooAllOfObject - {}",
-                        value, err
+                        r#"Unable to convert header value '{value}' into FooAllOfObject - {err}"#
                     )),
                 }
             }
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Unable to convert header: {:?} to string: {}",
-                hdr_value, e
+                r#"Unable to convert header: {hdr_value:?} to string: {e}"#
             )),
         }
     }
@@ -493,8 +487,7 @@ impl std::convert::TryFrom<header::IntoHeaderValue<FooBaseAllOf>> for HeaderValu
         match HeaderValue::from_str(&hdr_value) {
             std::result::Result::Ok(value) => std::result::Result::Ok(value),
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Invalid header value for FooBaseAllOf - value: {} is invalid {}",
-                hdr_value, e
+                r#"Invalid header value for FooBaseAllOf - value: {hdr_value} is invalid {e}"#
             )),
         }
     }
@@ -512,14 +505,12 @@ impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<FooBaseAllOf
                         std::result::Result::Ok(header::IntoHeaderValue(value))
                     }
                     std::result::Result::Err(err) => std::result::Result::Err(format!(
-                        "Unable to convert header value '{}' into FooBaseAllOf - {}",
-                        value, err
+                        r#"Unable to convert header value '{value}' into FooBaseAllOf - {err}"#
                     )),
                 }
             }
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Unable to convert header: {:?} to string: {}",
-                hdr_value, e
+                r#"Unable to convert header: {hdr_value:?} to string: {e}"#
             )),
         }
     }
@@ -643,8 +634,7 @@ impl std::convert::TryFrom<header::IntoHeaderValue<FooDummyPutRequest>> for Head
         match HeaderValue::from_str(&hdr_value) {
             std::result::Result::Ok(value) => std::result::Result::Ok(value),
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Invalid header value for FooDummyPutRequest - value: {} is invalid {}",
-                hdr_value, e
+                r#"Invalid header value for FooDummyPutRequest - value: {hdr_value} is invalid {e}"#
             )),
         }
     }
@@ -662,14 +652,12 @@ impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<FooDummyPutR
                         std::result::Result::Ok(header::IntoHeaderValue(value))
                     }
                     std::result::Result::Err(err) => std::result::Result::Err(format!(
-                        "Unable to convert header value '{}' into FooDummyPutRequest - {}",
-                        value, err
+                        r#"Unable to convert header value '{value}' into FooDummyPutRequest - {err}"#
                     )),
                 }
             }
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Unable to convert header: {:?} to string: {}",
-                hdr_value, e
+                r#"Unable to convert header: {hdr_value:?} to string: {e}"#
             )),
         }
     }
@@ -779,8 +767,7 @@ impl std::convert::TryFrom<header::IntoHeaderValue<FooGetYamlResponse>> for Head
         match HeaderValue::from_str(&hdr_value) {
             std::result::Result::Ok(value) => std::result::Result::Ok(value),
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Invalid header value for FooGetYamlResponse - value: {} is invalid {}",
-                hdr_value, e
+                r#"Invalid header value for FooGetYamlResponse - value: {hdr_value} is invalid {e}"#
             )),
         }
     }
@@ -798,14 +785,12 @@ impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<FooGetYamlRe
                         std::result::Result::Ok(header::IntoHeaderValue(value))
                     }
                     std::result::Result::Err(err) => std::result::Result::Err(format!(
-                        "Unable to convert header value '{}' into FooGetYamlResponse - {}",
-                        value, err
+                        r#"Unable to convert header value '{value}' into FooGetYamlResponse - {err}"#
                     )),
                 }
             }
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Unable to convert header: {:?} to string: {}",
-                hdr_value, e
+                r#"Unable to convert header: {hdr_value:?} to string: {e}"#
             )),
         }
     }
@@ -915,8 +900,7 @@ impl std::convert::TryFrom<header::IntoHeaderValue<FooObjectOfObjects>> for Head
         match HeaderValue::from_str(&hdr_value) {
             std::result::Result::Ok(value) => std::result::Result::Ok(value),
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Invalid header value for FooObjectOfObjects - value: {} is invalid {}",
-                hdr_value, e
+                r#"Invalid header value for FooObjectOfObjects - value: {hdr_value} is invalid {e}"#
             )),
         }
     }
@@ -934,14 +918,12 @@ impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<FooObjectOfO
                         std::result::Result::Ok(header::IntoHeaderValue(value))
                     }
                     std::result::Result::Err(err) => std::result::Result::Err(format!(
-                        "Unable to convert header value '{}' into FooObjectOfObjects - {}",
-                        value, err
+                        r#"Unable to convert header value '{value}' into FooObjectOfObjects - {err}"#
                     )),
                 }
             }
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Unable to convert header: {:?} to string: {}",
-                hdr_value, e
+                r#"Unable to convert header: {hdr_value:?} to string: {e}"#
             )),
         }
     }
@@ -1068,8 +1050,7 @@ impl std::convert::TryFrom<header::IntoHeaderValue<FooObjectOfObjectsInner>> for
         match HeaderValue::from_str(&hdr_value) {
             std::result::Result::Ok(value) => std::result::Result::Ok(value),
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Invalid header value for FooObjectOfObjectsInner - value: {} is invalid {}",
-                hdr_value, e
+                r#"Invalid header value for FooObjectOfObjectsInner - value: {hdr_value} is invalid {e}"#
             )),
         }
     }
@@ -1087,14 +1068,12 @@ impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<FooObjectOfO
                         std::result::Result::Ok(header::IntoHeaderValue(value))
                     }
                     std::result::Result::Err(err) => std::result::Result::Err(format!(
-                        "Unable to convert header value '{}' into FooObjectOfObjectsInner - {}",
-                        value, err
+                        r#"Unable to convert header value '{value}' into FooObjectOfObjectsInner - {err}"#
                     )),
                 }
             }
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Unable to convert header: {:?} to string: {}",
-                hdr_value, e
+                r#"Unable to convert header: {hdr_value:?} to string: {e}"#
             )),
         }
     }

@@ -56,7 +56,7 @@ where
                 Err(err) => {
                     return Response::builder()
                         .status(StatusCode::BAD_REQUEST)
-                        .body(Body::from(format!("Invalid header some_uid - {}", err)))
+                        .body(Body::from(format!(r#"Invalid header some_uid - {err}"#)))
                         .map_err(|e| {
                             error!(error = ?e);
                             StatusCode::INTERNAL_SERVER_ERROR

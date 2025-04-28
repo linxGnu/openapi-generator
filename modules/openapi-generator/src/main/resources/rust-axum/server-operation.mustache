@@ -105,7 +105,7 @@ where
                         Err(err) => {
                             return Response::builder()
                                         .status(StatusCode::BAD_REQUEST)
-                                        .body(Body::from(format!("Invalid header {{{baseName}}} - {}", err))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
+                                        .body(Body::from(format!(r#"Invalid header {{{baseName}}} - {err}"#))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
 
                         },
                     },
@@ -312,7 +312,7 @@ where
                                                         Err(e) => {
                                                             return Response::builder()
                                                                     .status(StatusCode::INTERNAL_SERVER_ERROR)
-                                                                    .body(Body::from(format!("An internal server error occurred handling {{name}} header - {}", e))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
+                                                                    .body(Body::from(format!(r#"An internal server error occurred handling {{name}} header - {e}"#))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
                                                         }
                                                     };
 

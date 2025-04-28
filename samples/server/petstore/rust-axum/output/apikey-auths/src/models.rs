@@ -137,8 +137,7 @@ impl std::convert::TryFrom<header::IntoHeaderValue<Amount>> for HeaderValue {
         match HeaderValue::from_str(&hdr_value) {
             std::result::Result::Ok(value) => std::result::Result::Ok(value),
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Invalid header value for Amount - value: {} is invalid {}",
-                hdr_value, e
+                r#"Invalid header value for Amount - value: {hdr_value} is invalid {e}"#
             )),
         }
     }
@@ -156,14 +155,12 @@ impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<Amount> {
                         std::result::Result::Ok(header::IntoHeaderValue(value))
                     }
                     std::result::Result::Err(err) => std::result::Result::Err(format!(
-                        "Unable to convert header value '{}' into Amount - {}",
-                        value, err
+                        r#"Unable to convert header value '{value}' into Amount - {err}"#
                     )),
                 }
             }
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Unable to convert header: {:?} to string: {}",
-                hdr_value, e
+                r#"Unable to convert header: {hdr_value:?} to string: {e}"#
             )),
         }
     }
@@ -291,8 +288,7 @@ impl std::convert::TryFrom<header::IntoHeaderValue<CheckoutError>> for HeaderVal
         match HeaderValue::from_str(&hdr_value) {
             std::result::Result::Ok(value) => std::result::Result::Ok(value),
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Invalid header value for CheckoutError - value: {} is invalid {}",
-                hdr_value, e
+                r#"Invalid header value for CheckoutError - value: {hdr_value} is invalid {e}"#
             )),
         }
     }
@@ -310,14 +306,12 @@ impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<CheckoutErro
                         std::result::Result::Ok(header::IntoHeaderValue(value))
                     }
                     std::result::Result::Err(err) => std::result::Result::Err(format!(
-                        "Unable to convert header value '{}' into CheckoutError - {}",
-                        value, err
+                        r#"Unable to convert header value '{value}' into CheckoutError - {err}"#
                     )),
                 }
             }
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Unable to convert header: {:?} to string: {}",
-                hdr_value, e
+                r#"Unable to convert header: {hdr_value:?} to string: {e}"#
             )),
         }
     }
@@ -496,8 +490,7 @@ impl std::convert::TryFrom<header::IntoHeaderValue<Payment>> for HeaderValue {
         match HeaderValue::from_str(&hdr_value) {
             std::result::Result::Ok(value) => std::result::Result::Ok(value),
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Invalid header value for Payment - value: {} is invalid {}",
-                hdr_value, e
+                r#"Invalid header value for Payment - value: {hdr_value} is invalid {e}"#
             )),
         }
     }
@@ -515,14 +508,12 @@ impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<Payment> {
                         std::result::Result::Ok(header::IntoHeaderValue(value))
                     }
                     std::result::Result::Err(err) => std::result::Result::Err(format!(
-                        "Unable to convert header value '{}' into Payment - {}",
-                        value, err
+                        r#"Unable to convert header value '{value}' into Payment - {err}"#
                     )),
                 }
             }
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Unable to convert header: {:?} to string: {}",
-                hdr_value, e
+                r#"Unable to convert header: {hdr_value:?} to string: {e}"#
             )),
         }
     }
@@ -650,8 +641,7 @@ impl std::convert::TryFrom<header::IntoHeaderValue<PaymentMethod>> for HeaderVal
         match HeaderValue::from_str(&hdr_value) {
             std::result::Result::Ok(value) => std::result::Result::Ok(value),
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Invalid header value for PaymentMethod - value: {} is invalid {}",
-                hdr_value, e
+                r#"Invalid header value for PaymentMethod - value: {hdr_value} is invalid {e}"#
             )),
         }
     }
@@ -669,14 +659,12 @@ impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<PaymentMetho
                         std::result::Result::Ok(header::IntoHeaderValue(value))
                     }
                     std::result::Result::Err(err) => std::result::Result::Err(format!(
-                        "Unable to convert header value '{}' into PaymentMethod - {}",
-                        value, err
+                        r#"Unable to convert header value '{value}' into PaymentMethod - {err}"#
                     )),
                 }
             }
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Unable to convert header: {:?} to string: {}",
-                hdr_value, e
+                r#"Unable to convert header: {hdr_value:?} to string: {e}"#
             )),
         }
     }
@@ -808,8 +796,7 @@ impl std::convert::TryFrom<header::IntoHeaderValue<PaymentResult>> for HeaderVal
         match HeaderValue::from_str(&hdr_value) {
             std::result::Result::Ok(value) => std::result::Result::Ok(value),
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Invalid header value for PaymentResult - value: {} is invalid {}",
-                hdr_value, e
+                r#"Invalid header value for PaymentResult - value: {hdr_value} is invalid {e}"#
             )),
         }
     }
@@ -827,14 +814,12 @@ impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<PaymentResul
                         std::result::Result::Ok(header::IntoHeaderValue(value))
                     }
                     std::result::Result::Err(err) => std::result::Result::Err(format!(
-                        "Unable to convert header value '{}' into PaymentResult - {}",
-                        value, err
+                        r#"Unable to convert header value '{value}' into PaymentResult - {err}"#
                     )),
                 }
             }
             std::result::Result::Err(e) => std::result::Result::Err(format!(
-                "Unable to convert header: {:?} to string: {}",
-                hdr_value, e
+                r#"Unable to convert header: {hdr_value:?} to string: {e}"#
             )),
         }
     }

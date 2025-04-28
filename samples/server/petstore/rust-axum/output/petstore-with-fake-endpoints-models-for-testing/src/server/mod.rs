@@ -1255,8 +1255,7 @@ where
                     return Response::builder()
                         .status(StatusCode::BAD_REQUEST)
                         .body(Body::from(format!(
-                            "Invalid header enum_header_string_array - {}",
-                            err
+                            r#"Invalid header enum_header_string_array - {err}"#
                         )))
                         .map_err(|e| {
                             error!(error = ?e);
@@ -1275,8 +1274,7 @@ where
                     return Response::builder()
                         .status(StatusCode::BAD_REQUEST)
                         .body(Body::from(format!(
-                            "Invalid header enum_header_string - {}",
-                            err
+                            r#"Invalid header enum_header_string - {err}"#
                         )))
                         .map_err(|e| {
                             error!(error = ?e);
@@ -1779,7 +1777,7 @@ where
                 Err(err) => {
                     return Response::builder()
                         .status(StatusCode::BAD_REQUEST)
-                        .body(Body::from(format!("Invalid header api_key - {}", err)))
+                        .body(Body::from(format!(r#"Invalid header api_key - {err}"#)))
                         .map_err(|e| {
                             error!(error = ?e);
                             StatusCode::INTERNAL_SERVER_ERROR
@@ -3425,7 +3423,7 @@ where
                         Err(e) => {
                             return Response::builder()
                                                                     .status(StatusCode::INTERNAL_SERVER_ERROR)
-                                                                    .body(Body::from(format!("An internal server error occurred handling x_rate_limit header - {}", e))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
+                                                                    .body(Body::from(format!(r#"An internal server error occurred handling x_rate_limit header - {e}"#))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
                         }
                     };
 
@@ -3442,7 +3440,7 @@ where
                         Err(e) => {
                             return Response::builder()
                                                                     .status(StatusCode::INTERNAL_SERVER_ERROR)
-                                                                    .body(Body::from(format!("An internal server error occurred handling x_expires_after header - {}", e))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
+                                                                    .body(Body::from(format!(r#"An internal server error occurred handling x_expires_after header - {e}"#))).map_err(|e| { error!(error = ?e); StatusCode::INTERNAL_SERVER_ERROR });
                         }
                     };
 
