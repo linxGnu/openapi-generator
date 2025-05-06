@@ -14,13 +14,13 @@ pub mod event {
     pub type Event = std::collections::HashMap<String, String>;
 
     pub mod convention {
-        pub const EVENT_SERVICE: &str = "__service__";
-        pub const EVENT_ACTOR: &str = "__actor__";
-        pub const EVENT_ACTION: &str = "__action__";
-        pub const EVENT_RESOURCE_TYPE: &str = "__resource_type__";
-        pub const EVENT_RESOURCE: &str = "__resource__";
-        pub const EVENT_STATUS_CODE: &str = "__status_code__";
-        pub const EVENT_LATENCY: &str = "__latency__";
+        pub const EVENT_SERVICE: &str = "_service_";
+        pub const EVENT_ACTOR: &str = "_actor_";
+        pub const EVENT_ACTION: &str = "_action_";
+        pub const EVENT_RESOURCE_TYPE: &str = "_resource_type_";
+        pub const EVENT_RESOURCE: &str = "_resource_";
+        pub const EVENT_STATUS_CODE: &str = "_status_code_";
+        pub const EVENT_LATENCY: &str = "_latency_";
         pub const EVENT_TIMESTAMP: &str = "timestamp";
     }
 }

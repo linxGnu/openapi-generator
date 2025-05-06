@@ -253,7 +253,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -341,7 +344,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -429,7 +435,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -517,7 +526,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -613,7 +625,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -701,7 +716,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -789,7 +807,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -910,7 +931,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1012,7 +1036,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1231,7 +1258,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1313,7 +1343,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1415,7 +1448,10 @@ where
             event.insert(event::convention::EVENT_ACTION.to_string(), "multiple_path_params_with_very_long_path_to_test_formatting_path_param_a_path_param_b_get".to_string());
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1517,7 +1553,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1600,7 +1639,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1707,7 +1749,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1789,7 +1834,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1877,7 +1925,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1969,7 +2020,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2160,7 +2214,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2301,7 +2358,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2436,7 +2496,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2533,7 +2596,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2635,7 +2701,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2729,7 +2798,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2835,7 +2907,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2929,7 +3004,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -3023,7 +3101,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -3117,7 +3198,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -3224,7 +3308,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -3320,7 +3407,10 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(start_at).to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
             );
             api_impl.as_ref().dispatch(event).await;
         }
