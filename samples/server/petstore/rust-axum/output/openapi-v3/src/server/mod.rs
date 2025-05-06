@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use axum::{body::Body, extract::*, response::Response, routing::*};
 use axum_extra::extract::{CookieJar, Host};
 use bytes::Bytes;
+use chrono::Utc;
 use http::{header::CONTENT_TYPE, HeaderMap, HeaderName, HeaderValue, Method, StatusCode};
 use tracing::error;
 use validator::{Validate, ValidationErrors};
@@ -133,6 +134,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = any_of_get_validation(query_params);
 
     let Ok((query_params,)) = validation else {
@@ -142,7 +150,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .any_of_get(&mut event, method, host, cookies, query_params)
@@ -244,6 +251,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "any_of_get".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -276,6 +287,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = callback_with_header_post_validation(query_params);
 
     let Ok((query_params,)) = validation else {
@@ -285,7 +303,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .callback_with_header_post(&mut event, method, host, cookies, query_params)
@@ -322,6 +339,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "callback_with_header_post".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -354,6 +375,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = complex_query_param_get_validation(query_params);
 
     let Ok((query_params,)) = validation else {
@@ -363,7 +391,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .complex_query_param_get(&mut event, method, host, cookies, query_params)
@@ -400,6 +427,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "complex_query_param_get".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -432,6 +463,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = enum_in_path_path_param_get_validation(path_params);
 
     let Ok((path_params,)) = validation else {
@@ -441,7 +479,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .enum_in_path_path_param_get(&mut event, method, host, cookies, path_params)
@@ -477,6 +514,10 @@ where
             event.insert(
                 event::convention::EVENT_ACTION.to_string(),
                 "enum_in_path_path_param_get".to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -518,6 +559,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = form_test_validation(body);
 
     let Ok((body,)) = validation else {
@@ -527,7 +575,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .form_test(&mut event, method, host, cookies, body)
@@ -564,6 +611,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "form_test".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -596,6 +647,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = get_with_boolean_parameter_validation(query_params);
 
     let Ok((query_params,)) = validation else {
@@ -605,7 +663,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .get_with_boolean_parameter(&mut event, method, host, cookies, query_params)
@@ -642,6 +699,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "get_with_boolean_parameter".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -674,6 +735,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = json_complex_query_param_get_validation(query_params);
 
     let Ok((query_params,)) = validation else {
@@ -683,7 +751,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .json_complex_query_param_get(&mut event, method, host, cookies, query_params)
@@ -720,6 +787,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "json_complex_query_param_get".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -752,6 +823,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     // Header parameters
     let header_params = {
         let header_x_header = headers.get(HeaderName::from_static("x-header"));
@@ -794,7 +872,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .mandatory_request_header_get(&mut event, method, host, cookies, header_params)
@@ -831,6 +908,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "mandatory_request_header_get".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -858,6 +939,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = merge_patch_json_get_validation();
 
     let Ok(()) = validation else {
@@ -867,7 +955,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .merge_patch_json_get(&mut event, method, host, cookies)
@@ -923,6 +1010,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "merge_patch_json_get".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -950,6 +1041,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = multiget_get_validation();
 
     let Ok(()) = validation else {
@@ -959,7 +1057,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .multiget_get(&mut event, method, host, cookies)
@@ -1132,6 +1229,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "multiget_get".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -1159,6 +1260,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = multiple_auth_scheme_get_validation();
 
     let Ok(()) = validation else {
@@ -1168,7 +1276,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .multiple_auth_scheme_get(&mut event, method, host, cookies)
@@ -1203,6 +1310,10 @@ where
             event.insert(
                 event::convention::EVENT_ACTION.to_string(),
                 "multiple_auth_scheme_get".to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1244,6 +1355,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation =
     multiple_path_params_with_very_long_path_to_test_formatting_path_param_a_path_param_b_get_validation(
         path_params,
@@ -1257,7 +1375,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .multiple_path_params_with_very_long_path_to_test_formatting_path_param_a_path_param_b_get(
@@ -1296,6 +1413,10 @@ where
                 resp.status().as_u16().to_string(),
             );
             event.insert(event::convention::EVENT_ACTION.to_string(), "multiple_path_params_with_very_long_path_to_test_formatting_path_param_a_path_param_b_get".to_string());
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -1323,6 +1444,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = one_of_get_validation();
 
     let Ok(()) = validation else {
@@ -1332,7 +1460,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .one_of_get(&mut event, method, host, cookies)
@@ -1388,6 +1515,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "one_of_get".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -1415,6 +1546,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = override_server_get_validation();
 
     let Ok(()) = validation else {
@@ -1424,7 +1562,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .override_server_get(&mut event, method, host, cookies)
@@ -1461,6 +1598,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "override_server_get".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -1493,6 +1634,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = paramget_get_validation(query_params);
 
     let Ok((query_params,)) = validation else {
@@ -1502,7 +1650,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .paramget_get(&mut event, method, host, cookies, query_params)
@@ -1558,6 +1705,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "paramget_get".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -1585,6 +1736,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = readonly_auth_scheme_get_validation();
 
     let Ok(()) = validation else {
@@ -1594,7 +1752,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .readonly_auth_scheme_get(&mut event, method, host, cookies)
@@ -1630,6 +1787,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "readonly_auth_scheme_get".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -1662,6 +1823,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = register_callback_post_validation(query_params);
 
     let Ok((query_params,)) = validation else {
@@ -1671,7 +1839,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .register_callback_post(&mut event, method, host, cookies, query_params)
@@ -1707,6 +1874,10 @@ where
             event.insert(
                 event::convention::EVENT_ACTION.to_string(),
                 "register_callback_post".to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1744,6 +1915,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = required_octet_stream_put_validation(body);
 
     let Ok((body,)) = validation else {
@@ -1753,7 +1931,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .required_octet_stream_put(&mut event, method, host, cookies, body)
@@ -1790,6 +1967,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "required_octet_stream_put".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -1817,6 +1998,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = responses_with_headers_get_validation();
 
     let Ok(()) = validation else {
@@ -1826,7 +2014,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .responses_with_headers_get(&mut event, method, host, cookies)
@@ -1971,6 +2158,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "responses_with_headers_get".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -1998,6 +2189,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = rfc7807_get_validation();
 
     let Ok(()) = validation else {
@@ -2007,7 +2205,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .rfc7807_get(&mut event, method, host, cookies)
@@ -2102,6 +2299,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "rfc7807_get".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -2134,6 +2335,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     // Header parameters
     let header_params = {
         let header_x_header_one = headers.get(HeaderName::from_static("x-header-one"));
@@ -2190,7 +2398,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .two_first_letter_headers(&mut event, method, host, cookies, header_params)
@@ -2226,6 +2433,10 @@ where
             event.insert(
                 event::convention::EVENT_ACTION.to_string(),
                 "two_first_letter_headers".to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2269,6 +2480,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = untyped_property_get_validation(body);
 
     let Ok((body,)) = validation else {
@@ -2278,7 +2496,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .untyped_property_get(&mut event, method, host, cookies, body)
@@ -2314,6 +2531,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "untyped_property_get".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -2341,6 +2562,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = uuid_get_validation();
 
     let Ok(()) = validation else {
@@ -2350,7 +2578,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .uuid_get(&mut event, method, host, cookies)
@@ -2406,6 +2633,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "uuid_get".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -2440,6 +2671,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = xml_extra_post_validation(body);
 
     let Ok((body,)) = validation else {
@@ -2449,7 +2687,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .xml_extra_post(&mut event, method, host, cookies, body)
@@ -2490,6 +2727,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "xml_extra_post".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -2524,6 +2765,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = xml_other_post_validation(body);
 
     let Ok((body,)) = validation else {
@@ -2533,7 +2781,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .xml_other_post(&mut event, method, host, cookies, body)
@@ -2586,6 +2833,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "xml_other_post".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -2620,6 +2871,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = xml_other_put_validation(body);
 
     let Ok((body,)) = validation else {
@@ -2629,7 +2887,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .xml_other_put(&mut event, method, host, cookies, body)
@@ -2670,6 +2927,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "xml_other_put".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -2704,6 +2965,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = xml_post_validation(body);
 
     let Ok((body,)) = validation else {
@@ -2713,7 +2981,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .xml_post(&mut event, method, host, cookies, body)
@@ -2754,6 +3021,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "xml_post".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -2788,6 +3059,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = xml_put_validation(body);
 
     let Ok((body,)) = validation else {
@@ -2797,7 +3075,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .xml_put(&mut event, method, host, cookies, body)
@@ -2838,6 +3115,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "xml_put".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -2870,6 +3151,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::info_repo::InfoRepo,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = get_repo_info_validation(path_params);
 
     let Ok((path_params,)) = validation else {
@@ -2879,7 +3167,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .get_repo_info(&mut event, method, host, cookies, path_params)
@@ -2935,6 +3222,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "get_repo_info".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -2975,6 +3266,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::repo::Repo,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     let validation = create_repo_validation(body);
 
     let Ok((body,)) = validation else {
@@ -2984,7 +3282,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .create_repo(&mut event, method, host, cookies, body)
@@ -3020,6 +3317,10 @@ where
             event.insert(
                 event::convention::EVENT_ACTION.to_string(),
                 "create_repo".to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }

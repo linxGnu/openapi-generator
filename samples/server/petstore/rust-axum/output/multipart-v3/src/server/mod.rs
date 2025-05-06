@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use axum::{body::Body, extract::*, response::Response, routing::*};
 use axum_extra::extract::{CookieJar, Host};
 use bytes::Bytes;
+use chrono::Utc;
 use http::{header::CONTENT_TYPE, HeaderMap, HeaderName, HeaderValue, Method, StatusCode};
 use tracing::error;
 use validator::{Validate, ValidationErrors};
@@ -50,6 +51,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     #[allow(clippy::redundant_closure)]
     let validation =
         tokio::task::spawn_blocking(move || multipart_related_request_post_validation())
@@ -63,7 +71,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .multipart_related_request_post(&mut event, method, host, cookies, body)
@@ -100,6 +107,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "multipart_related_request_post".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -128,6 +139,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || multipart_request_post_validation())
         .await
@@ -140,7 +158,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .multipart_request_post(&mut event, method, host, cookies, body)
@@ -177,6 +194,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "multipart_request_post".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -205,6 +226,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     #[allow(clippy::redundant_closure)]
     let validation =
         tokio::task::spawn_blocking(move || multiple_identical_mime_types_post_validation())
@@ -218,7 +246,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .multiple_identical_mime_types_post(&mut event, method, host, cookies, body)
@@ -254,6 +281,10 @@ where
             event.insert(
                 event::convention::EVENT_ACTION.to_string(),
                 "multiple_identical_mime_types_post".to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }

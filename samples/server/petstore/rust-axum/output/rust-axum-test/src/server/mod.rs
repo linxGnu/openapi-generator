@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use axum::{body::Body, extract::*, response::Response, routing::*};
 use axum_extra::extract::{CookieJar, Host};
 use bytes::Bytes;
+use chrono::Utc;
 use http::{header::CONTENT_TYPE, HeaderMap, HeaderName, HeaderValue, Method, StatusCode};
 use tracing::error;
 use validator::{Validate, ValidationErrors};
@@ -48,6 +49,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || all_of_get_validation())
         .await
@@ -60,7 +68,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .all_of_get(&mut event, method, host, cookies)
@@ -116,6 +123,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "all_of_get".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -143,6 +154,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || dummy_get_validation())
         .await
@@ -155,7 +173,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .dummy_get(&mut event, method, host, cookies)
@@ -191,6 +208,10 @@ where
             event.insert(
                 event::convention::EVENT_ACTION.to_string(),
                 "dummy_get".to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -232,6 +253,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || dummy_put_validation(body))
         .await
@@ -244,7 +272,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .dummy_put(&mut event, method, host, cookies, body)
@@ -281,6 +308,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "dummy_put".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -308,6 +339,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || file_response_get_validation())
         .await
@@ -320,7 +358,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .file_response_get(&mut event, method, host, cookies)
@@ -376,6 +413,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "file_response_get".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -403,6 +444,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || get_structured_yaml_validation())
         .await
@@ -415,7 +463,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .get_structured_yaml(&mut event, method, host, cookies)
@@ -464,6 +511,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "get_structured_yaml".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -498,6 +549,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || html_post_validation(body))
         .await
@@ -510,7 +568,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .html_post(&mut event, method, host, cookies, body)
@@ -559,6 +616,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "html_post".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -593,6 +654,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || post_yaml_validation(body))
         .await
@@ -605,7 +673,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .post_yaml(&mut event, method, host, cookies, body)
@@ -642,6 +709,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "post_yaml".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -669,6 +740,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || raw_json_get_validation())
         .await
@@ -681,7 +759,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .raw_json_get(&mut event, method, host, cookies)
@@ -737,6 +814,10 @@ where
                 event::convention::EVENT_ACTION.to_string(),
                 "raw_json_get".to_string(),
             );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
+            );
             api_impl.as_ref().dispatch(event).await;
         }
     }
@@ -776,6 +857,13 @@ where
     I: AsRef<A> + Send + Sync,
     A: apis::EventDispatcher + apis::default::Default,
 {
+    let start_at = Utc::now();
+    let mut event = event::Event::default();
+    event.insert(
+        event::convention::EVENT_TIMESTAMP.to_string(),
+        format!("{:?}", start_at),
+    );
+
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || solo_object_post_validation(body))
         .await
@@ -788,7 +876,6 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
-    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .solo_object_post(&mut event, method, host, cookies, body)
@@ -824,6 +911,10 @@ where
             event.insert(
                 event::convention::EVENT_ACTION.to_string(),
                 "solo_object_post".to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_LATENCY.to_string(),
+                Utc::now().signed_duration_since(&start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
