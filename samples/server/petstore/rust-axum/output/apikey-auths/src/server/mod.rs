@@ -159,7 +159,7 @@ where
                 "get_payment_method_by_id".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -269,7 +269,7 @@ where
                 "get_payment_methods".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -447,7 +447,7 @@ where
                 "post_make_payment".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()

@@ -20,7 +20,7 @@ pub mod event {
         pub const EVENT_RESOURCE_TYPE: &str = "_resource_type_";
         pub const EVENT_RESOURCE: &str = "_resource_";
         pub const EVENT_STATUS_CODE: &str = "_status_code_";
-        pub const EVENT_LATENCY: &str = "_latency_";
+        pub const EVENT_LATENCY_SECS: &str = "_latency_secs_";
         pub const EVENT_TIMESTAMP: &str = "timestamp";
     }
 }

@@ -169,7 +169,7 @@ where
                 "add_pet".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -302,7 +302,7 @@ where
                 "delete_pet".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -413,7 +413,7 @@ where
                 "find_pets_by_status".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -524,7 +524,7 @@ where
                 "find_pets_by_tags".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -671,7 +671,7 @@ where
                 "get_pet_by_id".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -797,7 +797,7 @@ where
                 "update_pet".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -911,7 +911,7 @@ where
                 "update_pet_with_form".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1025,7 +1025,7 @@ where
                 "upload_file".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1125,7 +1125,7 @@ where
                 "delete_order".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1266,7 +1266,7 @@ where
                 "get_inventory".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1382,7 +1382,7 @@ where
                 "get_order_by_id".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1502,7 +1502,7 @@ where
                 "place_order".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1637,7 +1637,7 @@ where
                 "create_user".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1773,7 +1773,7 @@ where
                 "create_users_with_array_input".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1909,7 +1909,7 @@ where
                 "create_users_with_list_input".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2040,7 +2040,7 @@ where
                 "delete_user".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2156,7 +2156,7 @@ where
                 "get_user_by_name".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2321,7 +2321,7 @@ where
                 "login_user".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2443,7 +2443,7 @@ where
                 "logout_user".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2585,7 +2585,7 @@ where
                 "update_user".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()

@@ -130,7 +130,7 @@ where
                 "foo".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()

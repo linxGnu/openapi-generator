@@ -252,7 +252,7 @@ where
                 "any_of_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -343,7 +343,7 @@ where
                 "callback_with_header_post".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -434,7 +434,7 @@ where
                 "complex_query_param_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -525,7 +525,7 @@ where
                 "enum_in_path_path_param_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -624,7 +624,7 @@ where
                 "form_test".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -715,7 +715,7 @@ where
                 "get_with_boolean_parameter".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -806,7 +806,7 @@ where
                 "json_complex_query_param_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -930,7 +930,7 @@ where
                 "mandatory_request_header_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1035,7 +1035,7 @@ where
                 "merge_patch_json_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1257,7 +1257,7 @@ where
                 "multiget_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1342,7 +1342,7 @@ where
                 "multiple_auth_scheme_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1447,7 +1447,7 @@ where
             );
             event.insert(event::convention::EVENT_ACTION.to_string(), "multiple_path_params_with_very_long_path_to_test_formatting_path_param_a_path_param_b_get".to_string());
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1552,7 +1552,7 @@ where
                 "one_of_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1638,7 +1638,7 @@ where
                 "override_server_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1748,7 +1748,7 @@ where
                 "paramget_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1833,7 +1833,7 @@ where
                 "readonly_auth_scheme_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1924,7 +1924,7 @@ where
                 "register_callback_post".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2019,7 +2019,7 @@ where
                 "required_octet_stream_put".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2213,7 +2213,7 @@ where
                 "responses_with_headers_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2357,7 +2357,7 @@ where
                 "rfc7807_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2495,7 +2495,7 @@ where
                 "two_first_letter_headers".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2595,7 +2595,7 @@ where
                 "untyped_property_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2700,7 +2700,7 @@ where
                 "uuid_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2797,7 +2797,7 @@ where
                 "xml_extra_post".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2906,7 +2906,7 @@ where
                 "xml_other_post".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -3003,7 +3003,7 @@ where
                 "xml_other_put".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -3100,7 +3100,7 @@ where
                 "xml_post".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -3197,7 +3197,7 @@ where
                 "xml_put".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -3307,7 +3307,7 @@ where
                 "get_repo_info".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -3406,7 +3406,7 @@ where
                 "create_repo".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()

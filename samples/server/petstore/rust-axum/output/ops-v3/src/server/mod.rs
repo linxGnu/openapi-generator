@@ -134,7 +134,7 @@ where
                 "op10_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -223,7 +223,7 @@ where
                 "op11_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -312,7 +312,7 @@ where
                 "op12_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -401,7 +401,7 @@ where
                 "op13_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -490,7 +490,7 @@ where
                 "op14_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -579,7 +579,7 @@ where
                 "op15_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -668,7 +668,7 @@ where
                 "op16_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -757,7 +757,7 @@ where
                 "op17_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -846,7 +846,7 @@ where
                 "op18_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -935,7 +935,7 @@ where
                 "op19_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1024,7 +1024,7 @@ where
                 "op1_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1113,7 +1113,7 @@ where
                 "op20_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1202,7 +1202,7 @@ where
                 "op21_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1291,7 +1291,7 @@ where
                 "op22_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1380,7 +1380,7 @@ where
                 "op23_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1469,7 +1469,7 @@ where
                 "op24_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1558,7 +1558,7 @@ where
                 "op25_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1647,7 +1647,7 @@ where
                 "op26_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1736,7 +1736,7 @@ where
                 "op27_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1825,7 +1825,7 @@ where
                 "op28_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -1914,7 +1914,7 @@ where
                 "op29_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2003,7 +2003,7 @@ where
                 "op2_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2092,7 +2092,7 @@ where
                 "op30_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2181,7 +2181,7 @@ where
                 "op31_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2270,7 +2270,7 @@ where
                 "op32_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2359,7 +2359,7 @@ where
                 "op33_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2448,7 +2448,7 @@ where
                 "op34_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2537,7 +2537,7 @@ where
                 "op35_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2626,7 +2626,7 @@ where
                 "op36_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2715,7 +2715,7 @@ where
                 "op37_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2804,7 +2804,7 @@ where
                 "op3_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2893,7 +2893,7 @@ where
                 "op4_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -2982,7 +2982,7 @@ where
                 "op5_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -3071,7 +3071,7 @@ where
                 "op6_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -3160,7 +3160,7 @@ where
                 "op7_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -3249,7 +3249,7 @@ where
                 "op8_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
@@ -3338,7 +3338,7 @@ where
                 "op9_get".to_string(),
             );
             event.insert(
-                event::convention::EVENT_LATENCY.to_string(),
+                event::convention::EVENT_LATENCY_SECS.to_string(),
                 format!(
                     "{:.6}",
                     Utc::now().signed_duration_since(start_at).as_seconds_f64()
