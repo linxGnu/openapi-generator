@@ -138,7 +138,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = any_of_get_validation(query_params);
@@ -253,7 +253,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -291,7 +291,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = callback_with_header_post_validation(query_params);
@@ -341,7 +341,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -379,7 +379,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = complex_query_param_get_validation(query_params);
@@ -429,7 +429,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -467,7 +467,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = enum_in_path_path_param_get_validation(path_params);
@@ -517,7 +517,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -563,7 +563,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = form_test_validation(body);
@@ -613,7 +613,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -651,7 +651,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = get_with_boolean_parameter_validation(query_params);
@@ -701,7 +701,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -739,7 +739,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = json_complex_query_param_get_validation(query_params);
@@ -789,7 +789,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -827,7 +827,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     // Header parameters
@@ -910,7 +910,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -943,7 +943,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = merge_patch_json_get_validation();
@@ -1012,7 +1012,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1045,7 +1045,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = multiget_get_validation();
@@ -1231,7 +1231,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1264,7 +1264,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = multiple_auth_scheme_get_validation();
@@ -1313,7 +1313,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1359,7 +1359,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation =
@@ -1415,7 +1415,7 @@ where
             event.insert(event::convention::EVENT_ACTION.to_string(), "multiple_path_params_with_very_long_path_to_test_formatting_path_param_a_path_param_b_get".to_string());
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1448,7 +1448,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = one_of_get_validation();
@@ -1517,7 +1517,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1550,7 +1550,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = override_server_get_validation();
@@ -1600,7 +1600,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1638,7 +1638,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = paramget_get_validation(query_params);
@@ -1707,7 +1707,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1740,7 +1740,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = readonly_auth_scheme_get_validation();
@@ -1789,7 +1789,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1827,7 +1827,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = register_callback_post_validation(query_params);
@@ -1877,7 +1877,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -1919,7 +1919,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = required_octet_stream_put_validation(body);
@@ -1969,7 +1969,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2002,7 +2002,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = responses_with_headers_get_validation();
@@ -2160,7 +2160,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2193,7 +2193,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = rfc7807_get_validation();
@@ -2301,7 +2301,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2339,7 +2339,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     // Header parameters
@@ -2436,7 +2436,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2484,7 +2484,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = untyped_property_get_validation(body);
@@ -2533,7 +2533,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2566,7 +2566,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = uuid_get_validation();
@@ -2635,7 +2635,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2675,7 +2675,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = xml_extra_post_validation(body);
@@ -2729,7 +2729,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2769,7 +2769,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = xml_other_post_validation(body);
@@ -2835,7 +2835,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2875,7 +2875,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = xml_other_put_validation(body);
@@ -2929,7 +2929,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -2969,7 +2969,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = xml_post_validation(body);
@@ -3023,7 +3023,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -3063,7 +3063,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = xml_put_validation(body);
@@ -3117,7 +3117,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -3155,7 +3155,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = get_repo_info_validation(path_params);
@@ -3224,7 +3224,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -3270,7 +3270,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     let validation = create_repo_validation(body);
@@ -3320,7 +3320,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }

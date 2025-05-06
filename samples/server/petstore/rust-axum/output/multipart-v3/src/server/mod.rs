@@ -55,7 +55,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     #[allow(clippy::redundant_closure)]
@@ -109,7 +109,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -143,7 +143,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     #[allow(clippy::redundant_closure)]
@@ -196,7 +196,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
@@ -230,7 +230,7 @@ where
     let mut event = event::Event::default();
     event.insert(
         event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{:?}", start_at),
+        format!("{start_at:?}"),
     );
 
     #[allow(clippy::redundant_closure)]
@@ -284,7 +284,7 @@ where
             );
             event.insert(
                 event::convention::EVENT_LATENCY.to_string(),
-                Utc::now().signed_duration_since(&start_at).to_string(),
+                Utc::now().signed_duration_since(start_at).to_string(),
             );
             api_impl.as_ref().dispatch(event).await;
         }
