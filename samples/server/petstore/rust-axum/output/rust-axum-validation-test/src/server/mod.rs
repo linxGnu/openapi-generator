@@ -39,12 +39,8 @@ where
     A: apis::EventDispatcher + apis::default::Default,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .mail_put(&mut event, method, host, cookies, body)
@@ -69,6 +65,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),

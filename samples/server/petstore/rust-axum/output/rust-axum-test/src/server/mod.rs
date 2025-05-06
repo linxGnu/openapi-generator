@@ -50,11 +50,6 @@ where
     A: apis::EventDispatcher + apis::default::Default,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || all_of_get_validation())
@@ -68,6 +63,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .all_of_get(&mut event, method, host, cookies)
@@ -112,6 +108,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
+            event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
             );
@@ -155,11 +155,6 @@ where
     A: apis::EventDispatcher + apis::default::Default,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || dummy_get_validation())
@@ -173,6 +168,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .dummy_get(&mut event, method, host, cookies)
@@ -197,6 +193,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -254,11 +254,6 @@ where
     A: apis::EventDispatcher + apis::default::Default,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || dummy_put_validation(body))
@@ -272,6 +267,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .dummy_put(&mut event, method, host, cookies, body)
@@ -296,6 +292,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -340,11 +340,6 @@ where
     A: apis::EventDispatcher + apis::default::Default,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || file_response_get_validation())
@@ -358,6 +353,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .file_response_get(&mut event, method, host, cookies)
@@ -402,6 +398,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
+            event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
             );
@@ -445,11 +445,6 @@ where
     A: apis::EventDispatcher + apis::default::Default,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || get_structured_yaml_validation())
@@ -463,6 +458,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .get_structured_yaml(&mut event, method, host, cookies)
@@ -499,6 +495,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -550,11 +550,6 @@ where
     A: apis::EventDispatcher + apis::default::Default,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || html_post_validation(body))
@@ -568,6 +563,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .html_post(&mut event, method, host, cookies, body)
@@ -604,6 +600,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -655,11 +655,6 @@ where
     A: apis::EventDispatcher + apis::default::Default,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || post_yaml_validation(body))
@@ -673,6 +668,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .post_yaml(&mut event, method, host, cookies, body)
@@ -697,6 +693,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -741,11 +741,6 @@ where
     A: apis::EventDispatcher + apis::default::Default,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || raw_json_get_validation())
@@ -759,6 +754,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .raw_json_get(&mut event, method, host, cookies)
@@ -802,6 +798,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -858,11 +858,6 @@ where
     A: apis::EventDispatcher + apis::default::Default,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || solo_object_post_validation(body))
@@ -876,6 +871,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .solo_object_post(&mut event, method, host, cookies, body)
@@ -900,6 +896,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),

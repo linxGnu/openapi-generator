@@ -98,11 +98,6 @@ where
     A: apis::EventDispatcher + apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || add_pet_validation(body))
@@ -116,6 +111,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .add_pet(&mut event, method, host, cookies, body)
@@ -156,6 +152,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -211,11 +211,6 @@ where
     A: apis::EventDispatcher + apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     // Header parameters
     let header_params = {
@@ -255,6 +250,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .delete_pet(
@@ -286,6 +282,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -335,11 +335,6 @@ where
     A: apis::EventDispatcher + apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation =
@@ -354,6 +349,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .find_pets_by_status(&mut event, method, host, cookies, query_params)
@@ -394,6 +390,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -443,11 +443,6 @@ where
     A: apis::EventDispatcher + apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation =
@@ -462,6 +457,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .find_pets_by_tags(&mut event, method, host, cookies, query_params)
@@ -502,6 +498,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -555,11 +555,6 @@ where
         + apis::ApiKeyAuthHeader<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     // Authentication
     let claims_in_header = api_impl
@@ -602,6 +597,7 @@ where
         }
     }
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .get_pet_by_id(&mut event, method, host, cookies, claims, path_params)
@@ -646,6 +642,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -703,11 +703,6 @@ where
     A: apis::EventDispatcher + apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || update_pet_validation(body))
@@ -721,6 +716,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .update_pet(&mut event, method, host, cookies, body)
@@ -769,6 +765,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -837,11 +837,6 @@ where
     A: apis::EventDispatcher + apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation =
@@ -856,6 +851,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .update_pet_with_form(&mut event, method, host, cookies, path_params, body)
@@ -880,6 +876,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -930,11 +930,6 @@ where
     A: apis::EventDispatcher + apis::pet::Pet<Claims = C> + apis::pet::PetAuthorization<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || upload_file_validation(path_params))
@@ -948,6 +943,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .upload_file(&mut event, method, host, cookies, path_params, body)
@@ -991,6 +987,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -1042,11 +1042,6 @@ where
         + apis::store::StoreAuthorization<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || delete_order_validation(path_params))
@@ -1060,6 +1055,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .delete_order(&mut event, method, host, cookies, path_params)
@@ -1088,6 +1084,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -1136,11 +1136,6 @@ where
         + apis::ApiKeyAuthHeader<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     // Authentication
     let claims_in_header = api_impl
@@ -1183,6 +1178,7 @@ where
         }
     }
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .get_inventory(&mut event, method, host, cookies, claims)
@@ -1226,6 +1222,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -1277,11 +1277,6 @@ where
         + apis::store::StoreAuthorization<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || get_order_by_id_validation(path_params))
@@ -1295,6 +1290,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .get_order_by_id(&mut event, method, host, cookies, path_params)
@@ -1339,6 +1335,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -1398,11 +1398,6 @@ where
         + apis::store::StoreAuthorization<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || place_order_validation(body))
@@ -1416,6 +1411,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .place_order(&mut event, method, host, cookies, body)
@@ -1456,6 +1452,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -1517,11 +1517,6 @@ where
         + apis::ApiKeyAuthHeader<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     // Authentication
     let claims_in_header = api_impl
@@ -1564,6 +1559,7 @@ where
         }
     }
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .create_user(&mut event, method, host, cookies, claims, body)
@@ -1588,6 +1584,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -1649,11 +1649,6 @@ where
         + apis::ApiKeyAuthHeader<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     // Authentication
     let claims_in_header = api_impl
@@ -1697,6 +1692,7 @@ where
         }
     }
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .create_users_with_array_input(&mut event, method, host, cookies, claims, body)
@@ -1721,6 +1717,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -1782,11 +1782,6 @@ where
         + apis::ApiKeyAuthHeader<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     // Authentication
     let claims_in_header = api_impl
@@ -1830,6 +1825,7 @@ where
         }
     }
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .create_users_with_list_input(&mut event, method, host, cookies, claims, body)
@@ -1854,6 +1850,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -1907,11 +1907,6 @@ where
         + apis::ApiKeyAuthHeader<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     // Authentication
     let claims_in_header = api_impl
@@ -1954,6 +1949,7 @@ where
         }
     }
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .delete_user(&mut event, method, host, cookies, claims, path_params)
@@ -1982,6 +1978,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -2033,11 +2033,6 @@ where
         + apis::user::UserAuthorization<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || get_user_by_name_validation(path_params))
@@ -2051,6 +2046,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .get_user_by_name(&mut event, method, host, cookies, path_params)
@@ -2095,6 +2091,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -2146,11 +2146,6 @@ where
         + apis::user::UserAuthorization<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || login_user_validation(query_params))
@@ -2164,6 +2159,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .login_user(&mut event, method, host, cookies, query_params)
@@ -2258,6 +2254,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
+            event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
             );
@@ -2305,11 +2305,6 @@ where
         + apis::ApiKeyAuthHeader<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     // Authentication
     let claims_in_header = api_impl
@@ -2352,6 +2347,7 @@ where
         }
     }
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .logout_user(&mut event, method, host, cookies, claims)
@@ -2376,6 +2372,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -2440,11 +2440,6 @@ where
         + apis::ApiKeyAuthHeader<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     // Authentication
     let claims_in_header = api_impl
@@ -2487,6 +2482,7 @@ where
         }
     }
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .update_user(&mut event, method, host, cookies, claims, path_params, body)
@@ -2515,6 +2511,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),

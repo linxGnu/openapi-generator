@@ -61,11 +61,6 @@ where
         + apis::payments::PaymentsAuthorization<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation =
@@ -80,6 +75,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .get_payment_method_by_id(&mut event, method, host, cookies, path_params)
@@ -147,6 +143,10 @@ where
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
             event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
+            event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
             );
@@ -192,11 +192,6 @@ where
         + apis::payments::PaymentsAuthorization<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     #[allow(clippy::redundant_closure)]
     let validation = tokio::task::spawn_blocking(move || get_payment_methods_validation())
@@ -210,6 +205,7 @@ where
             .map_err(|_| StatusCode::BAD_REQUEST);
     };
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .get_payment_methods(&mut event, method, host, cookies)
@@ -253,6 +249,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
@@ -315,11 +315,6 @@ where
         + apis::CookieAuthentication<Claims = C>,
 {
     let start_at = Utc::now();
-    let mut event = event::Event::default();
-    event.insert(
-        event::convention::EVENT_TIMESTAMP.to_string(),
-        format!("{start_at:?}"),
-    );
 
     // Authentication
     let claims_in_cookie = api_impl
@@ -362,6 +357,7 @@ where
         }
     }
 
+    let mut event = event::Event::default();
     let result = api_impl
         .as_ref()
         .post_make_payment(&mut event, method, host, cookies, claims, body)
@@ -428,6 +424,10 @@ where
     };
     if let Ok(resp) = resp.as_ref() {
         if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
             event.insert(
                 event::convention::EVENT_SERVICE.to_string(),
                 api_impl.as_ref().service_name(),
