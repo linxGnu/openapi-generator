@@ -105,33 +105,33 @@ where
                 .body(Body::empty())
         }
     };
-    if let Ok(resp) = resp.as_ref()
-        && !event.is_empty()
-    {
-        event.insert(
-            event::convention::EVENT_TIMESTAMP.to_string(),
-            format!("{start_at:?}"),
-        );
-        event.insert(
-            event::convention::EVENT_SERVICE.to_string(),
-            api_impl.as_ref().service_name(),
-        );
-        event.insert(
-            event::convention::EVENT_STATUS_CODE.to_string(),
-            resp.status().as_u16().to_string(),
-        );
-        event.insert(
-            event::convention::EVENT_ACTION.to_string(),
-            "all_of_get".to_string(),
-        );
-        event.insert(
-            event::convention::EVENT_LATENCY_SECS.to_string(),
-            format!(
-                "{:.6}",
-                Utc::now().signed_duration_since(start_at).as_seconds_f64()
-            ),
-        );
-        api_impl.as_ref().dispatch(event).await;
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "all_of_get".to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_LATENCY_SECS.to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
     }
 
     resp.map_err(|e| {
@@ -194,33 +194,33 @@ where
                 .body(Body::empty())
         }
     };
-    if let Ok(resp) = resp.as_ref()
-        && !event.is_empty()
-    {
-        event.insert(
-            event::convention::EVENT_TIMESTAMP.to_string(),
-            format!("{start_at:?}"),
-        );
-        event.insert(
-            event::convention::EVENT_SERVICE.to_string(),
-            api_impl.as_ref().service_name(),
-        );
-        event.insert(
-            event::convention::EVENT_STATUS_CODE.to_string(),
-            resp.status().as_u16().to_string(),
-        );
-        event.insert(
-            event::convention::EVENT_ACTION.to_string(),
-            "dummy_get".to_string(),
-        );
-        event.insert(
-            event::convention::EVENT_LATENCY_SECS.to_string(),
-            format!(
-                "{:.6}",
-                Utc::now().signed_duration_since(start_at).as_seconds_f64()
-            ),
-        );
-        api_impl.as_ref().dispatch(event).await;
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "dummy_get".to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_LATENCY_SECS.to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
     }
 
     resp.map_err(|e| {
@@ -296,33 +296,33 @@ where
                 .body(Body::empty())
         }
     };
-    if let Ok(resp) = resp.as_ref()
-        && !event.is_empty()
-    {
-        event.insert(
-            event::convention::EVENT_TIMESTAMP.to_string(),
-            format!("{start_at:?}"),
-        );
-        event.insert(
-            event::convention::EVENT_SERVICE.to_string(),
-            api_impl.as_ref().service_name(),
-        );
-        event.insert(
-            event::convention::EVENT_STATUS_CODE.to_string(),
-            resp.status().as_u16().to_string(),
-        );
-        event.insert(
-            event::convention::EVENT_ACTION.to_string(),
-            "dummy_put".to_string(),
-        );
-        event.insert(
-            event::convention::EVENT_LATENCY_SECS.to_string(),
-            format!(
-                "{:.6}",
-                Utc::now().signed_duration_since(start_at).as_seconds_f64()
-            ),
-        );
-        api_impl.as_ref().dispatch(event).await;
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "dummy_put".to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_LATENCY_SECS.to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
     }
 
     resp.map_err(|e| {
@@ -404,33 +404,33 @@ where
                 .body(Body::empty())
         }
     };
-    if let Ok(resp) = resp.as_ref()
-        && !event.is_empty()
-    {
-        event.insert(
-            event::convention::EVENT_TIMESTAMP.to_string(),
-            format!("{start_at:?}"),
-        );
-        event.insert(
-            event::convention::EVENT_SERVICE.to_string(),
-            api_impl.as_ref().service_name(),
-        );
-        event.insert(
-            event::convention::EVENT_STATUS_CODE.to_string(),
-            resp.status().as_u16().to_string(),
-        );
-        event.insert(
-            event::convention::EVENT_ACTION.to_string(),
-            "file_response_get".to_string(),
-        );
-        event.insert(
-            event::convention::EVENT_LATENCY_SECS.to_string(),
-            format!(
-                "{:.6}",
-                Utc::now().signed_duration_since(start_at).as_seconds_f64()
-            ),
-        );
-        api_impl.as_ref().dispatch(event).await;
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "file_response_get".to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_LATENCY_SECS.to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
     }
 
     resp.map_err(|e| {
@@ -505,33 +505,33 @@ where
                 .body(Body::empty())
         }
     };
-    if let Ok(resp) = resp.as_ref()
-        && !event.is_empty()
-    {
-        event.insert(
-            event::convention::EVENT_TIMESTAMP.to_string(),
-            format!("{start_at:?}"),
-        );
-        event.insert(
-            event::convention::EVENT_SERVICE.to_string(),
-            api_impl.as_ref().service_name(),
-        );
-        event.insert(
-            event::convention::EVENT_STATUS_CODE.to_string(),
-            resp.status().as_u16().to_string(),
-        );
-        event.insert(
-            event::convention::EVENT_ACTION.to_string(),
-            "get_structured_yaml".to_string(),
-        );
-        event.insert(
-            event::convention::EVENT_LATENCY_SECS.to_string(),
-            format!(
-                "{:.6}",
-                Utc::now().signed_duration_since(start_at).as_seconds_f64()
-            ),
-        );
-        api_impl.as_ref().dispatch(event).await;
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "get_structured_yaml".to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_LATENCY_SECS.to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
     }
 
     resp.map_err(|e| {
@@ -613,33 +613,33 @@ where
                 .body(Body::empty())
         }
     };
-    if let Ok(resp) = resp.as_ref()
-        && !event.is_empty()
-    {
-        event.insert(
-            event::convention::EVENT_TIMESTAMP.to_string(),
-            format!("{start_at:?}"),
-        );
-        event.insert(
-            event::convention::EVENT_SERVICE.to_string(),
-            api_impl.as_ref().service_name(),
-        );
-        event.insert(
-            event::convention::EVENT_STATUS_CODE.to_string(),
-            resp.status().as_u16().to_string(),
-        );
-        event.insert(
-            event::convention::EVENT_ACTION.to_string(),
-            "html_post".to_string(),
-        );
-        event.insert(
-            event::convention::EVENT_LATENCY_SECS.to_string(),
-            format!(
-                "{:.6}",
-                Utc::now().signed_duration_since(start_at).as_seconds_f64()
-            ),
-        );
-        api_impl.as_ref().dispatch(event).await;
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "html_post".to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_LATENCY_SECS.to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
     }
 
     resp.map_err(|e| {
@@ -709,33 +709,33 @@ where
                 .body(Body::empty())
         }
     };
-    if let Ok(resp) = resp.as_ref()
-        && !event.is_empty()
-    {
-        event.insert(
-            event::convention::EVENT_TIMESTAMP.to_string(),
-            format!("{start_at:?}"),
-        );
-        event.insert(
-            event::convention::EVENT_SERVICE.to_string(),
-            api_impl.as_ref().service_name(),
-        );
-        event.insert(
-            event::convention::EVENT_STATUS_CODE.to_string(),
-            resp.status().as_u16().to_string(),
-        );
-        event.insert(
-            event::convention::EVENT_ACTION.to_string(),
-            "post_yaml".to_string(),
-        );
-        event.insert(
-            event::convention::EVENT_LATENCY_SECS.to_string(),
-            format!(
-                "{:.6}",
-                Utc::now().signed_duration_since(start_at).as_seconds_f64()
-            ),
-        );
-        api_impl.as_ref().dispatch(event).await;
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "post_yaml".to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_LATENCY_SECS.to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
     }
 
     resp.map_err(|e| {
@@ -817,33 +817,33 @@ where
                 .body(Body::empty())
         }
     };
-    if let Ok(resp) = resp.as_ref()
-        && !event.is_empty()
-    {
-        event.insert(
-            event::convention::EVENT_TIMESTAMP.to_string(),
-            format!("{start_at:?}"),
-        );
-        event.insert(
-            event::convention::EVENT_SERVICE.to_string(),
-            api_impl.as_ref().service_name(),
-        );
-        event.insert(
-            event::convention::EVENT_STATUS_CODE.to_string(),
-            resp.status().as_u16().to_string(),
-        );
-        event.insert(
-            event::convention::EVENT_ACTION.to_string(),
-            "raw_json_get".to_string(),
-        );
-        event.insert(
-            event::convention::EVENT_LATENCY_SECS.to_string(),
-            format!(
-                "{:.6}",
-                Utc::now().signed_duration_since(start_at).as_seconds_f64()
-            ),
-        );
-        api_impl.as_ref().dispatch(event).await;
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "raw_json_get".to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_LATENCY_SECS.to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
     }
 
     resp.map_err(|e| {
@@ -918,33 +918,33 @@ where
                 .body(Body::empty())
         }
     };
-    if let Ok(resp) = resp.as_ref()
-        && !event.is_empty()
-    {
-        event.insert(
-            event::convention::EVENT_TIMESTAMP.to_string(),
-            format!("{start_at:?}"),
-        );
-        event.insert(
-            event::convention::EVENT_SERVICE.to_string(),
-            api_impl.as_ref().service_name(),
-        );
-        event.insert(
-            event::convention::EVENT_STATUS_CODE.to_string(),
-            resp.status().as_u16().to_string(),
-        );
-        event.insert(
-            event::convention::EVENT_ACTION.to_string(),
-            "solo_object_post".to_string(),
-        );
-        event.insert(
-            event::convention::EVENT_LATENCY_SECS.to_string(),
-            format!(
-                "{:.6}",
-                Utc::now().signed_duration_since(start_at).as_seconds_f64()
-            ),
-        );
-        api_impl.as_ref().dispatch(event).await;
+    if let Ok(resp) = resp.as_ref() {
+        if !event.is_empty() {
+            event.insert(
+                event::convention::EVENT_TIMESTAMP.to_string(),
+                format!("{start_at:?}"),
+            );
+            event.insert(
+                event::convention::EVENT_SERVICE.to_string(),
+                api_impl.as_ref().service_name(),
+            );
+            event.insert(
+                event::convention::EVENT_STATUS_CODE.to_string(),
+                resp.status().as_u16().to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_ACTION.to_string(),
+                "solo_object_post".to_string(),
+            );
+            event.insert(
+                event::convention::EVENT_LATENCY_SECS.to_string(),
+                format!(
+                    "{:.6}",
+                    Utc::now().signed_duration_since(start_at).as_seconds_f64()
+                ),
+            );
+            api_impl.as_ref().dispatch(event).await;
+        }
     }
 
     resp.map_err(|e| {
