@@ -163,7 +163,9 @@ impl ::std::str::FromStr for AdditionalPropertiesReferencedAnyOfObject {
     type Err = &'static str;
 
     fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
-        std::result::Result::Err("Parsing additionalProperties for AdditionalPropertiesReferencedAnyOfObject is not supported")
+        std::result::Result::Err(
+            "Parsing additionalProperties for AdditionalPropertiesReferencedAnyOfObject is not supported",
+        )
     }
 }
 
@@ -306,7 +308,7 @@ impl std::str::FromStr for AdditionalPropertiesWithNullable {
                 None => {
                     return std::result::Result::Err(
                         "Missing value while parsing AdditionalPropertiesWithNullable".to_string(),
-                    )
+                    );
                 }
             };
 
@@ -589,10 +591,10 @@ impl AnotherXmlObject {
 /// Should be implemented in a serde serializer
 impl std::fmt::Display for AnotherXmlObject {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let params: Vec<Option<String>> = vec![self
-            .inner_string
-            .as_ref()
-            .map(|inner_string| ["inner_string".to_string(), inner_string.to_string()].join(","))];
+        let params: Vec<Option<String>> =
+            vec![self.inner_string.as_ref().map(|inner_string| {
+                ["inner_string".to_string(), inner_string.to_string()].join(",")
+            })];
 
         write!(
             f,
@@ -628,7 +630,7 @@ impl std::str::FromStr for AnotherXmlObject {
                 None => {
                     return std::result::Result::Err(
                         "Missing value while parsing AnotherXmlObject".to_string(),
-                    )
+                    );
                 }
             };
 
@@ -642,7 +644,7 @@ impl std::str::FromStr for AnotherXmlObject {
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing AnotherXmlObject".to_string(),
-                        )
+                        );
                     }
                 }
             }
@@ -857,7 +859,7 @@ impl std::str::FromStr for AnyOfProperty {
                 None => {
                     return std::result::Result::Err(
                         "Missing value while parsing AnyOfProperty".to_string(),
-                    )
+                    );
                 }
             };
 
@@ -877,7 +879,7 @@ impl std::str::FromStr for AnyOfProperty {
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing AnyOfProperty".to_string(),
-                        )
+                        );
                     }
                 }
             }
@@ -1009,7 +1011,7 @@ impl std::str::FromStr for DuplicateXmlObject {
                 None => {
                     return std::result::Result::Err(
                         "Missing value while parsing DuplicateXmlObject".to_string(),
-                    )
+                    );
                 }
             };
 
@@ -1028,7 +1030,7 @@ impl std::str::FromStr for DuplicateXmlObject {
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing DuplicateXmlObject".to_string(),
-                        )
+                        );
                     }
                 }
             }
@@ -1298,7 +1300,7 @@ impl std::str::FromStr for FormTestRequest {
                 None => {
                     return std::result::Result::Err(
                         "Missing value while parsing FormTestRequest".to_string(),
-                    )
+                    );
                 }
             };
 
@@ -1309,12 +1311,12 @@ impl std::str::FromStr for FormTestRequest {
                         return std::result::Result::Err(
                             "Parsing a container in this style is not supported in FormTestRequest"
                                 .to_string(),
-                        )
+                        );
                     }
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing FormTestRequest".to_string(),
-                        )
+                        );
                     }
                 }
             }
@@ -1421,10 +1423,11 @@ impl MultigetGet201Response {
 /// Should be implemented in a serde serializer
 impl std::fmt::Display for MultigetGet201Response {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let params: Vec<Option<String>> = vec![self
-            .foo
-            .as_ref()
-            .map(|foo| ["foo".to_string(), foo.to_string()].join(","))];
+        let params: Vec<Option<String>> = vec![
+            self.foo
+                .as_ref()
+                .map(|foo| ["foo".to_string(), foo.to_string()].join(",")),
+        ];
 
         write!(
             f,
@@ -1460,7 +1463,7 @@ impl std::str::FromStr for MultigetGet201Response {
                 None => {
                     return std::result::Result::Err(
                         "Missing value while parsing MultigetGet201Response".to_string(),
-                    )
+                    );
                 }
             };
 
@@ -1474,7 +1477,7 @@ impl std::str::FromStr for MultigetGet201Response {
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing MultigetGet201Response".to_string(),
-                        )
+                        );
                     }
                 }
             }
@@ -1951,7 +1954,7 @@ impl std::str::FromStr for NullableTest {
                 None => {
                     return std::result::Result::Err(
                         "Missing value while parsing NullableTest".to_string(),
-                    )
+                    );
                 }
             };
 
@@ -1978,30 +1981,30 @@ impl std::str::FromStr for NullableTest {
                         return std::result::Result::Err(
                             "Parsing a container in this style is not supported in NullableTest"
                                 .to_string(),
-                        )
+                        );
                     }
                     "min_item_test" => {
                         return std::result::Result::Err(
                             "Parsing a container in this style is not supported in NullableTest"
                                 .to_string(),
-                        )
+                        );
                     }
                     "max_item_test" => {
                         return std::result::Result::Err(
                             "Parsing a container in this style is not supported in NullableTest"
                                 .to_string(),
-                        )
+                        );
                     }
                     "min_max_item_test" => {
                         return std::result::Result::Err(
                             "Parsing a container in this style is not supported in NullableTest"
                                 .to_string(),
-                        )
+                        );
                     }
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing NullableTest".to_string(),
-                        )
+                        );
                     }
                 }
             }
@@ -2151,7 +2154,7 @@ impl std::str::FromStr for ObjectHeader {
                 None => {
                     return std::result::Result::Err(
                         "Missing value while parsing ObjectHeader".to_string(),
-                    )
+                    );
                 }
             };
 
@@ -2169,7 +2172,7 @@ impl std::str::FromStr for ObjectHeader {
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing ObjectHeader".to_string(),
-                        )
+                        );
                     }
                 }
             }
@@ -2301,7 +2304,7 @@ impl std::str::FromStr for ObjectParam {
                 None => {
                     return std::result::Result::Err(
                         "Missing value while parsing ObjectParam".to_string(),
-                    )
+                    );
                 }
             };
 
@@ -2319,7 +2322,7 @@ impl std::str::FromStr for ObjectParam {
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing ObjectParam".to_string(),
-                        )
+                        );
                     }
                 }
             }
@@ -2468,7 +2471,7 @@ impl std::str::FromStr for ObjectUntypedProps {
                 None => {
                     return std::result::Result::Err(
                         "Missing value while parsing ObjectUntypedProps".to_string(),
-                    )
+                    );
                 }
             };
 
@@ -2617,7 +2620,7 @@ impl std::str::FromStr for ObjectWithArrayOfObjects {
                 None => {
                     return std::result::Result::Err(
                         "Missing value while parsing ObjectWithArrayOfObjects".to_string(),
-                    )
+                    );
                 }
             };
 
@@ -3273,7 +3276,7 @@ impl std::str::FromStr for XmlObject {
                 None => {
                     return std::result::Result::Err(
                         "Missing value while parsing XmlObject".to_string(),
-                    )
+                    );
                 }
             };
 
@@ -3291,7 +3294,7 @@ impl std::str::FromStr for XmlObject {
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing XmlObject".to_string(),
-                        )
+                        );
                     }
                 }
             }
