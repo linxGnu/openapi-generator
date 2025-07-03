@@ -1018,7 +1018,7 @@ public class RustAxumServerCodegen extends AbstractRustCodegen implements Codege
         String cmd = System.getenv("RUST_POST_PROCESS_FILE");
         if (StringUtils.isEmpty(cmd)) {
             cmd = "rustfmt";
-            command = new String[]{cmd, "--edition", "2021", fileName};
+            command = new String[]{cmd, "--edition", "2024", fileName};
         } else {
             command = new String[]{cmd, fileName};
         }
