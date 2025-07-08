@@ -3240,9 +3240,7 @@ impl std::str::FromStr for List {
             let val = match string_iter.next() {
                 Some(x) => x,
                 None => {
-                    return std::result::Result::Err(
-                        "Missing value while parsing List".to_string(),
-                    );
+                    return std::result::Result::Err("Missing value while parsing List".to_string());
                 }
             };
 
@@ -3875,9 +3873,7 @@ impl std::str::FromStr for Name {
             let val = match string_iter.next() {
                 Some(x) => x,
                 None => {
-                    return std::result::Result::Err(
-                        "Missing value while parsing Name".to_string(),
-                    );
+                    return std::result::Result::Err("Missing value while parsing Name".to_string());
                 }
             };
 
@@ -6480,9 +6476,7 @@ impl std::str::FromStr for User {
             let val = match string_iter.next() {
                 Some(x) => x,
                 None => {
-                    return std::result::Result::Err(
-                        "Missing value while parsing User".to_string(),
-                    );
+                    return std::result::Result::Err("Missing value while parsing User".to_string());
                 }
             };
 
